@@ -148,16 +148,18 @@
     video.classList.remove("is-playing");
   }
 
-  // Hero background — iOS/Android need muted + playsinline + gesture retry
+  // Hero background loop
+  // Desktop: full snip-hero.mp4 (src in HTML) — play ASAP, always show layer
+  // Mobile: lighter snip-hero-mobile.mp4 + gesture retry if autoplay blocked
   const heroVid = document.querySelector(".hero-bg-video");
   if (heroVid) {
     const isMobile =
       window.matchMedia("(max-width: 900px)").matches ||
       /iPhone|iPad|iPod|Android/i.test(navigator.userAgent || "");
-    const mobileSrc = "assets/videos/snip-hero-mobile.mp4";
-    const desktopSrc = "assets/videos/snip-hero.mp4";
-    // Lighter 18s baseline encode on phones; full cut on desktop
-    heroVid.src = isMobile ? mobileSrc : desktopSrc;
+
+    if (isMobile) {
+      heroVid.src = "assets/videos/snip-hero-mobile.mp4";
+    }
 
     heroVid.muted = true;
     heroVid.defaultMuted = true;
@@ -166,55 +168,37 @@
     heroVid.setAttribute("muted", "");
     heroVid.setAttribute("playsinline", "");
     heroVid.setAttribute("webkit-playsinline", "");
-    heroVid.setAttribute("autoplay", "");
 
-    let unlocked = false;
-    const markPlaying = () => {
-      heroVid.classList.add("is-on", "is-ready", "is-playing");
-      if (!unlocked) {
-        unlocked = true;
-        gestureAbort.abort();
-      }
-    };
+    // Always reveal the video layer (poster/img sits underneath until frames paint)
+    heroVid.classList.add("is-on", "is-ready");
 
     const kick = () => {
       if (prefersReduced) return;
-      try {
-        heroVid.muted = true;
-        heroVid.defaultMuted = true;
-        heroVid.volume = 0;
-      } catch (_) {}
+      heroVid.muted = true;
+      heroVid.volume = 0;
       const p = heroVid.play();
       if (p && typeof p.then === "function") {
-        p.then(markPlaying).catch(() => {});
+        p.then(() => heroVid.classList.add("is-playing")).catch(() => {});
       }
     };
 
-    const gestureAbort = new AbortController();
-    const gOpts = { passive: true, capture: true, signal: gestureAbort.signal };
-    ["touchstart", "touchend", "pointerdown", "click", "scroll"].forEach((ev) => {
-      window.addEventListener(ev, kick, gOpts);
-    });
+    if (heroVid.readyState >= 2) kick();
+    heroVid.addEventListener("loadeddata", kick);
+    heroVid.addEventListener("canplay", kick);
+    heroVid.addEventListener("playing", () => heroVid.classList.add("is-playing"));
+
+    // iOS: first touch often unlocks autoplay
+    if (isMobile) {
+      const unlock = () => kick();
+      window.addEventListener("touchstart", unlock, { passive: true, once: true });
+      window.addEventListener("click", unlock, { passive: true, once: true });
+    }
+
     document.addEventListener("visibilitychange", () => {
       if (document.visibilityState === "visible") kick();
     });
-    window.addEventListener("pageshow", kick);
 
-    heroVid.addEventListener("loadeddata", kick);
-    heroVid.addEventListener("canplay", kick);
-    heroVid.addEventListener("canplaythrough", kick);
-    heroVid.addEventListener("playing", markPlaying);
-    heroVid.addEventListener("timeupdate", () => {
-      if (!heroVid.paused && heroVid.currentTime > 0.08) markPlaying();
-    });
-
-    try {
-      heroVid.load();
-    } catch (_) {}
-    // Deferred kick — some WebViews need a tick after setting src
-    requestAnimationFrame(() => kick());
-    setTimeout(kick, 250);
-    setTimeout(kick, 1200);
+    kick();
   }
 
   // Side film cards + about cinema — in-view play
