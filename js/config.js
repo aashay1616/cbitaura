@@ -1,35 +1,46 @@
 /**
  * AURA 2026 — registration config
- * Fill Supabase keys when ready. Leave empty = demo mode (localStorage).
- * Payment QR: put image at assets/payment-qr.png when you have it.
+ * ---------------------------------------------------------
+ * CLOSED until rules + fees + payment QR are final.
+ *
+ * Go live:
+ *   1. Set feeRupees (or feeByCategory) per sport
+ *   2. Drop official QR → assets/payment-qr.png
+ *   3. Fill SUPABASE_URL + SUPABASE_ANON_KEY
+ *   4. Set REGISTRATION_OPEN: true
+ *   5. Run supabase/schema.sql + replace admin emails
+ *
+ * Form fields: sport, category, name, phone, email,
+ * college, PD name, PD phone → fee + QR payment.
  */
 window.AURA_CONFIG = {
-  // Flip true when forms should accept real submissions
   REGISTRATION_OPEN: false,
 
-  // Supabase project (https://supabase.com)
   SUPABASE_URL: "",
   SUPABASE_ANON_KEY: "",
 
-  // Public paths
   PAYMENT_QR_PATH: "assets/payment-qr.png",
   SITE_URL: "https://cbitaura.in",
 
-  // Admin emails allowed to use admin.html (must match auth user email)
-  // Also set the same list in Supabase RLS policies
+  // Used later for live admin auth checks (match schema RLS emails)
   ADMIN_EMAILS: [],
 
-  // Sports offered (mirrors site)
+  /**
+   * feeRupees: number | null
+   *   null   → payment step shows “Fee TBA”
+   *   number → “Pay ₹X” and pre-fill amount
+   * feeByCategory: { men: 2000, women: 1500 }  (optional override)
+   */
   SPORTS: [
-    { id: "cricket", name: "Cricket", categories: ["men"], teamMin: 11, teamMax: 15 },
-    { id: "basketball", name: "Basketball", categories: ["men", "women"], teamMin: 5, teamMax: 12 },
-    { id: "football", name: "Football", categories: ["men"], teamMin: 11, teamMax: 18 },
-    { id: "volleyball", name: "Volleyball", categories: ["men", "women"], teamMin: 6, teamMax: 12 },
-    { id: "kabaddi", name: "Kabaddi", categories: ["men"], teamMin: 7, teamMax: 12 },
-    { id: "throwball", name: "Throwball", categories: ["women"], teamMin: 7, teamMax: 12 },
-    { id: "badminton", name: "Badminton", categories: ["men", "women"], teamMin: 1, teamMax: 4 },
-    { id: "table-tennis", name: "Table Tennis", categories: ["men", "women"], teamMin: 1, teamMax: 4 },
-    { id: "chess", name: "Chess", categories: ["men", "women"], teamMin: 1, teamMax: 4 },
-    { id: "carroms", name: "Carroms", categories: ["men", "women"], teamMin: 1, teamMax: 4 },
+    { id: "cricket", name: "Cricket", categories: ["men"], feeRupees: null },
+    { id: "basketball", name: "Basketball", categories: ["men", "women"], feeRupees: null },
+    { id: "football", name: "Football", categories: ["men"], feeRupees: null },
+    { id: "volleyball", name: "Volleyball", categories: ["men", "women"], feeRupees: null },
+    { id: "kabaddi", name: "Kabaddi", categories: ["men"], feeRupees: null },
+    { id: "throwball", name: "Throwball", categories: ["women"], feeRupees: null },
+    { id: "badminton", name: "Badminton", categories: ["men", "women"], feeRupees: null },
+    { id: "table-tennis", name: "Table Tennis", categories: ["men", "women"], feeRupees: null },
+    { id: "chess", name: "Chess", categories: ["men", "women"], feeRupees: null },
+    { id: "carroms", name: "Carroms", categories: ["men", "women"], feeRupees: null },
   ],
 };

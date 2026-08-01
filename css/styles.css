@@ -1384,6 +1384,195 @@ body.has-preview-banner .hero-cinematic { padding-top: calc(var(--nav-h) + var(-
 }
 .hidden-step { display: none !important; }
 
+/* Register page — titles & gate */
+.reg-page-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.85rem, 4.5vw, 2.75rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  margin: 0.35rem 0 0.65rem;
+}
+.reg-page-lead {
+  color: var(--text-2);
+  font-size: 1.02rem;
+  line-height: 1.55;
+  margin: 0 0 1.5rem;
+  max-width: 38rem;
+}
+.step-title {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.35rem;
+}
+.gate-banner {
+  margin: 0 0 1.5rem;
+  padding: 1rem 1.15rem;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 193, 77, 0.35);
+  background: linear-gradient(135deg, rgba(255, 180, 50, 0.1), rgba(91, 140, 255, 0.06));
+  color: var(--text-2);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+.gate-banner strong {
+  display: block;
+  color: #ffc14d;
+  font-size: 0.95rem;
+  margin-bottom: 0.25rem;
+}
+.gate-banner code {
+  font-size: 0.8em;
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.35);
+  color: var(--blue-soft);
+}
+
+/* Sport picker */
+.sport-pick-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.65rem;
+}
+.sport-pick {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.3rem;
+  text-align: left;
+  padding: 0.95rem 1rem;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: rgba(5, 7, 12, 0.55);
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s, transform 0.15s;
+}
+.sport-pick:hover {
+  border-color: var(--line-strong);
+  background: rgba(91, 140, 255, 0.08);
+}
+.sport-pick:focus-visible {
+  outline: 2px solid var(--blue-soft);
+  outline-offset: 2px;
+}
+.sport-pick.is-selected {
+  border-color: transparent;
+  background: linear-gradient(145deg, rgba(59, 102, 214, 0.35), rgba(91, 140, 255, 0.12));
+  box-shadow: 0 0 0 1px rgba(91, 140, 255, 0.55), 0 8px 24px rgba(59, 102, 214, 0.2);
+}
+.sport-pick-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.98rem;
+  letter-spacing: -0.02em;
+}
+.sport-pick-meta {
+  font-size: 0.72rem;
+  color: var(--text-3);
+  text-transform: capitalize;
+  letter-spacing: 0.04em;
+}
+.sport-pick.is-selected .sport-pick-meta {
+  color: var(--blue-soft);
+}
+
+/* Field section divider (PD block) */
+.field-divider {
+  margin: 1.35rem 0 1rem;
+  padding: 0.65rem 0 0.15rem;
+  border-top: 1px solid var(--line);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--blue-soft);
+}
+
+/* Fee amount banner on payment step */
+.fee-banner {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin: 1rem 0 1.15rem;
+  padding: 1.15rem 1.25rem;
+  border-radius: 16px;
+  border: 1px solid rgba(91, 140, 255, 0.35);
+  background:
+    radial-gradient(ellipse 80% 120% at 100% 0%, rgba(91, 140, 255, 0.18), transparent 55%),
+    rgba(8, 12, 22, 0.9);
+}
+.fee-banner .fee-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.fee-banner .fee-amount {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #fff;
+  line-height: 1.15;
+}
+.fee-banner .fee-sub {
+  font-size: 0.88rem;
+  color: var(--text-2);
+  line-height: 1.45;
+  max-width: 28rem;
+}
+.fee-banner.is-tba .fee-amount {
+  color: #ffc14d;
+  font-size: clamp(1.35rem, 3vw, 1.65rem);
+}
+
+/* Review strip before pay */
+.reg-review {
+  margin: 0 0 1rem;
+  padding: 0.9rem 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: rgba(5, 7, 12, 0.45);
+  font-size: 0.88rem;
+  color: var(--text-2);
+  line-height: 1.55;
+}
+.reg-review strong {
+  color: var(--text);
+  font-weight: 600;
+}
+.reg-review .reg-review-label {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 0.35rem;
+}
+
+/* Inline field errors */
+.field.has-error input,
+.field.has-error select {
+  border-color: rgba(255, 100, 100, 0.65);
+}
+.field-error {
+  display: none;
+  margin-top: 0.35rem;
+  font-size: 0.78rem;
+  color: #ff8a8a;
+}
+.field.has-error .field-error { display: block; }
+
+#submit-status.is-error { color: #ff8a8a; }
+#submit-status.is-ok { color: #5ee09a; }
+
 /* ============================================================
    INSANE POST-HERO v3 — conversion design system
    Does NOT override .hero-cinematic block

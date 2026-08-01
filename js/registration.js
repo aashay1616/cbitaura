@@ -1,89 +1,34 @@
 /**
- * AURA 2026 registration flow
- * Demo mode: localStorage when Supabase keys empty
- * Live mode: Supabase insert + storage upload (when configured)
+ * AURA 2026 registration
+ * Flow: Sport → Details (name, phone, email, college, PD) → Pay (fee + QR + proof) → Pending
+ * Live mode only when REGISTRATION_OPEN + Supabase keys; otherwise demo via localStorage.
  */
 (function () {
   const CFG = window.AURA_CONFIG || {};
   const open = !!CFG.REGISTRATION_OPEN;
   const sports = CFG.SPORTS || [];
-
   const $ = (id) => document.getElementById(id);
-  const gate = $("gate-closed");
-  if (open && gate) gate.classList.add("hidden-step");
-  if (!open && gate) gate.classList.remove("hidden-step");
 
-  // Populate sports
-  const sportSel = $("sport");
-  if (sportSel) {
-    sportSel.innerHTML =
-      '<option value="">Select sport</option>' +
-      sports.map((s) => `<option value="${s.id}">${s.name}</option>`).join("");
+  const gate = $("gate-closed");
+  if (gate) gate.classList.toggle("hidden-step", open);
+
+  const grid = $("sport-pick-grid");
+  const sportHidden = $("sport");
+  const categorySel = $("category");
+
+  function feeFor(sport, category) {
+    if (!sport) return null;
+    if (sport.feeByCategory && category && sport.feeByCategory[category] != null) {
+      return Number(sport.feeByCategory[category]);
+    }
+    if (sport.feeRupees == null || sport.feeRupees === "") return null;
+    return Number(sport.feeRupees);
   }
 
   function currentSport() {
-    return sports.find((s) => s.id === sportSel.value) || null;
+    return sports.find((s) => s.id === (sportHidden && sportHidden.value)) || null;
   }
 
-  function syncCategories() {
-    const s = currentSport();
-    const cat = $("category");
-    if (!cat) return;
-    const allowed = s ? s.categories : ["men", "women"];
-    [...cat.options].forEach((opt) => {
-      if (!opt.value) return;
-      opt.hidden = !allowed.includes(opt.value);
-    });
-    if (cat.value && !allowed.includes(cat.value)) cat.value = "";
-    updateRosterHint();
-  }
-
-  sportSel && sportSel.addEventListener("change", syncCategories);
-
-  function updateRosterHint() {
-    const s = currentSport();
-    const el = $("roster-hint");
-    if (!el) return;
-    if (!s) {
-      el.textContent = "";
-      return;
-    }
-    el.textContent = ` · ${s.name}: ${s.teamMin}–${s.teamMax} players`;
-  }
-
-  // Players
-  const list = $("players-list");
-  function addPlayerRow(name = "", phone = "") {
-    if (!list) return;
-    const row = document.createElement("div");
-    row.className = "player-row";
-    row.innerHTML = `
-      <input type="text" class="p-name" placeholder="Player name" value="${name.replace(/"/g, "&quot;")}" />
-      <input type="tel" class="p-phone" placeholder="Phone (optional)" value="${phone.replace(/"/g, "&quot;")}" />
-      <button type="button" class="p-remove" aria-label="Remove">×</button>
-    `;
-    row.querySelector(".p-remove").addEventListener("click", () => {
-      row.remove();
-    });
-    list.appendChild(row);
-  }
-
-  $("add-player") &&
-    $("add-player").addEventListener("click", () => addPlayerRow());
-
-  // start with 1 row
-  addPlayerRow();
-
-  function collectPlayers() {
-    return [...document.querySelectorAll(".player-row")]
-      .map((row) => ({
-        name: row.querySelector(".p-name").value.trim(),
-        phone: row.querySelector(".p-phone").value.trim(),
-      }))
-      .filter((p) => p.name);
-  }
-
-  // Steps
   function goStep(n) {
     [1, 2, 3, 4].forEach((i) => {
       const el = $("step-" + i);
@@ -97,65 +42,117 @@
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  function validateStep1() {
-    const college = $("college").value.trim();
-    const sport = $("sport").value;
-    const category = $("category").value;
-    const captain_name = $("captain_name").value.trim();
-    const captain_phone = $("captain_phone").value.trim();
-    const captain_email = $("captain_email").value.trim();
-    if (!college || !sport || !category || !captain_name || !captain_phone || !captain_email) {
-      alert("Please fill all required team / captain fields.");
-      return false;
-    }
-    const s = currentSport();
-    if (s && !s.categories.includes(category)) {
-      alert("That category is not available for this sport.");
-      return false;
-    }
-    return true;
+  function clearFieldError(el) {
+    if (!el) return;
+    const wrap = el.closest(".field");
+    if (wrap) wrap.classList.remove("has-error");
   }
 
-  function validateStep2() {
-    const s = currentSport();
-    const players = collectPlayers();
-    if (!s) {
-      alert("Select a sport first.");
-      return false;
+  function setFieldError(el, msg) {
+    if (!el) return false;
+    const wrap = el.closest(".field");
+    if (wrap) {
+      wrap.classList.add("has-error");
+      let err = wrap.querySelector(".field-error");
+      if (!err) {
+        err = document.createElement("p");
+        err.className = "field-error";
+        wrap.appendChild(err);
+      }
+      err.textContent = msg || "Required";
     }
-    if (players.length < s.teamMin || players.length > s.teamMax) {
-      alert(`Roster must be ${s.teamMin}–${s.teamMax} players for ${s.name}. You have ${players.length}.`);
-      return false;
-    }
-    return true;
+    el.focus();
+    return false;
   }
 
-  $("to-step-2") &&
-    $("to-step-2").addEventListener("click", () => {
-      if (validateStep1()) {
-        // seed empty rows to min
-        const s = currentSport();
-        while (list.children.length < (s ? s.teamMin : 1)) addPlayerRow();
-        updateRosterHint();
-        goStep(2);
-      }
+  function digitsPhone(v) {
+    return String(v || "").replace(/\D/g, "");
+  }
+
+  function isValidPhone(v) {
+    const d = digitsPhone(v);
+    // India: 10 digits, or with country code 91 + 10
+    return d.length === 10 || (d.length === 12 && d.startsWith("91"));
+  }
+
+  function renderSportGrid() {
+    if (!grid) return;
+    grid.innerHTML = sports
+      .map(
+        (s) => `
+      <button type="button" class="sport-pick" role="option" data-id="${s.id}" aria-selected="false">
+        <span class="sport-pick-name">${s.name}</span>
+        <span class="sport-pick-meta">${s.categories.join(" · ")}</span>
+      </button>`
+      )
+      .join("");
+
+    grid.querySelectorAll(".sport-pick").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        grid.querySelectorAll(".sport-pick").forEach((b) => {
+          b.classList.remove("is-selected");
+          b.setAttribute("aria-selected", "false");
+        });
+        btn.classList.add("is-selected");
+        btn.setAttribute("aria-selected", "true");
+        sportHidden.value = btn.dataset.id;
+        syncCategories();
+        updateFeeUI();
+      });
     });
-  $("back-1") && $("back-1").addEventListener("click", () => goStep(1));
-  $("to-step-3") &&
-    $("to-step-3").addEventListener("click", () => {
-      if (validateStep2()) {
-        setupPaymentQr();
-        goStep(3);
-      }
+  }
+
+  function syncCategories() {
+    const s = currentSport();
+    if (!categorySel) return;
+    const allowed = s ? s.categories : ["men", "women"];
+    [...categorySel.options].forEach((opt) => {
+      if (!opt.value) return;
+      opt.hidden = !allowed.includes(opt.value);
+      opt.disabled = !allowed.includes(opt.value);
     });
-  $("back-2") && $("back-2").addEventListener("click", () => goStep(2));
+    if (categorySel.value && !allowed.includes(categorySel.value)) categorySel.value = "";
+    if (allowed.length === 1) categorySel.value = allowed[0];
+  }
+
+  function updateFeeUI() {
+    const s = currentSport();
+    const cat = categorySel ? categorySel.value : "";
+    const fee = feeFor(s, cat);
+    const amountEl = $("fee-amount");
+    const subEl = $("fee-sub");
+    const payAmt = $("payment_amount");
+    const banner = $("fee-banner");
+
+    if (fee == null || Number.isNaN(fee)) {
+      if (amountEl) amountEl.textContent = "Fee TBA";
+      if (subEl)
+        subEl.textContent =
+          "Entry fee will appear here once costs are finalised for this sport.";
+      if (payAmt) {
+        payAmt.value = "";
+        payAmt.placeholder = "As per published fee";
+      }
+      if (banner) banner.classList.add("is-tba");
+    } else {
+      if (amountEl) amountEl.textContent = "₹" + fee.toLocaleString("en-IN");
+      if (subEl)
+        subEl.textContent = `Pay exactly ₹${fee.toLocaleString("en-IN")} for ${s.name}${
+          cat ? " · " + cat : ""
+        }. Use the official QR only.`;
+      if (payAmt) {
+        payAmt.value = String(fee);
+        payAmt.placeholder = String(fee);
+      }
+      if (banner) banner.classList.remove("is-tba");
+    }
+  }
 
   function setupPaymentQr() {
     const img = $("payment-qr");
     const ph = $("payment-qr-ph");
     if (!img) return;
     const path = CFG.PAYMENT_QR_PATH || "assets/payment-qr.png";
-    img.src = path;
     img.onload = () => {
       img.hidden = false;
       if (ph) ph.hidden = true;
@@ -164,14 +161,74 @@
       img.hidden = true;
       if (ph) ph.hidden = false;
     };
-    // force check
-    img.src = path + "?t=" + Date.now();
+    img.src = path + (path.includes("?") ? "&" : "?") + "v=1";
+  }
+
+  function fillReview() {
+    const s = currentSport();
+    const el = $("reg-review-body");
+    if (!el || !s) return;
+    el.innerHTML = `
+      <strong>${s.name}</strong> · ${categorySel.value}<br>
+      ${$("college").value.trim()}<br>
+      ${$("captain_name").value.trim()} · ${$("captain_phone").value.trim()} · ${$("captain_email").value.trim()}<br>
+      PD: ${$("pd_name").value.trim()} · ${$("pd_phone").value.trim()}
+    `;
+  }
+
+  function validateStep1() {
+    if (!sportHidden || !sportHidden.value) {
+      alert("Please select a sport.");
+      return false;
+    }
+    if (!categorySel || !categorySel.value) {
+      alert("Please select Men or Women category.");
+      return false;
+    }
+    const s = currentSport();
+    if (s && !s.categories.includes(categorySel.value)) {
+      alert("That category is not available for this sport.");
+      return false;
+    }
+    return true;
+  }
+
+  function validateStep2() {
+    const checks = [
+      ["college", "College name is required"],
+      ["captain_name", "Your name is required"],
+      ["captain_phone", "Phone number is required"],
+      ["captain_email", "Email ID is required"],
+      ["pd_name", "Physical director name is required"],
+      ["pd_phone", "Physical director phone is required"],
+    ];
+    for (const [id] of checks) clearFieldError($(id));
+
+    for (const [id, msg] of checks) {
+      const el = $(id);
+      if (!el || !el.value.trim()) return setFieldError(el, msg);
+    }
+
+    const emailEl = $("captain_email");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailEl.value.trim())) {
+      return setFieldError(emailEl, "Enter a valid email address");
+    }
+
+    const phoneEl = $("captain_phone");
+    if (!isValidPhone(phoneEl.value)) {
+      return setFieldError(phoneEl, "Enter a valid 10-digit mobile number");
+    }
+
+    const pdPhone = $("pd_phone");
+    if (!isValidPhone(pdPhone.value)) {
+      return setFieldError(pdPhone, "Enter a valid 10-digit mobile number");
+    }
+
+    return true;
   }
 
   function genRef() {
-    const a = Math.random().toString(36).slice(2, 6).toUpperCase();
-    const b = Math.random().toString(36).slice(2, 6).toUpperCase();
-    return `AURA-${a}${b}`;
+    return "AURA-" + Math.random().toString(36).slice(2, 10).toUpperCase();
   }
 
   function demoStore(record) {
@@ -182,16 +239,14 @@
   }
 
   async function submitLive(record, file) {
-    // Placeholder for Supabase — plugged in when keys exist
     const url = CFG.SUPABASE_URL;
     const key = CFG.SUPABASE_ANON_KEY;
     if (!url || !key) throw new Error("Supabase not configured");
 
-    // Dynamic import not available offline; use fetch REST
-    let screenshot_path = null;
-    let screenshot_url = null;
+    let payment_screenshot_path = null;
     if (file) {
-      const path = `payments/${record.ref_code}/${Date.now()}-${file.name.replace(/[^\w.\-]+/g, "_")}`;
+      const safeName = file.name.replace(/[^\w.\-]+/g, "_");
+      const path = `payments/${record.ref_code}/${Date.now()}-${safeName}`;
       const up = await fetch(`${url}/storage/v1/object/payment-proofs/${path}`, {
         method: "POST",
         headers: {
@@ -202,23 +257,24 @@
         },
         body: file,
       });
-      if (!up.ok) throw new Error("Screenshot upload failed");
-      screenshot_path = path;
+      if (!up.ok) throw new Error("Screenshot upload failed — try a smaller image");
+      payment_screenshot_path = path;
     }
 
     const body = {
       college_name: record.college_name,
       sport: record.sport,
       category: record.category,
-      team_name: record.team_name,
       captain_name: record.captain_name,
       captain_phone: record.captain_phone,
       captain_email: record.captain_email,
-      players: record.players,
+      pd_name: record.pd_name,
+      pd_phone: record.pd_phone,
+      players: [],
       payment_txn_id: record.payment_txn_id,
       payment_amount: record.payment_amount,
-      payment_screenshot_path: screenshot_path,
-      payment_screenshot_url: screenshot_url,
+      fee_expected: record.fee_expected,
+      payment_screenshot_path,
       status: "pending",
       ref_code: record.ref_code,
     };
@@ -233,44 +289,100 @@
       },
       body: JSON.stringify(body),
     });
-    if (!res.ok) {
-      const t = await res.text();
-      throw new Error(t || "Submit failed");
-    }
+    if (!res.ok) throw new Error((await res.text()) || "Submit failed");
     return (await res.json())[0] || body;
   }
+
+  // --- Events ---
+  $("to-step-2") &&
+    $("to-step-2").addEventListener("click", () => {
+      if (!validateStep1()) return;
+      const s = currentSport();
+      if ($("summary-sport")) {
+        $("summary-sport").textContent = `${s.name} · ${categorySel.value}`;
+      }
+      goStep(2);
+    });
+
+  $("back-1") && $("back-1").addEventListener("click", () => goStep(1));
+
+  $("to-step-3") &&
+    $("to-step-3").addEventListener("click", () => {
+      if (!validateStep2()) return;
+      fillReview();
+      updateFeeUI();
+      setupPaymentQr();
+      goStep(3);
+    });
+
+  $("back-2") && $("back-2").addEventListener("click", () => goStep(2));
+  categorySel && categorySel.addEventListener("change", updateFeeUI);
+
+  // Clear errors on input
+  ["college", "captain_name", "captain_phone", "captain_email", "pd_name", "pd_phone"].forEach((id) => {
+    const el = $(id);
+    if (el) el.addEventListener("input", () => clearFieldError(el));
+  });
 
   $("submit-reg") &&
     $("submit-reg").addEventListener("click", async () => {
       const status = $("submit-status");
       const fileInput = $("payment_file");
       const file = fileInput && fileInput.files && fileInput.files[0];
+      const s = currentSport();
+      const fee = feeFor(s, categorySel.value);
+      const btn = $("submit-reg");
 
-      if (open && !file) {
-        alert("Please upload a payment screenshot.");
-        return;
+      if (status) {
+        status.classList.remove("is-error", "is-ok");
+        status.textContent = "";
+      }
+
+      if (open) {
+        if (fee != null && !$("payment_amount").value.trim()) {
+          if (status) {
+            status.classList.add("is-error");
+            status.textContent = "Enter the amount you paid.";
+          }
+          return;
+        }
+        if (!file) {
+          if (status) {
+            status.classList.add("is-error");
+            status.textContent = "Please upload a payment screenshot.";
+          }
+          return;
+        }
+        if (!$("payment_txn").value.trim()) {
+          if (status) {
+            status.classList.add("is-error");
+            status.textContent = "Please enter the transaction / UTR ID.";
+          }
+          return;
+        }
       }
 
       const record = {
         ref_code: genRef(),
         created_at: new Date().toISOString(),
         college_name: $("college").value.trim(),
-        team_name: $("team_name").value.trim(),
-        sport: $("sport").value,
-        category: $("category").value,
+        sport: sportHidden.value,
+        category: categorySel.value,
         captain_name: $("captain_name").value.trim(),
         captain_phone: $("captain_phone").value.trim(),
         captain_email: $("captain_email").value.trim(),
-        players: collectPlayers(),
+        pd_name: $("pd_name").value.trim(),
+        pd_phone: $("pd_phone").value.trim(),
         payment_txn_id: $("payment_txn").value.trim(),
         payment_amount: $("payment_amount").value.trim(),
+        fee_expected: fee,
         payment_screenshot_name: file ? file.name : null,
-        // demo only: store as data URL for admin preview
         payment_screenshot_data: null,
         status: "pending",
       };
 
-      status.textContent = "Submitting…";
+      if (status) status.textContent = "Submitting…";
+      if (btn) btn.disabled = true;
 
       try {
         if (file) {
@@ -289,18 +401,23 @@
         }
 
         $("final-ref").textContent = record.ref_code;
-        $("final-status").textContent = "Pending verification";
-        $("final-status").className = "status-pill pending";
-        status.textContent = open
-          ? "Submitted. Status: pending."
-          : "Demo saved in this browser. Status: pending. (Flip REGISTRATION_OPEN + Supabase when ready.)";
+        if (status) {
+          status.classList.add("is-ok");
+          status.textContent = open
+            ? "Submitted. Status: pending verification."
+            : "Demo saved on this device. Open admin.html to verify.";
+        }
         goStep(4);
       } catch (err) {
         console.error(err);
-        status.textContent = "Error: " + (err.message || err);
+        if (status) {
+          status.classList.add("is-error");
+          status.textContent = "Error: " + (err.message || err);
+        }
+      } finally {
+        if (btn) btn.disabled = false;
       }
     });
 
-  // deep-link demo mode message
-  syncCategories();
+  renderSportGrid();
 })();

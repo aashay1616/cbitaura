@@ -1,64 +1,87 @@
-# AURA 2026 — Registration system (ready to switch on)
+# AURA 2026 — Registration system
 
-Built now, **activated later** when you add **rules + payment QR**.
+Built now, **opened later** when rules + entry fees + payment QR are final.
 
----
-
-## Team journey (what captains do)
-
-```
-1. Open register.html
-2. Team details  → college, sport, men/women, captain name / phone / email
-3. Player roster → full list (min/max by sport)
-4. Payment       → scan CBIT QR, enter UTR, upload screenshot
-5. Submit        → status = PENDING
-6. Organiser verifies screenshot in admin.html
-7. Status = VERIFIED → confirmation email to captain
-   (or REJECTED with optional note)
-```
+`REGISTRATION_OPEN` stays `false` until then. Demo mode still works end-to-end.
 
 ---
 
-## Files already in the project
+## Captain journey
+
+```
+1. register.html
+2. Choose sport + category (men / women)
+3. Details → name, phone, email, college name,
+             Physical Director name + phone
+4. Payment → fee from config (or “Fee TBA”),
+             official QR, UTR, amount, screenshot
+5. Submit → status = PENDING · ref code shown
+6. Organiser verifies in admin.html
+7. VERIFIED → confirmation email (when Edge Function is live)
+   or REJECTED with optional note
+```
+
+---
+
+## Files
 
 | File | Role |
 |------|------|
-| `register.html` | Multi-step team form |
-| `admin.html` | Organiser desk (verify / reject / export CSV) |
-| `js/config.js` | Switches + Supabase keys + sports list |
-| `js/registration.js` | Form logic (demo + live hooks) |
-| `js/admin.js` | Admin list + status actions |
-| `supabase/schema.sql` | Database + storage + RLS |
+| `register.html` | 4-step form (Sport → Details → Payment → Done) |
+| `admin.html` | Verify / reject / export CSV |
+| `js/config.js` | Open switch, Supabase keys, sports + fees |
+| `js/registration.js` | Form logic (demo + live) |
+| `js/admin.js` | Desk + status actions + CSV |
+| `supabase/schema.sql` | Table, RLS, storage bucket |
 | `assets/payment-qr.png` | **You add** when ready |
 
-Home page `#register` shows the 4-step path and links to the form.
+Home `#register` shows the same 4-step path.
 
 ---
 
-## Demo mode (works today, no backend)
+## Config: fees (set when decided)
 
-1. Open `register.html` (local or GitHub Pages)
-2. Walk through steps and submit
-3. Open `admin.html` on the **same browser**
-4. See row as **pending** → Verify / Reject
+In `js/config.js` per sport:
 
-Data is stored in **localStorage** until Supabase is connected.
+```js
+{ id: "cricket", name: "Cricket", categories: ["men"], feeRupees: 2500 }
+// or different by category:
+{ id: "basketball", name: "Basketball", categories: ["men", "women"],
+  feeRupees: null,
+  feeByCategory: { men: 2000, women: 1500 } }
+```
+
+- `null` → UI shows **Fee TBA** (current state)
+- number → payment step shows **Pay ₹X** and pre-fills amount
+
+QR path: `PAYMENT_QR_PATH: "assets/payment-qr.png"`
 
 ---
 
-## Go-live checklist (when rules + QR are ready)
+## Demo mode (works today)
 
-### A. Payment QR
-1. Export official CBIT payment QR image  
-2. Save as: `assets/payment-qr.png`  
-3. Commit + push  
+1. Open `register.html`
+2. Walk through all steps and submit (payment fields optional in demo)
+3. Open `admin.html` in the **same browser**
+4. See **pending** → Verify / Reject / Export CSV
 
-### B. Supabase (free)
+Data lives in `localStorage` key `aura2026_registrations` until Supabase is connected.
+
+---
+
+## Go-live checklist
+
+### A. Content
+1. Final rules (link or PDF later)
+2. Entry fees per sport (and category if needed) in `config.js`
+3. Official payment QR → `assets/payment-qr.png`
+
+### B. Supabase
 1. Create project at https://supabase.com  
-2. SQL editor → paste + run `supabase/schema.sql`  
-3. Storage → confirm bucket `payment-proofs`  
-4. Auth → create organiser login(s)  
-5. In `schema.sql` policies, replace `admin@example.com` with real organiser emails  
+2. SQL editor → run `supabase/schema.sql`  
+3. Confirm storage bucket `payment-proofs`  
+4. Auth → organiser login(s)  
+5. Replace `admin@example.com` in policies with real emails  
 6. In `js/config.js`:
 
 ```js
@@ -68,15 +91,29 @@ SUPABASE_ANON_KEY: "eyJ...",
 ```
 
 ### C. Confirmation email
-Deploy a Supabase Edge Function `send-confirmation` that:
-- loads registration by `ref_code`
-- emails captain via Resend / SendGrid / SMTP  
-`admin.js` already calls `/functions/v1/send-confirmation` on verify.
+Deploy Edge Function `send-confirmation` (Resend / SendGrid / SMTP).  
+`admin.js` already POSTs `/functions/v1/send-confirmation` on verify.
 
-### D. Flip the switch
+### D. Flip switch
 - `REGISTRATION_OPEN: true`
 - Push to GitHub
-- Link “Register” CTAs on the home page to `register.html` (already linked)
+
+---
+
+## Database fields (aligned with form)
+
+| Field | Source |
+|-------|--------|
+| `sport`, `category` | Step 1 |
+| `college_name` | Step 2 |
+| `captain_name`, `captain_phone`, `captain_email` | Step 2 |
+| `pd_name`, `pd_phone` | Step 2 (Physical Director) |
+| `fee_expected` | From config at submit time |
+| `payment_txn_id`, `payment_amount`, screenshot path | Step 3 |
+| `status` | `pending` → `verified` / `rejected` |
+| `ref_code` | Auto `AURA-XXXXXXXX` |
+
+Optional `players` jsonb kept for a future roster step.
 
 ---
 
@@ -84,25 +121,19 @@ Deploy a Supabase Edge Function `send-confirmation` that:
 
 | Status | Meaning |
 |--------|---------|
-| `pending` | Submitted; screenshot not yet checked |
-| `verified` | Payment OK; confirmation email sent |
-| `rejected` | Payment invalid / incomplete |
+| `pending` | Submitted; payment not checked |
+| `verified` | Payment OK; email when wired |
+| `rejected` | Invalid / incomplete payment |
 
 ---
 
-## Security notes
+## Security
 
-- Public can **insert** registrations only  
-- Only authenticated admins **list/update**  
-- Payment screenshots in private storage bucket  
-- Don’t commit service-role keys to the repo  
+- Public **insert** only (registrations)
+- Authenticated admins **select / update**
+- Payment screenshots in private `payment-proofs` bucket
+- Never commit service-role keys
 
 ---
-
-## Later (with rules)
-
-- Attach rule PDFs per sport on `register.html`  
-- Show fee amount per sport from config  
-- Auto-fill amount field  
 
 No hero changes required for any of this.
