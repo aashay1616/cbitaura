@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Register · AURA 2026</title>
+    <meta name="description" content="Team registration for AURA 2026 — CBIT National Level Sports Fest." />
+    <meta name="theme-color" content="#05080f" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Outfit:wght@500;600;700;800&family=Syne:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="icon" href="assets/logo-kreeda.png" type="image/png" />
+  </head>
+  <body>
+    <header class="nav scrolled" id="top">
+      <div class="nav-inner">
+        <a class="brand" href="index.html">
+          <img src="assets/logo-kreeda.png" alt="Chaitanya Kreeda" width="36" height="36" />
+          <span class="brand-text">
+            <strong>AURA</strong>
+            <span>2026 · Register</span>
+          </span>
+        </a>
+        <nav class="nav-links" aria-label="Primary">
+          <a href="index.html">Home</a>
+          <a href="index.html#sports">Sports</a>
+          <a href="index.html#contact">Contact</a>
+          <a class="nav-cta" href="register.html">Register</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="page-shell">
+      <div class="container">
+        <p class="eyebrow">Team registration</p>
+        <h1 style="font-family: var(--font-display); font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 800; letter-spacing: -0.03em; margin: 0.4rem 0 0.6rem;">
+          Enter AURA 2026
+        </h1>
+        <p style="color: var(--text-2); margin-bottom: 1.5rem; max-width: 48ch;">
+          Multi-step team entry. When registrations open, payment QR goes live and submissions store in our database as
+          <strong style="color: var(--text)">pending</strong> until organisers verify your screenshot.
+        </p>
+
+        <div class="reg-card" id="reg-app">
+          <div class="steps-bar" id="steps-bar">
+            <div class="s active" data-step="1">1 · Team</div>
+            <div class="s" data-step="2">2 · Roster</div>
+            <div class="s" data-step="3">3 · Pay</div>
+            <div class="s" data-step="4">4 · Done</div>
+          </div>
+
+          <div id="gate-closed" class="form-note" style="margin-bottom: 1.25rem; padding: 0.9rem 1rem; border-radius: 12px; border: 1px solid var(--line-strong); background: rgba(91,140,255,0.08);">
+            <strong style="color: var(--blue-soft);">Registration is closed right now.</strong>
+            You can still walk through the full flow (demo). When we add rules + payment QR, we flip one switch and this goes live.
+          </div>
+
+          <!-- STEP 1 -->
+          <section id="step-1">
+            <div class="field-row">
+              <div class="field">
+                <label for="college">College name</label>
+                <input id="college" name="college" required placeholder="e.g. CBIT" autocomplete="organization" />
+              </div>
+              <div class="field">
+                <label for="team_name">Team name (optional)</label>
+                <input id="team_name" name="team_name" placeholder="e.g. Warriors" />
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="sport">Sport</label>
+                <select id="sport" name="sport" required></select>
+              </div>
+              <div class="field">
+                <label for="category">Category</label>
+                <select id="category" name="category" required>
+                  <option value="">Select</option>
+                  <option value="men">Men</option>
+                  <option value="women">Women</option>
+                </select>
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="captain_name">Captain full name</label>
+                <input id="captain_name" required autocomplete="name" />
+              </div>
+              <div class="field">
+                <label for="captain_phone">Captain phone</label>
+                <input id="captain_phone" type="tel" required placeholder="+91 …" autocomplete="tel" />
+              </div>
+            </div>
+            <div class="field">
+              <label for="captain_email">Captain email</label>
+              <input id="captain_email" type="email" required autocomplete="email" />
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn btn-primary" id="to-step-2">Continue to roster →</button>
+            </div>
+          </section>
+
+          <!-- STEP 2 -->
+          <section id="step-2" class="hidden-step">
+            <p class="form-note" style="margin-bottom: 1rem;">
+              Add every player. Min/max depends on sport (shown below).
+              <span id="roster-hint"></span>
+            </p>
+            <div id="players-list"></div>
+            <button type="button" class="btn btn-ghost" id="add-player" style="margin-top: 0.5rem;">+ Add player</button>
+            <div class="form-actions">
+              <button type="button" class="btn btn-ghost" id="back-1">← Back</button>
+              <button type="button" class="btn btn-primary" id="to-step-3">Continue to payment →</button>
+            </div>
+          </section>
+
+          <!-- STEP 3 -->
+          <section id="step-3" class="hidden-step">
+            <p class="form-note">
+              Scan the official payment QR, pay the entry fee, then upload a clear screenshot of the UPI/bank confirmation.
+            </p>
+            <div class="pay-box">
+              <div>
+                <img id="payment-qr" src="assets/payment-qr.png" alt="Payment QR" hidden />
+                <div class="pay-placeholder" id="payment-qr-ph">Payment QR<br />coming soon<br /><small>drop assets/payment-qr.png</small></div>
+              </div>
+              <div>
+                <div class="field">
+                  <label for="payment_txn">Transaction / UTR ID</label>
+                  <input id="payment_txn" placeholder="e.g. 123456789012" />
+                </div>
+                <div class="field">
+                  <label for="payment_amount">Amount paid (₹)</label>
+                  <input id="payment_amount" inputmode="decimal" placeholder="e.g. 2000" />
+                </div>
+                <div class="field">
+                  <label for="payment_file">Payment screenshot</label>
+                  <input id="payment_file" type="file" accept="image/*" />
+                </div>
+              </div>
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn btn-ghost" id="back-2">← Back</button>
+              <button type="button" class="btn btn-primary" id="submit-reg">Submit registration</button>
+            </div>
+            <p class="form-note" id="submit-status"></p>
+          </section>
+
+          <!-- STEP 4 -->
+          <section id="step-4" class="hidden-step">
+            <span class="status-pill pending" id="final-status">Pending verification</span>
+            <h2 style="font-family: var(--font-display); margin: 0.85rem 0 0.5rem; font-size: 1.6rem;">You're on the list</h2>
+            <p class="form-note">
+              Reference: <strong id="final-ref" style="color: var(--text)">—</strong><br />
+              Status stays <strong>pending</strong> until organisers verify your payment screenshot.
+              After approval, a confirmation email goes to the captain.
+            </p>
+            <div class="form-actions">
+              <a class="btn btn-primary" href="index.html">Back to home</a>
+              <a class="btn btn-ghost" href="https://www.instagram.com/aura_cbit/" target="_blank" rel="noopener">Follow @aura_cbit</a>
+            </div>
+          </section>
+        </div>
+
+        <p class="form-note" style="margin-top: 1.25rem;">
+          Organisers: <a href="admin.html" style="color: var(--blue-soft);">Admin dashboard</a> ·
+          Setup notes: <a href="REGISTRATION-SYSTEM.md" style="color: var(--blue-soft);">REGISTRATION-SYSTEM.md</a>
+        </p>
+      </div>
+    </main>
+
+    <script src="js/config.js"></script>
+    <script src="js/registration.js"></script>
+  </body>
+</html>
