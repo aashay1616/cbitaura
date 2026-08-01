@@ -1043,7 +1043,8 @@ body.has-preview-banner .hero-cinematic { padding-top: calc(var(--nav-h) + var(-
   }
   .meta-label { font-size: 0.55rem; margin-bottom: 0.2rem; }
   .meta-block strong { font-size: 0.78rem; line-height: 1.25; display: block; }
-  .meta-divider { display: block; }
+  .meta-divider { display: none; }
+  .meta-block:not(:last-child) { border-right: 1px solid var(--line); }
   .hero-actions {
     width: 100%;
     flex-direction: column;
