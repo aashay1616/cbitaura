@@ -1383,3 +1383,302 @@ body.has-preview-banner .hero-cinematic { padding-top: calc(var(--nav-h) + var(-
   color: var(--text-3);
 }
 .hidden-step { display: none !important; }
+
+/* ============================================================
+   INSANE POST-HERO v3 — conversion design system
+   Does NOT override .hero-cinematic block
+   ============================================================ */
+
+.split-headline {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: clamp(1.25rem, 4vw, 3rem);
+  align-items: end;
+  margin-bottom: clamp(2rem, 4vw, 3rem);
+}
+.split-headline h2 {
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 5vw, 3.6rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+  margin: 0.35rem 0 0;
+}
+.split-headline .lead.wide {
+  color: var(--text-2);
+  font-size: 1.08rem;
+  line-height: 1.65;
+  max-width: 42ch;
+  margin: 0;
+}
+.text-glow {
+  background: linear-gradient(120deg, #fff 10%, #9bb6ff 45%, #5b8cff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Bento about */
+.bento {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 0.85rem;
+  margin-bottom: 1.75rem;
+}
+.bento-card {
+  grid-column: span 4;
+  position: relative;
+  overflow: hidden;
+  border-radius: 22px;
+  border: 1px solid rgba(255,255,255,0.07);
+  background:
+    radial-gradient(ellipse 80% 70% at 100% 0%, rgba(91,140,255,0.14), transparent 55%),
+    rgba(12, 16, 28, 0.85);
+  padding: 1.4rem 1.35rem 1.5rem;
+  min-height: 160px;
+  transition: transform 0.4s cubic-bezier(0.22,1,0.36,1), border-color 0.35s, box-shadow 0.4s;
+  box-shadow: 0 30px 60px -36px rgba(0,0,0,0.7);
+}
+.bento-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(120,160,255,0.35);
+  box-shadow: 0 40px 80px -30px rgba(59,102,214,0.35);
+}
+.bento-lg { grid-column: span 8; min-height: 180px; }
+.bento-media {
+  padding: 0;
+  min-height: 200px;
+}
+.bento-media img {
+  width: 100%;
+  height: 100%;
+  min-height: 200px;
+  object-fit: cover;
+  transition: transform 0.8s cubic-bezier(0.22,1,0.36,1);
+}
+.bento-media:hover img { transform: scale(1.05); }
+.bento-tall { grid-row: span 1; min-height: 220px; }
+.bento-kicker {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--blue-soft);
+  margin-bottom: 0.65rem;
+}
+.bento-card h3 {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 750;
+  letter-spacing: -0.025em;
+  margin-bottom: 0.45rem;
+}
+.bento-card p {
+  color: var(--text-2);
+  font-size: 0.95rem;
+  line-height: 1.55;
+  max-width: 42ch;
+}
+
+/* Stats lux */
+.stats-lux {
+  background:
+    radial-gradient(ellipse 90% 80% at 50% -10%, rgba(91,140,255,0.18), transparent 55%),
+    linear-gradient(180deg, #060910, #0a101c 50%, #060910);
+}
+.stats-row-lux {
+  border-radius: 24px;
+  overflow: hidden;
+  border: 1px solid rgba(120,160,255,0.18);
+  background: rgba(255,255,255,0.04);
+}
+.stats-row-lux .stat-xl {
+  background: transparent;
+  padding: 2rem 1rem;
+  position: relative;
+}
+.stats-row-lux .stat-xl::after {
+  content: "";
+  position: absolute;
+  right: 0; top: 20%; bottom: 20%;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, rgba(255,255,255,0.1), transparent);
+}
+.stats-row-lux .stat-xl:last-child::after { display: none; }
+.stats-row-lux .stat-xl:hover {
+  background: rgba(91,140,255,0.08);
+}
+
+/* Film lux */
+.sec-film {
+  background:
+    radial-gradient(ellipse 50% 40% at 0% 50%, rgba(91,140,255,0.08), transparent 50%),
+    var(--bg);
+}
+.film-lux .film-feature {
+  border-radius: 24px;
+  border: 1px solid rgba(120,160,255,0.2);
+  overflow: hidden;
+  background: #080b14;
+  box-shadow: 0 40px 100px -40px rgba(59,102,214,0.45);
+}
+.film-feature-player { position: relative; }
+.film-glow {
+  position: absolute;
+  inset: auto 10% -20% 10%;
+  height: 40%;
+  background: radial-gradient(ellipse, rgba(91,140,255,0.35), transparent 70%);
+  pointer-events: none;
+  filter: blur(20px);
+}
+.film-side-card {
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: linear-gradient(165deg, rgba(18,24,40,0.95), rgba(8,10,18,0.98));
+}
+
+/* Sports dark luxury (was light) */
+.sec-sports {
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 0%, rgba(91,140,255,0.1), transparent 55%),
+    linear-gradient(180deg, #070b14, #0a0f1a 40%, #070b14);
+  color: var(--text);
+}
+.sec-sports .split-headline .lead.wide { color: var(--text-2); }
+.sec-sports .filters-lux .filter-btn {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: var(--text-2);
+}
+.sec-sports .filters-lux .filter-btn:hover {
+  border-color: rgba(120,160,255,0.4);
+  color: #fff;
+}
+.sec-sports .filters-lux .filter-btn.active {
+  color: #fff;
+  background: linear-gradient(135deg, var(--blue), var(--blue-deep));
+  border-color: transparent;
+}
+.sports-lux .sport-card-lux {
+  background: linear-gradient(180deg, rgba(16,20,32,0.95), rgba(8,10,16,0.98));
+  border: 1px solid rgba(255,255,255,0.07);
+  color: var(--text);
+  box-shadow: 0 28px 50px -28px rgba(0,0,0,0.7);
+}
+.sports-lux .sport-card-lux .sport-body h3 { color: #fff; }
+.sports-lux .sport-card-lux .sport-body p { color: var(--text-2); }
+.sports-lux .sport-card-lux .sport-foot {
+  border-top-color: rgba(255,255,255,0.06);
+}
+.sports-lux .sport-media {
+  aspect-ratio: 16 / 11;
+}
+.sport-shine {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(125deg, rgba(255,255,255,0.12) 0%, transparent 35%, transparent 100%);
+  opacity: 0.5;
+}
+.sports-cta {
+  margin-top: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.35rem 1.5rem;
+  border-radius: 18px;
+  border: 1px solid rgba(120,160,255,0.22);
+  background:
+    radial-gradient(ellipse 60% 100% at 100% 50%, rgba(91,140,255,0.16), transparent 55%),
+    rgba(12,16,28,0.8);
+}
+.sports-cta h3 {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 750;
+  margin-bottom: 0.25rem;
+}
+.sports-cta p { color: var(--text-2); font-size: 0.92rem; }
+
+/* Schedule lux */
+.sec-schedule {
+  background: linear-gradient(180deg, #060910, #0a0f18);
+}
+.schedule-lux .day-card {
+  border-radius: 22px;
+  min-height: 300px;
+  padding: 1.75rem 1.5rem;
+  background:
+    radial-gradient(ellipse 90% 60% at 0% 0%, rgba(91,140,255,0.12), transparent 50%),
+    linear-gradient(165deg, rgba(16,22,38,0.95), rgba(6,8,14,0.98));
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.schedule-lux .day-card.featured {
+  transform: translateY(-6px);
+  border-color: rgba(120,160,255,0.4);
+  box-shadow: 0 40px 80px -30px rgba(59,102,214,0.45);
+}
+.day-ribbon {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  background: rgba(91,140,255,0.2);
+  color: var(--blue-soft);
+  border: 1px solid rgba(120,160,255,0.3);
+}
+
+/* Register lux */
+.register-lux {
+  border-radius: 28px !important;
+  border: 1px solid rgba(120,160,255,0.28) !important;
+  box-shadow: 0 50px 120px -40px rgba(59,102,214,0.55) !important;
+}
+.register-lux .register-cinema-content h2 {
+  font-size: clamp(2rem, 4.5vw, 3.1rem);
+  letter-spacing: -0.035em;
+}
+
+/* Contact lux */
+.sec-contact {
+  background:
+    radial-gradient(ellipse 50% 40% at 50% 100%, rgba(91,140,255,0.1), transparent 55%),
+    var(--bg);
+}
+.contact-lux .contact-card {
+  border-radius: 20px;
+  min-height: 150px;
+  background:
+    radial-gradient(ellipse 80% 60% at 100% 0%, rgba(91,140,255,0.1), transparent 50%),
+    rgba(12,16,28,0.8);
+  border: 1px solid rgba(255,255,255,0.07);
+}
+
+.ig-follow-lux {
+  border-radius: 20px;
+  border: 1px solid rgba(120,160,255,0.2);
+  background:
+    radial-gradient(ellipse 50% 100% at 0% 50%, rgba(221,42,123,0.12), transparent 50%),
+    radial-gradient(ellipse 50% 100% at 100% 50%, rgba(91,140,255,0.12), transparent 50%),
+    rgba(10,14,24,0.9);
+}
+
+@media (max-width: 1000px) {
+  .split-headline { grid-template-columns: 1fr; }
+  .bento-card, .bento-lg { grid-column: span 6; }
+}
+@media (max-width: 720px) {
+  .bento-card, .bento-lg, .bento-media { grid-column: span 12; }
+  .schedule-lux .day-card.featured { transform: none; }
+  .sports-cta { flex-direction: column; align-items: stretch; }
+  .sports-cta .btn { width: 100%; }
+}
