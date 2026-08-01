@@ -417,13 +417,70 @@ code {
   transition: transform 0.9s var(--ease-out);
 }
 .cinema-frame:hover img { transform: scale(1.04); }
-.cinema-frame figcaption {
-  position: absolute; inset: auto 0 0;
-  padding: 2.5rem 1.15rem 1.05rem;
-  background: linear-gradient(transparent, rgba(5, 7, 12, 0.9));
-  font-size: 0.8rem; font-weight: 500; color: var(--text-2);
-  letter-spacing: 0.02em;
+.cinema-frame figcaption { display: none; }
+
+/* Follow us on Instagram — dual pages */
+.ig-follow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem 1.75rem;
+  margin-top: 2.25rem;
+  padding: 1.4rem 1.5rem;
+  border-radius: 18px;
+  border: 1px solid var(--line);
+  background: rgba(12, 16, 26, 0.72);
 }
+.ig-follow-copy h3 {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0.2rem 0 0.3rem;
+}
+.ig-follow-copy p { color: var(--text-2); font-size: 0.92rem; }
+.ig-follow-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+.ig-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.7rem 1rem 0.7rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(91, 140, 255, 0.08);
+  transition: border-color 0.25s, background 0.25s, transform 0.25s;
+}
+.ig-chip:hover {
+  border-color: rgba(120, 160, 255, 0.5);
+  background: rgba(91, 140, 255, 0.14);
+  transform: translateY(-1px);
+}
+.ig-chip-mark {
+  width: 34px; height: 34px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.65rem; font-weight: 800; letter-spacing: 0.04em;
+  color: #fff;
+  background: linear-gradient(135deg, #f58529, #dd2a7b 45%, #8134af 70%, #515bd4);
+}
+.ig-chip strong {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+.ig-chip em {
+  display: block;
+  font-style: normal;
+  font-size: 0.72rem;
+  color: var(--text-3);
+  margin-top: 0.1rem;
+}
+.reg-ig { margin-top: 1.15rem; }
 
 /* ─── STATS ─── */
 .stats-band {
