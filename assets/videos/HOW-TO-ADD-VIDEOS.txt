@@ -1,0 +1,54 @@
+AURA 2026 — How to add Instagram / trailer videos
+=================================================
+
+Drop your video files in THIS folder:
+  C:\Users\Dell\aura-2026\assets\videos\
+
+Recommended filenames (so the website picks them up automatically):
+  trailer-2024.mp4          ← main AURA 2024 trailer (hero / previous editions)
+  highlights-2024.mp4       ← finishing / highlights reel
+  finals-2024.mp4           ← finals / prize ceremony clip
+  reel-1.mp4                ← extra IG reel
+  reel-2.mp4
+  reel-3.mp4
+
+Formats that work best:
+  .mp4  (preferred)
+  .webm
+  Keep each file under ~50–80 MB if possible for fast loading.
+
+------------------------------------------------
+EASIEST WAYS TO GET VIDEOS FROM INSTAGRAM
+------------------------------------------------
+
+Option A — Save from Instagram app (if available in your region)
+  1. Open the reel/post on @chaitanyakreeda
+  2. Tap ⋯ menu → Save / Download (if shown)
+  3. Copy the file into this folder and rename as above
+
+Option B — WhatsApp / Files to this PC
+  1. Download reels to your phone
+  2. Send them to yourself on WhatsApp or USB
+  3. Save into:  C:\Users\Dell\aura-2026\assets\videos\
+
+Option C — Give me the Instagram links
+  1. Open the reel on Instagram
+  2. Tap Share → Copy link
+  3. Paste the links in chat (example):
+       https://www.instagram.com/reel/XXXXX/
+  4. Tell me which is trailer / highlights / finals
+  I can wire embeds or help place files once you download them.
+
+Option D — Google Drive folder
+  Upload all clips to a Drive folder, share the link with me,
+  download them into this videos folder, then refresh the site.
+
+------------------------------------------------
+AFTER YOU ADD FILES
+------------------------------------------------
+1. Make sure names match the list above (or tell me the real names)
+2. Refresh the website (Ctrl + F5)
+3. Previous Editions section will play local videos
+
+Until files are here, the site shows stylish placeholders
+and links to @chaitanyakreeda on Instagram.

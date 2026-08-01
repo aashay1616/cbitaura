@@ -1,0 +1,12 @@
+﻿kreeda-extract/
+brand-options/
+assets/videos/_analysis/
+assets/videos/_hero_parts/
+assets/videos/trailer.mp4
+assets/videos/aftermovie.mp4
+*.docx
+*.xlsx
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

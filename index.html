@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AURA 2026 · CBIT National Level Sports Fest</title>
+    <meta
+      name="description"
+      content="AURA 2026 — CBIT's National Level Sports Fest, October 7–9, 2026. Register your college. Organised by Chaitanya Kreeda."
+    />
+    <meta name="theme-color" content="#05080f" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Outfit:wght@500;600;700;800&family=Syne:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="icon" href="assets/logo-kreeda.png" type="image/png" />
+  </head>
+  <body>
+    <div class="noise" aria-hidden="true"></div>
+    <div class="bg-glow bg-glow-1" aria-hidden="true"></div>
+    <div class="bg-glow bg-glow-2" aria-hidden="true"></div>
+
+    <!-- NAV -->
+    <header class="nav" id="top">
+      <div class="nav-inner">
+        <a class="brand" href="#top">
+          <img src="assets/logo-kreeda.png" alt="Chaitanya Kreeda" />
+          <span class="brand-text">
+            <strong>AURA</strong>
+            <span>2026 · CBIT</span>
+          </span>
+        </a>
+        <button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+        <nav class="nav-links" aria-label="Primary">
+          <a href="#about">About</a>
+          <a href="#editions">Previous</a>
+          <a href="#sports">Sports</a>
+          <a href="#schedule">Schedule</a>
+          <a href="#contact">Contact</a>
+          <a class="nav-cta" href="#register">Claim Your Spot</a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- HERO — cinematic full-bleed -->
+    <section class="hero-cinematic">
+      <div class="hero-bg">
+        <img src="assets/hero-cinematic.jpg" alt="" class="hero-bg-img" />
+        <video
+          class="hero-bg-video is-on"
+          muted
+          loop
+          playsinline
+          autoplay
+          preload="auto"
+          poster="assets/hero-cinematic.jpg"
+          src="assets/videos/snip-hero.mp4"
+        ></video>
+        <div class="hero-bg-shade"></div>
+        <div class="hero-bg-vignette"></div>
+      </div>
+
+      <div class="hero-content container">
+        <div class="hero-top-row reveal">
+          <span class="live-pill"><span class="dot"></span> Registrations opening soon</span>
+          <span class="hero-host">Chaitanya Kreeda · CBIT</span>
+        </div>
+
+        <p class="eyebrow hero-eye reveal">National Level Sports Fest · October 2026</p>
+        <h1 class="hero-title reveal">
+          <span class="hero-title-line">AURA</span>
+          <span class="hero-title-year">2026</span>
+        </h1>
+        <p class="hero-tagline reveal">
+          Three days. Ten sports. One campus.<br />
+          Engineering colleges from across India. One stage.
+        </p>
+
+        <div class="hero-meta reveal">
+          <div class="meta-block">
+            <span class="meta-label">When</span>
+            <strong>7 – 9 Oct 2026</strong>
+          </div>
+          <div class="meta-divider"></div>
+          <div class="meta-block">
+            <span class="meta-label">Where</span>
+            <strong>CBIT · Gandipet</strong>
+          </div>
+          <div class="meta-divider"></div>
+          <div class="meta-block">
+            <span class="meta-label">Prize pool</span>
+            <strong>₹3L+ last edition</strong>
+          </div>
+        </div>
+
+        <div class="hero-actions reveal">
+          <a class="btn btn-primary btn-lg" href="#register">
+            Register your team
+            <span class="btn-shine" aria-hidden="true"></span>
+          </a>
+          <a class="btn btn-ghost btn-lg" href="#editions">Watch last edition</a>
+        </div>
+      </div>
+
+      <div class="hero-scroll" aria-hidden="true">
+        <span>Scroll</span>
+        <div class="scroll-line"></div>
+      </div>
+    </section>
+
+    <!-- MARQUEE -->
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track">
+        <span>CRICKET</span><span>·</span>
+        <span>BASKETBALL</span><span>·</span>
+        <span>FOOTBALL</span><span>·</span>
+        <span>VOLLEYBALL</span><span>·</span>
+        <span>KABADDI</span><span>·</span>
+        <span>THROWBALL</span><span>·</span>
+        <span>BADMINTON</span><span>·</span>
+        <span>TABLE TENNIS</span><span>·</span>
+        <span>CHESS</span><span>·</span>
+        <span>CARROMS</span><span>·</span>
+        <span>CRICKET</span><span>·</span>
+        <span>BASKETBALL</span><span>·</span>
+        <span>FOOTBALL</span><span>·</span>
+        <span>VOLLEYBALL</span><span>·</span>
+        <span>KABADDI</span><span>·</span>
+        <span>THROWBALL</span><span>·</span>
+        <span>BADMINTON</span><span>·</span>
+        <span>TABLE TENNIS</span><span>·</span>
+        <span>CHESS</span><span>·</span>
+        <span>CARROMS</span><span>·</span>
+      </div>
+    </div>
+
+    <!-- ABOUT -->
+    <section class="section" id="about">
+      <div class="container">
+        <div class="about-split">
+          <div class="section-head reveal">
+            <p class="eyebrow">The fest</p>
+            <h2>Built for teams that travel to win</h2>
+            <p class="lead">
+              AURA is CBIT’s flagship national-level inter-engineering sports meet —
+              certified officials, serious brackets, and a campus that lives for three days of sport.
+            </p>
+          </div>
+          <div class="about-points reveal">
+            <article class="about-point">
+              <span class="ap-num">01</span>
+              <div>
+                <h3>Professionally conducted</h3>
+                <p>End-to-end by Chaitanya Kreeda &amp; the Department of Physical Education. Certified referees every match.</p>
+              </div>
+            </article>
+            <article class="about-point">
+              <span class="ap-num">02</span>
+              <div>
+                <h3>Real scale</h3>
+                <p>1,500+ athletes last edition. 10+ sports. Colleges from across the circuit. ₹3L+ prize pool.</p>
+              </div>
+            </article>
+            <article class="about-point">
+              <span class="ap-num">03</span>
+              <div>
+                <h3>Hosted at CBIT</h3>
+                <p>1979 · NAAC A+ · autonomous · Gandipet. Grounds, courts, and indoor halls ready for national play.</p>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <div class="cinema-strip reveal">
+          <figure class="cinema-frame media-live">
+            <video muted loop playsinline preload="none" data-src="assets/videos/snip-campus-banners.mp4" poster="assets/photo-team.png"></video>
+            <img src="assets/photo-team.png" alt="AURA campus" class="media-fallback" />
+            <figcaption>Campus dressed for AURA</figcaption>
+          </figure>
+          <figure class="cinema-frame tall media-live">
+            <video muted loop playsinline preload="none" data-src="assets/videos/snip-inauguration.mp4" poster="assets/photo-court.png"></video>
+            <img src="assets/photo-court.png" alt="Inauguration" class="media-fallback" />
+            <figcaption>Opening · lamp &amp; guests</figcaption>
+          </figure>
+          <figure class="cinema-frame media-live">
+            <video muted loop playsinline preload="none" data-src="assets/videos/snip-closing-aura.mp4" poster="assets/photo-jersey.png"></video>
+            <img src="assets/photo-jersey.png" alt="AURA brand" class="media-fallback" />
+            <figcaption>AURA 2024 close</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- STATS — dramatic band -->
+    <section class="stats-band" id="scale">
+      <div class="container">
+        <div class="stats-band-head reveal">
+          <p class="eyebrow">Last edition</p>
+          <h2>Numbers that already made noise</h2>
+        </div>
+        <div class="stats-row">
+          <div class="stat-xl reveal">
+            <span class="stat-xl-num" data-count="3">₹3L+</span>
+            <span class="stat-xl-label">Prize pool</span>
+          </div>
+          <div class="stat-xl reveal">
+            <span class="stat-xl-num">1,500+</span>
+            <span class="stat-xl-label">Athletes</span>
+          </div>
+          <div class="stat-xl reveal">
+            <span class="stat-xl-num">10+</span>
+            <span class="stat-xl-label">Sports</span>
+          </div>
+          <div class="stat-xl reveal">
+            <span class="stat-xl-num">40–50</span>
+            <span class="stat-xl-label">Colleges</span>
+          </div>
+          <div class="stat-xl reveal">
+            <span class="stat-xl-num">3</span>
+            <span class="stat-xl-label">Days · Oct 7–9</span>
+          </div>
+          <div class="stat-xl reveal">
+            <span class="stat-xl-num">5K+</span>
+            <span class="stat-xl-label">@chaitanyakreeda</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FILM — curated moments (not a wall of simultaneous clips) -->
+    <section class="section editions" id="editions">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="eyebrow">AURA 2024 on film</p>
+          <h2>Sports that already happened here</h2>
+          <p>
+            Hand-picked cuts from the official trailer and aftermovie —
+            one main reel, two atmosphere cards. Full films on Instagram.
+          </p>
+        </div>
+
+        <div class="film-layout reveal">
+          <article class="film-feature">
+            <div class="film-feature-player">
+              <video
+                id="feature-sports"
+                controls
+                playsinline
+                preload="metadata"
+                poster="assets/photo-court.png"
+                src="assets/videos/snip-feature-sports.mp4"
+              ></video>
+            </div>
+            <div class="film-feature-meta">
+              <span class="film-label">Featured · sports cut</span>
+              <h3>Kabaddi · Cricket · Football</h3>
+              <p>Match action only — title cards stripped so the site type stays clean.</p>
+            </div>
+          </article>
+
+          <div class="film-side">
+            <a class="film-side-card" href="https://www.instagram.com/p/DCQMqO0yj9p/" target="_blank" rel="noopener">
+              <div class="film-side-media">
+                <video muted loop playsinline preload="none" data-src="assets/videos/snip-trailer-atmosphere.mp4" poster="assets/photo-banner.png"></video>
+                <span class="watch-play" aria-hidden="true">▶</span>
+              </div>
+              <div class="film-side-body">
+                <span class="film-label">Aftermovie</span>
+                <strong>Volleyball · net action</strong>
+                <span class="watch-link">Full trailer on Instagram ↗</span>
+              </div>
+            </a>
+            <a class="film-side-card" href="https://www.instagram.com/p/DFtXXlkTIQN/" target="_blank" rel="noopener">
+              <div class="film-side-media">
+                <video muted loop playsinline preload="none" data-src="assets/videos/snip-closing-aura.mp4" poster="assets/photo-team.png"></video>
+                <span class="watch-play" aria-hidden="true">▶</span>
+              </div>
+              <div class="film-side-body">
+                <span class="film-label">Aftermovie</span>
+                <strong>Opening · guests</strong>
+                <span class="watch-link">Full aftermovie on Instagram ↗</span>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SPORTS -->
+    <section class="section section-light" id="sports">
+      <div class="container">
+        <div class="section-head dark reveal">
+          <p class="eyebrow">Disciplines</p>
+          <h2>Every sport. Every reason to bring a team.</h2>
+          <p>
+            Men’s &amp; women’s categories. Indoor &amp; outdoor.
+            Rule books drop when registrations open — lock your squad now.
+          </p>
+        </div>
+
+        <div class="filters reveal" role="tablist" aria-label="Filter sports">
+          <button class="filter-btn active" type="button" data-filter="all">All</button>
+          <button class="filter-btn" type="button" data-filter="men">Men</button>
+          <button class="filter-btn" type="button" data-filter="women">Women</button>
+          <button class="filter-btn" type="button" data-filter="outdoor">Outdoor</button>
+          <button class="filter-btn" type="button" data-filter="indoor">Indoor</button>
+        </div>
+
+        <div class="sports-grid">
+          <article class="sport-card reveal" data-tags="men outdoor">
+            <div class="sport-media">
+              <img src="assets/sports/cricket.jpg" alt="Cricket" />
+              <video muted loop playsinline preload="none" data-src="assets/videos/sport-cricket.mp4"></video>
+            </div>
+            <div class="sport-body">
+              <h3>Cricket</h3>
+              <div class="sport-tags"><span class="tag tag-men">Men</span><span class="tag tag-outdoor">Outdoor</span></div>
+              <p>Flagship outdoor event — brackets that start early so the full tournament runs clean.</p>
+              <div class="sport-foot"><span class="soon">Rules soon</span><span class="type">Team</span></div>
+            </div>
+          </article>
+          <article class="sport-card reveal" data-tags="men women outdoor">
+            <div class="sport-media">
+              <img src="assets/sports/basketball.jpg" alt="Basketball" />
+              <video muted loop playsinline preload="none" data-src="assets/videos/sport-basketball.mp4"></video>
+            </div>
+            <div class="sport-body">
+              <h3>Basketball</h3>
+              <div class="sport-tags"><span class="tag tag-men">Men</span><span class="tag tag-women">Women</span><span class="tag tag-outdoor">Outdoor</span></div>
+              <p>High-intensity court action — one of AURA’s most competitive draws every year.</p>
+              <div class="sport-foot"><span class="soon">Rules soon</span><span class="type">Team</span></div>
+            </div>
+          </article>
+          <article class="sport-card reveal" data-tags="men outdoor">
+            <div class="sport-media">
+              <img src="assets/sports/football.jpg" alt="Football" />
+              <video muted loop playsinline preload="none" data-src="assets/videos/sport-football.mp4"></video>
+            </div>
+            <div class="sport-body">
+              <h3>Football</h3>
+              <div class="sport-tags"><span class="tag tag-men">Men</span><span class="tag tag-outdoor">Outdoor</span></div>
+              <p>Full-field football with knockout energy — for colleges that travel ready.</p>
+              <div class="sport-foot"><span class="soon">Rules soon</span><span class="type">Team</span></div>
+            </div>
+          </article>
+          <article class="sport-card reveal" data-tags="men women outdoor">
+            <div class="sport-media">
+              <img src="assets/sports/volleyball.jpg" alt="Volleyball" />
+              <video muted loop playsinline preload="none" data-src="assets/videos/sport-volleyball.mp4"></video>
+            </div>
+            <div class="sport-body">
+              <h3>Volleyball</h3>
+              <div class="sport-tags"><span class="tag tag-men">Men</span><span class="tag tag-women">Women</span><span class="tag tag-outdoor">Outdoor</span></div>
+              <p>Men’s and women’s brackets — fast rallies, campus crowds.</p>
+              <div class="sport-foot"><span class="soon">Rules soon</span><span class="type">Team</span></div>
+            </div>
+          </article>
+          <article class="sport-card reveal" data-tags="men outdoor">
+            <div class="sport-media">
+              <img src="assets/sports/kabaddi.jpg" alt="Kabaddi" />
+              <video muted loop playsinline preload="none" data-src="assets/videos/sport-kabaddi.mp4"></video>
+            </div>
+            <div class="sport-body">
+              <h3>Kabaddi</h3>
+              <div class="sport-tags"><span class="tag tag-men">Men</span><span class="tag tag-outdoor">Outdoor</span></div>
+              <p>Raids, tackles, pure intensity — always a crowd favourite.</p>
+              <div class="sport-foot"><span class="soon">Rules soon</span><span class="type">Team</span></div>
+            </div>
+          </article>
+          <article class="sport-card reveal" data-tags="women outdoor">
+            <div class="sport-media"><img src="assets/sports/throwball.jpg" alt="Throwball" /></div>
+            <div class="sport-body">
+              <h3>Throwball</h3>
+              <div class="sport-tags"><span class="tag tag-women">Women</span><span class="tag tag-outdoor">Outdoor</span></div>
+              <p>Women’s throwball — sharp serves and strong inter-college rivalry.</p>
+              <div class="sport-foot"><span class="soon">Rules soon</span><span class="type">Team</span></div>
+            </div>
+          </article>
+          <article class="sport-card reveal" data-tags="men women indoor">
+            <div class="sport-media">
+              <img src="assets/sports/badminton.jpg" alt="Badminton" />
+              <video muted loop playsinline preload="none" data-src="assets/videos/sport-badminton.mp4"></video>
+            </div>
+            <div class="sport-body">
+              <h3>Badminton</h3>
+              <div class="sport-tags"><span class="tag tag-men">Men</span><span class="tag tag-women">Women</span><span class="tag tag-indoor">Indoor</span></div>
+              <p>Indoor speed and precision for men and women.</p>
+              <div class="sport-foot"><span class="soon">Rules soon</span><span class="type">Racquet</span></div>
+            </div>
+          </article>
+          <article class="sport-card reveal" data-tags="men women indoor">
+            <div class="sport-media">
+              <img src="assets/sports/table-tennis.jpg" alt="Table Tennis" />
+              <video muted loop playsinline preload="none" data-src="assets/videos/sport-tabletennis.mp4"></video>
+            </div>
+            <div class="sport-body">
+              <h3>Table Tennis</h3>
+              <div class="sport-tags"><span class="tag tag-men">Men</span><span class="tag tag-women">Women</span><span class="tag tag-indoor">Indoor</span></div>
+              <p>Fast indoor brackets — spin, smash, nerve.</p>
+              <div class="sport-foot"><span class="soon">Rules soon</span><span class="type">Racquet</span></div>
+            </div>
+          </article>
+          <article class="sport-card reveal" data-tags="men women indoor">
+            <div class="sport-media"><img src="assets/sports/chess.jpg" alt="Chess" /></div>
+            <div class="sport-body">
+              <h3>Chess</h3>
+              <div class="sport-tags"><span class="tag tag-men">Men</span><span class="tag tag-women">Women</span><span class="tag tag-indoor">Indoor</span></div>
+              <p>Quiet intensity. Clock-controlled competitive boards.</p>
+              <div class="sport-foot"><span class="soon">Rules soon</span><span class="type">Mind</span></div>
+            </div>
+          </article>
+          <article class="sport-card reveal" data-tags="men women indoor">
+            <div class="sport-media"><img src="assets/sports/carroms.jpg" alt="Carroms" /></div>
+            <div class="sport-body">
+              <h3>Carroms</h3>
+              <div class="sport-tags"><span class="tag tag-men">Men</span><span class="tag tag-women">Women</span><span class="tag tag-indoor">Indoor</span></div>
+              <p>Board craftsmanship — clean strikes, clean finishes.</p>
+              <div class="sport-foot"><span class="soon">Rules soon</span><span class="type">Board</span></div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCHEDULE -->
+    <section class="section" id="schedule">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="eyebrow">Tentative schedule</p>
+          <h2>Three days that decide everything</h2>
+          <p>Final fixtures closer to the fest. Cricket may start earlier to complete outdoor brackets.</p>
+        </div>
+        <div class="schedule-grid">
+          <article class="day-card reveal">
+            <div class="day-num">Day 01</div>
+            <h3>Opening &amp; Prelims</h3>
+            <p class="date">Wed · 7 October 2026</p>
+            <ul>
+              <li>Opening ceremony</li>
+              <li>Group / preliminary matches</li>
+              <li>Indoor brackets begin</li>
+            </ul>
+          </article>
+          <article class="day-card featured reveal">
+            <div class="day-num">Day 02</div>
+            <h3>Quarters &amp; Semis</h3>
+            <p class="date">Thu · 8 October 2026</p>
+            <ul>
+              <li>Knockouts across sports</li>
+              <li>Semi-finals outdoor &amp; indoor</li>
+              <li>Peak campus energy</li>
+            </ul>
+          </article>
+          <article class="day-card reveal">
+            <div class="day-num">Day 03</div>
+            <h3>Finals &amp; Closing</h3>
+            <p class="date">Fri · 9 October 2026</p>
+            <ul>
+              <li>Championship finals</li>
+              <li>Prize distribution</li>
+              <li>Closing ceremony</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- REGISTER CTA — high desire -->
+    <section class="section" id="register">
+      <div class="container">
+        <div class="register-cinema reveal">
+          <div class="register-cinema-bg" aria-hidden="true">
+            <img src="assets/photo-court.png" alt="" />
+          </div>
+          <div class="register-cinema-content">
+            <p class="eyebrow">Entries</p>
+            <h2>Your college. Your squad.<br />Your name on the bracket.</h2>
+            <p class="reg-lead">
+              Online registration opens here soon. Captains will submit college details,
+              full player lists, contact info, and payment via official CBIT QR.
+            </p>
+            <ul class="checklist">
+              <li>College name &amp; category (men / women)</li>
+              <li>Captain name, phone &amp; email</li>
+              <li>Full player roster</li>
+              <li>Payment via official CBIT QR</li>
+              <li>Sport-wise rules published with open registration</li>
+            </ul>
+            <div class="reg-cta-row">
+              <span class="badge-soon"><span class="dot"></span> Forms not open yet — watch this page</span>
+              <a class="btn btn-primary btn-lg" href="https://www.instagram.com/chaitanyakreeda/" target="_blank" rel="noopener">Follow for go-live alerts</a>
+            </div>
+          </div>
+          <div class="qr-box">
+            <img src="assets/website-qr.png" alt="QR to website" width="180" height="180" />
+            <strong>Scan for the site</strong>
+            <p>https://cbitaura.in</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="section" id="contact" style="padding-top: 2rem">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="eyebrow">Contact</p>
+          <h2>Chaitanya Kreeda · CBIT</h2>
+        </div>
+        <div class="contact-grid">
+          <article class="contact-card reveal">
+            <h3>Physical Director</h3>
+            <p>Dr. R. Rajeswari<br />Dept. of Physical Education<br /><a href="tel:+919866706855">+91 98667 06855</a></p>
+          </article>
+          <article class="contact-card reveal">
+            <h3>Fest coordination</h3>
+            <p>
+              <a href="tel:+919390206134">+91 93902 06134</a> ·
+              <a href="tel:+919100100507">+91 91001 00507</a> ·
+              <a href="tel:+919550527704">+91 95505 27704</a>
+            </p>
+          </article>
+          <article class="contact-card reveal">
+            <h3>Campus</h3>
+            <p>CBIT · Ocean Park Road, Kokapet / Gandipet<br />Hyderabad, Telangana 500075</p>
+          </article>
+          <article class="contact-card reveal">
+            <h3>Social</h3>
+            <p>
+              <a href="https://www.instagram.com/chaitanyakreeda/" target="_blank" rel="noopener">@chaitanyakreeda</a><br />
+              <a href="https://www.cbit.ac.in/academic_post/physical-education-facts-and-figures/" target="_blank" rel="noopener">CBIT PE facts</a>
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-top">
+          <div class="footer-brand">
+            <img src="assets/logo-kreeda.png" alt="Chaitanya Kreeda" />
+            <div>
+              <h3>AURA 2026</h3>
+              <p>CBIT · Chaitanya Kreeda · National Level Sports Fest</p>
+            </div>
+          </div>
+          <div class="footer-links">
+            <a href="#about">About</a>
+            <a href="#editions">Previous</a>
+            <a href="#sports">Sports</a>
+            <a href="#register">Register</a>
+            <a href="#contact">Contact</a>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <span>© <span id="year">2026</span> Chaitanya Kreeda · CBIT</span>
+          <span>Bring your best team.</span>
+        </div>
+      </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+  </body>
+</html>
