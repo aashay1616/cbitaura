@@ -244,8 +244,18 @@ body.has-preview-banner .hero-cinematic { padding-top: calc(var(--nav-h) + var(-
   from { transform: scale(1.04) translate3d(0, 0, 0); }
   to { transform: scale(1.08) translate3d(0, -1.5%, 0); }
 }
-.hero-bg-video { opacity: 0; transition: opacity 1.2s var(--ease); }
-.hero-bg-video.is-on { opacity: 1; }
+/* Stay hidden until actually playing so poster img remains visible on mobile */
+.hero-bg-video {
+  opacity: 0;
+  transition: opacity 0.9s var(--ease);
+  /* iOS: avoid GPU glitches with transform on video */
+  -webkit-transform: translateZ(0);
+}
+.hero-bg-video.is-on,
+.hero-bg-video.is-playing {
+  opacity: 0.88;
+  filter: saturate(1.02) contrast(1.04) brightness(0.98);
+}
 .hero-bg-shade {
   position: absolute; inset: 0;
   /* Keep mid-frame clearer so trailer sport titles (KABADDI / FOOTBALL) stay legible;
@@ -264,10 +274,16 @@ body.has-preview-banner .hero-cinematic { padding-top: calc(var(--nav-h) + var(-
   position: absolute; inset: 0; pointer-events: none;
   box-shadow: inset 0 0 120px 40px rgba(5, 7, 12, 0.5);
 }
-/* Let video titles read; site AURA type still sits in the dark bottom band */
-.hero-bg-video.is-on {
-  opacity: 0.88 !important;
-  filter: saturate(1.02) contrast(1.04) brightness(0.98);
+/* Mobile: lighter paint — skip heroDrift transform on video (can break iOS autoplay paint) */
+@media (max-width: 900px) {
+  .hero-bg-video {
+    transform: none;
+    animation: none;
+  }
+  .hero-bg-img {
+    transform: scale(1.02);
+    animation: none;
+  }
 }
 .hero-content {
   position: relative; z-index: 2;

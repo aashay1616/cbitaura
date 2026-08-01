@@ -70,17 +70,20 @@
     <!-- HERO — cinematic full-bleed -->
     <section class="hero-cinematic">
       <div class="hero-bg">
-        <img src="assets/hero-cinematic.jpg" alt="" class="hero-bg-img" />
+        <img src="assets/hero-cinematic.jpg" alt="" class="hero-bg-img" fetchpriority="high" />
         <video
-          class="hero-bg-video is-on"
+          class="hero-bg-video"
+          id="hero-bg-video"
           muted
+          defaultMuted
           loop
           playsinline
           webkit-playsinline
           autoplay
-          preload="metadata"
+          preload="auto"
           poster="assets/hero-cinematic.jpg"
-          src="assets/videos/snip-hero.mp4"
+          disablePictureInPicture
+          disableRemotePlayback
         ></video>
         <div class="hero-bg-shade"></div>
         <div class="hero-bg-vignette"></div>
@@ -438,8 +441,7 @@
           </article>
           <article class="sport-card sport-card-lux reveal" data-tags="men women indoor">
             <div class="sport-media">
-              <img src="assets/sports/table-tennis.jpg?v=2" alt="Table Tennis" />
-              <video muted loop playsinline preload="none" data-src="assets/videos/sport-tabletennis.mp4"></video>
+              <img src="assets/sports/table-tennis.jpg?v=3" alt="Table Tennis" />
               <div class="sport-shine" aria-hidden="true"></div>
             </div>
             <div class="sport-body">
@@ -451,7 +453,7 @@
           </article>
           <article class="sport-card sport-card-lux reveal" data-tags="men women indoor">
             <div class="sport-media">
-              <img src="assets/sports/chess.jpg?v=2" alt="Chess" />
+              <img src="assets/sports/chess.jpg?v=3" alt="Chess" />
               <div class="sport-shine" aria-hidden="true"></div>
             </div>
             <div class="sport-body">
