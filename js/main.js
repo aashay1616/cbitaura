@@ -6,6 +6,34 @@
   const nav = document.querySelector(".nav");
   const toggle = document.querySelector(".nav-toggle");
   const links = document.querySelector(".nav-links");
+  const banner = document.getElementById("preview-banner");
+  const bannerClose = document.getElementById("preview-banner-close");
+
+  function setPreviewOffset() {
+    const h = banner && !banner.classList.contains("is-hidden") ? banner.offsetHeight : 0;
+    document.documentElement.style.setProperty("--preview-h", `${h}px`);
+    document.body.classList.toggle("has-preview-banner", h > 0);
+  }
+
+  // Show preview banner until custom domain is live or user dismisses
+  if (banner) {
+    const dismissed = sessionStorage.getItem("aura-preview-banner") === "1";
+    const host = location.hostname || "";
+    const onCustom =
+      host === "cbitaura.in" || host === "www.cbitaura.in";
+    if (dismissed || onCustom) {
+      banner.classList.add("is-hidden");
+    }
+    setPreviewOffset();
+    window.addEventListener("resize", setPreviewOffset, { passive: true });
+    if (bannerClose) {
+      bannerClose.addEventListener("click", () => {
+        banner.classList.add("is-hidden");
+        sessionStorage.setItem("aura-preview-banner", "1");
+        setPreviewOffset();
+      });
+    }
+  }
 
   const onScroll = () => {
     if (nav) nav.classList.toggle("scrolled", window.scrollY > 16);

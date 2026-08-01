@@ -2,13 +2,21 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>AURA 2026 · CBIT National Level Sports Fest</title>
     <meta
       name="description"
       content="AURA 2026 — CBIT's National Level Sports Fest, October 7–9, 2026. Register your college. Organised by Chaitanya Kreeda."
     />
     <meta name="theme-color" content="#05080f" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta property="og:title" content="AURA 2026 · CBIT National Level Sports Fest" />
+    <meta property="og:description" content="Three days. Ten sports. One campus. October 7–9, 2026 · CBIT Gandipet." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://cbitaura.in/" />
+    <meta property="og:image" content="assets/hero-cinematic.jpg" />
+    <link rel="canonical" href="https://cbitaura.in/" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -23,11 +31,22 @@
     <div class="bg-glow bg-glow-1" aria-hidden="true"></div>
     <div class="bg-glow bg-glow-2" aria-hidden="true"></div>
 
+    <!-- Preview banner while custom DNS is pending -->
+    <div class="preview-banner" id="preview-banner" role="status">
+      <div class="preview-banner-inner">
+        <span>
+          <strong>Preview mode</strong> — full site works here. Custom domain
+          <strong>cbitaura.in</strong> goes live after Hostinger DNS (see Downloads guide).
+        </span>
+        <button type="button" class="preview-banner-close" id="preview-banner-close" aria-label="Dismiss">×</button>
+      </div>
+    </div>
+
     <!-- NAV -->
     <header class="nav" id="top">
       <div class="nav-inner">
         <a class="brand" href="#top">
-          <img src="assets/logo-kreeda.png" alt="Chaitanya Kreeda" />
+          <img src="assets/logo-kreeda.png" alt="Chaitanya Kreeda" width="36" height="36" />
           <span class="brand-text">
             <strong>AURA</strong>
             <span>2026 · CBIT</span>
@@ -41,6 +60,7 @@
           <a href="#editions">Previous</a>
           <a href="#sports">Sports</a>
           <a href="#schedule">Schedule</a>
+          <a href="#register">Register</a>
           <a href="#contact">Contact</a>
           <a class="nav-cta" href="#register">Claim Your Spot</a>
         </nav>
@@ -56,8 +76,9 @@
           muted
           loop
           playsinline
+          webkit-playsinline
           autoplay
-          preload="auto"
+          preload="metadata"
           poster="assets/hero-cinematic.jpg"
           src="assets/videos/snip-hero.mp4"
         ></video>
