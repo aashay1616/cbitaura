@@ -310,7 +310,22 @@
       body: JSON.stringify(body),
     });
     if (!res.ok) throw new Error((await res.text()) || "Submit failed");
-    return (await res.json())[0] || body;
+    const saved = (await res.json())[0] || body;
+
+    // Ping organisers (email alert) — non-blocking if function not deployed yet
+    try {
+      await fetch(`${url}/functions/v1/notify-organisers`, {
+        method: "POST",
+        headers: {
+          apikey: key,
+          Authorization: `Bearer ${key}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ref_code: record.ref_code }),
+      });
+    } catch (_) {}
+
+    return saved;
   }
 
   // --- Events ---

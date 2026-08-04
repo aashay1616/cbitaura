@@ -30,12 +30,51 @@
 
     <main class="page-shell">
       <div class="container" style="max-width: 1100px">
-        <p class="eyebrow">Organisers only</p>
+        <p class="eyebrow">Organisers only · do not share publicly</p>
         <h1 class="reg-page-title" style="font-size: clamp(1.7rem, 4vw, 2.4rem)">Registration desk</h1>
         <p class="reg-page-lead" style="margin-bottom: 1.25rem">
-          Review payment screenshots and team details. Mark <strong>verified</strong> (triggers confirmation email when live)
-          or <strong>rejected</strong>. Demo mode uses this browser’s storage until Supabase is connected.
+          When a team registers and pays, you get an email alert (live mode). Open this desk, open their payment
+          screenshot, then <strong>Verify</strong> (captain gets confirmation) or <strong>Reject</strong>.
         </p>
+
+        <!-- How it works -->
+        <div class="reg-card" style="margin-bottom: 1rem">
+          <h2 class="step-title" style="margin-bottom: 0.75rem">How approvals work</h2>
+          <ol class="admin-steps">
+            <li><strong>Team submits</strong> on register form (sport, details, payment screenshot + UTR).</li>
+            <li><strong>You are notified</strong> by email: “New registration · pending” + college, sport, ref code.</li>
+            <li><strong>Open this page</strong> → filter Pending → open screenshot → check UTR/amount.</li>
+            <li><strong>Verify + email</strong> = approved; captain receives confirmation. <strong>Reject</strong> = not accepted.</li>
+          </ol>
+          <p class="form-note" style="margin-top: 0.85rem; margin-bottom: 0">
+            <strong>Access URL (bookmark this):</strong>
+            <a href="https://cbitaura.in/admin.html" style="color: var(--blue-soft)">https://cbitaura.in/admin.html</a>
+            · not linked from the public nav.
+          </p>
+        </div>
+
+        <!-- Live login (shown when Supabase keys present) -->
+        <div class="reg-card hidden-step" id="admin-login-card" style="margin-bottom: 1rem">
+          <h2 class="step-title">Organiser login</h2>
+          <p class="form-note" style="margin-bottom: 1rem">
+            Live mode uses Supabase Auth. Sign in with the Gmail/college email that was invited as an organiser.
+          </p>
+          <div class="field-row">
+            <div class="field">
+              <label for="login-email">Email</label>
+              <input id="login-email" type="email" autocomplete="username" placeholder="you@gmail.com" />
+            </div>
+            <div class="field">
+              <label for="login-password">Password</label>
+              <input id="login-password" type="password" autocomplete="current-password" placeholder="••••••••" />
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-primary" id="admin-login-btn">Sign in</button>
+            <button type="button" class="btn btn-ghost" id="admin-logout-btn" hidden>Sign out</button>
+          </div>
+          <p class="form-note" id="login-status" role="status"></p>
+        </div>
 
         <div class="admin-stats" id="admin-stats" aria-live="polite">
           <div class="admin-stat"><span class="n" id="stat-pending">0</span><span class="l">Pending</span></div>
@@ -71,11 +110,6 @@
             <button type="button" class="btn btn-ghost" id="export-csv">Export CSV</button>
           </div>
           <p class="form-note" id="admin-mode-label">Mode: —</p>
-          <p class="form-note">
-            Live mode: create organiser accounts in Supabase Auth (emails listed in <code>js/config.js</code> →
-            <code>ADMIN_EMAILS</code>). Confirmation emails send from the address you set in the Edge Function
-            (<code>CONFIRMATION_FROM</code> — usually <code>noreply@cbitaura.in</code> once Resend + DNS are ready.
-          </p>
         </div>
 
         <div class="reg-card" style="overflow-x: auto">

@@ -31,15 +31,21 @@ window.AURA_CONFIG = {
   /**
    * Organiser logins for live admin (must match Supabase Auth emails
    * and RLS policies in supabase/schema.sql).
-   * Example: ["aashayrajgrandhi@gmail.com", "kreeda@cbit.ac.in"]
+   * Example: ["aashayrajgrandhi@gmail.com"]
    */
   ADMIN_EMAILS: [],
 
   /**
-   * Confirmation emails (Edge Function + Resend / SMTP).
-   * Pick a real mailbox you control, then verify it with Resend.
-   * Recommended once domain DNS is ready:  noreply@cbitaura.in
-   * Until then use a personal/org Gmail you own.
+   * Who gets an email the moment a team submits (pending).
+   * Put real Gmail/college addresses — set the same list as Edge secret NOTIFY_EMAILS.
+   * Example: ["aashayrajgrandhi@gmail.com", "parin@…"]
+   */
+  NOTIFY_ORGANISER_EMAILS: [],
+
+  /**
+   * Captain confirmation email after you click Verify.
+   * From-address is set on the Edge Function (Resend), not here.
+   * Recommended: noreply@cbitaura.in once Resend domain is verified.
    */
   CONFIRMATION_FROM_EMAIL: "",
   CONFIRMATION_FROM_NAME: "AURA 2026 · Chaitanya Kreeda",

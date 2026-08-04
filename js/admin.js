@@ -1,5 +1,6 @@
 /**
- * AURA 2026 admin — verify payment screenshots, filter, export CSV
+ * AURA 2026 admin desk
+ * Demo: localStorage · Live: Supabase (+ optional Auth token for RLS)
  */
 (function () {
   const CFG = window.AURA_CONFIG || {};
@@ -7,8 +8,33 @@
   const body = $("admin-body");
   const modeLabel = $("admin-mode-label");
 
+  const AUTH_KEY = "aura2026_admin_session";
+
   function mode() {
     return CFG.SUPABASE_URL && CFG.SUPABASE_ANON_KEY ? "live" : "demo";
+  }
+
+  function getSession() {
+    try {
+      return JSON.parse(localStorage.getItem(AUTH_KEY) || "null");
+    } catch {
+      return null;
+    }
+  }
+
+  function setSession(s) {
+    if (s) localStorage.setItem(AUTH_KEY, JSON.stringify(s));
+    else localStorage.removeItem(AUTH_KEY);
+  }
+
+  function authHeaders() {
+    const key = CFG.SUPABASE_ANON_KEY;
+    const session = getSession();
+    const bearer = (session && session.access_token) || key;
+    return {
+      apikey: key,
+      Authorization: `Bearer ${bearer}`,
+    };
   }
 
   function loadDemo() {
@@ -26,12 +52,7 @@
   async function loadLive() {
     const res = await fetch(
       `${CFG.SUPABASE_URL}/rest/v1/registrations?select=*&order=created_at.desc`,
-      {
-        headers: {
-          apikey: CFG.SUPABASE_ANON_KEY,
-          Authorization: `Bearer ${CFG.SUPABASE_ANON_KEY}`,
-        },
-      }
+      { headers: authHeaders() }
     );
     if (!res.ok) throw new Error(await res.text());
     return res.json();
@@ -54,8 +75,7 @@
       {
         method: "PATCH",
         headers: {
-          apikey: CFG.SUPABASE_ANON_KEY,
-          Authorization: `Bearer ${CFG.SUPABASE_ANON_KEY}`,
+          ...authHeaders(),
           "Content-Type": "application/json",
           Prefer: "return=minimal",
         },
@@ -72,14 +92,32 @@
         await fetch(`${CFG.SUPABASE_URL}/functions/v1/send-confirmation`, {
           method: "POST",
           headers: {
-            apikey: CFG.SUPABASE_ANON_KEY,
-            Authorization: `Bearer ${CFG.SUPABASE_ANON_KEY}`,
+            ...authHeaders(),
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ ref_code: ref }),
         });
       } catch (_) {}
     }
+  }
+
+  async function login(email, password) {
+    const res = await fetch(`${CFG.SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+      method: "POST",
+      headers: {
+        apikey: CFG.SUPABASE_ANON_KEY,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, password }),
+    });
+    if (!res.ok) throw new Error((await res.text()) || "Login failed");
+    const data = await res.json();
+    setSession({
+      access_token: data.access_token,
+      refresh_token: data.refresh_token,
+      email: data.user && data.user.email,
+    });
+    return data;
   }
 
   function sportName(id) {
@@ -177,28 +215,69 @@
 
     body.querySelectorAll(".act-verify").forEach((btn) => {
       btn.addEventListener("click", async () => {
-        if (!confirm("Mark verified? (Live mode sends confirmation email when Edge Function is deployed.)")) return;
-        await updateStatus(btn.dataset.ref, "verified");
-        refresh();
+        if (
+          !confirm(
+            "Mark this team VERIFIED?\n\nLive mode: captain receives a confirmation email."
+          )
+        )
+          return;
+        try {
+          await updateStatus(btn.dataset.ref, "verified");
+          refresh();
+        } catch (e) {
+          alert("Error: " + (e.message || e));
+        }
       });
     });
     body.querySelectorAll(".act-reject").forEach((btn) => {
       btn.addEventListener("click", async () => {
-        const note = prompt("Reason (optional)") || "";
-        await updateStatus(btn.dataset.ref, "rejected", note);
-        refresh();
+        const note = prompt("Reason for rejection (optional)") || "";
+        try {
+          await updateStatus(btn.dataset.ref, "rejected", note);
+          refresh();
+        } catch (e) {
+          alert("Error: " + (e.message || e));
+        }
       });
     });
   }
 
   let cache = [];
 
+  function syncLoginUI() {
+    const card = $("admin-login-card");
+    const logout = $("admin-logout-btn");
+    const session = getSession();
+    if (mode() === "live" && card) {
+      card.classList.remove("hidden-step");
+      if (logout) logout.hidden = !session;
+      if (session && $("login-status")) {
+        $("login-status").textContent = "Signed in as " + (session.email || "organiser");
+        $("login-status").classList.add("is-ok");
+      }
+    } else if (card) {
+      card.classList.add("hidden-step");
+    }
+  }
+
   async function refresh() {
-    modeLabel.textContent =
-      mode() === "live"
-        ? "Mode: LIVE (Supabase) — organiser Auth required for list/update under RLS"
-        : "Mode: DEMO (this browser’s localStorage only)";
+    syncLoginUI();
+    if (mode() === "live") {
+      const session = getSession();
+      modeLabel.textContent = session
+        ? "Mode: LIVE · signed in · data from Supabase"
+        : "Mode: LIVE · sign in above to load/verify teams (RLS)";
+    } else {
+      modeLabel.textContent =
+        "Mode: DEMO · data only in this browser (submit on register.html first, same device)";
+    }
     try {
+      if (mode() === "live" && !getSession()) {
+        cache = [];
+        body.innerHTML = `<tr><td colspan="6" style="color:var(--text-3)">Sign in as an organiser to load live registrations.</td></tr>`;
+        updateStats([]);
+        return;
+      }
       cache = mode() === "live" ? await loadLive() : loadDemo();
       render(cache);
     } catch (e) {
@@ -211,34 +290,70 @@
   $("filter-sport") && $("filter-sport").addEventListener("change", () => render(cache));
   $("search-q") && $("search-q").addEventListener("input", () => render(cache));
 
+  $("admin-login-btn") &&
+    $("admin-login-btn").addEventListener("click", async () => {
+      const email = ($("login-email") && $("login-email").value.trim()) || "";
+      const password = ($("login-password") && $("login-password").value) || "";
+      const st = $("login-status");
+      if (!email || !password) {
+        if (st) st.textContent = "Enter email and password.";
+        return;
+      }
+      if (st) st.textContent = "Signing in…";
+      try {
+        await login(email, password);
+        if (st) {
+          st.textContent = "Signed in.";
+          st.classList.add("is-ok");
+        }
+        refresh();
+      } catch (e) {
+        if (st) {
+          st.textContent = "Login failed: " + (e.message || e);
+          st.classList.add("is-error");
+        }
+      }
+    });
+
+  $("admin-logout-btn") &&
+    $("admin-logout-btn").addEventListener("click", () => {
+      setSession(null);
+      if ($("login-status")) $("login-status").textContent = "Signed out.";
+      refresh();
+    });
+
   $("export-csv") &&
     $("export-csv").addEventListener("click", async () => {
-      const rows = mode() === "live" ? await loadLive() : loadDemo();
-      const headers = [
-        "ref_code",
-        "status",
-        "college_name",
-        "sport",
-        "category",
-        "captain_name",
-        "captain_phone",
-        "captain_email",
-        "pd_name",
-        "pd_phone",
-        "fee_expected",
-        "payment_txn_id",
-        "payment_amount",
-        "created_at",
-      ];
-      const lines = [headers.join(",")];
-      rows.forEach((r) => {
-        lines.push(headers.map((h) => `"${String(r[h] ?? "").replace(/"/g, '""')}"`).join(","));
-      });
-      const blob = new Blob([lines.join("\n")], { type: "text/csv" });
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = "aura2026-registrations.csv";
-      a.click();
+      try {
+        const rows = mode() === "live" ? await loadLive() : loadDemo();
+        const headers = [
+          "ref_code",
+          "status",
+          "college_name",
+          "sport",
+          "category",
+          "captain_name",
+          "captain_phone",
+          "captain_email",
+          "pd_name",
+          "pd_phone",
+          "fee_expected",
+          "payment_txn_id",
+          "payment_amount",
+          "created_at",
+        ];
+        const lines = [headers.join(",")];
+        rows.forEach((r) => {
+          lines.push(headers.map((h) => `"${String(r[h] ?? "").replace(/"/g, '""')}"`).join(","));
+        });
+        const blob = new Blob([lines.join("\n")], { type: "text/csv" });
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "aura2026-registrations.csv";
+        a.click();
+      } catch (e) {
+        alert("Export failed: " + (e.message || e));
+      }
     });
 
   refresh();
