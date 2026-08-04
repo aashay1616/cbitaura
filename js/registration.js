@@ -98,8 +98,26 @@
         sportHidden.value = btn.dataset.id;
         syncCategories();
         updateFeeUI();
+        updateRulesLink();
       });
     });
+  }
+
+  function updateRulesLink() {
+    const wrap = $("sport-rules-link");
+    const a = $("sport-rules-anchor");
+    if (!wrap || !a) return;
+    const sheets = CFG.RULES_SHEETS || {};
+    const id = sportHidden && sportHidden.value;
+    const path = id && sheets[id];
+    if (path) {
+      a.href = path;
+      a.textContent = "View " + (currentSport()?.name || "tournament") + " rules →";
+      wrap.hidden = false;
+    } else {
+      wrap.hidden = true;
+      a.removeAttribute("href");
+    }
   }
 
   function syncCategories() {

@@ -80,6 +80,13 @@ window.AURA_CONFIG = {
     { name: "Aashay", phone: "+919390206134", role: "Student coordinator" },
     { name: "Parin", phone: "+919100100507", role: "Student coordinator" },
     { name: "Sohan", phone: "+919550527704", role: "Student coordinator" },
-    { name: "Samhitha", phone: "+916304647182", role: "Student coordinator" },
   ],
+
+  /**
+   * Optional rules sheet per sport (image or PDF path).
+   * Shown on register step when present.
+   */
+  RULES_SHEETS: {
+    basketball: "assets/rules/basketball-rules.png",
+  },
 };
