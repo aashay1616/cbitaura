@@ -85,18 +85,28 @@ create policy "public_insert_registration"
   to anon, authenticated
   with check (true);
 
--- Replace admin@example.com with real organiser emails
+-- Replace placeholder emails with real organiser Gmail/college logins
+-- (must match Supabase Auth users + js/config.js ADMIN_EMAILS)
 drop policy if exists "admin_select_all" on public.registrations;
 create policy "admin_select_all"
   on public.registrations for select
   to authenticated
-  using (auth.jwt() ->> 'email' in ('admin@example.com'));
+  using (
+    auth.jwt() ->> 'email' in (
+      'aashayrajgrandhi@gmail.com'
+      -- add more: , 'parin@…', 'sohan@…'
+    )
+  );
 
 drop policy if exists "admin_update_all" on public.registrations;
 create policy "admin_update_all"
   on public.registrations for update
   to authenticated
-  using (auth.jwt() ->> 'email' in ('admin@example.com'));
+  using (
+    auth.jwt() ->> 'email' in (
+      'aashayrajgrandhi@gmail.com'
+    )
+  );
 
 create or replace function public.get_registration_status(p_ref text, p_email text)
 returns table (

@@ -1,4 +1,8 @@
-"""Hero montage: all sports + trailer title fonts. NO title-sponsor cards. Optimized for web start."""
+"""
+Hero montage for AURA 2026
+Order: AURA logo reveal (smoke / confetti on auditorium) → sports action cuts.
+No title-sponsor cards. Optimized for web (faststart + mobile cut).
+"""
 import subprocess
 from pathlib import Path
 
@@ -9,20 +13,18 @@ vid = Path(__file__).resolve().parent
 tmp = vid / "_hero_parts"
 tmp.mkdir(exist_ok=True)
 
-# No trailer tail (that segment includes TITLE SPONSOR / Telangana Tourism)
+# Accurate aftermovie windows (remapped 2026-08):
+# 74–81 logo smoke · 81+ basketball · 86+ kabaddi · 90 volley · 96 badminton · 99 cricket · 111 football
 parts = [
-    ("aftermovie.mp4", "p01_bb.mp4", 74, 7),
-    ("trailer.mp4", "p02_kabaddi_title.mp4", 47, 3.5),
-    ("aftermovie.mp4", "p03_kabaddi.mp4", 84, 7),
-    ("aftermovie.mp4", "p04_cricket.mp4", 94, 8),
-    ("trailer.mp4", "p05_football_title.mp4", 70, 3.5),
-    ("aftermovie.mp4", "p06_football.mp4", 108, 7),
-    ("aftermovie.mp4", "p07_volley.mp4", 138, 7),
-    ("aftermovie.mp4", "p08_badminton.mp4", 144, 7),
-    ("aftermovie.mp4", "p09_tt.mp4", 156, 7),
+    ("aftermovie.mp4", "p00_logo_smoke.mp4", 74.2, 7.0),   # logo reveal + smoke
+    ("aftermovie.mp4", "p01_basketball.mp4", 80.8, 7.0),
+    ("aftermovie.mp4", "p02_kabaddi.mp4", 86.0, 6.5),
+    ("aftermovie.mp4", "p03_volleyball.mp4", 89.2, 6.0),
+    ("aftermovie.mp4", "p04_cricket.mp4", 98.0, 7.0),
+    ("aftermovie.mp4", "p05_football.mp4", 110.0, 7.0),
+    ("aftermovie.mp4", "p06_badminton.mp4", 94.8, 6.0),
 ]
 
-# Slightly smaller for faster first paint; fixed SAR/fps for smooth concat
 vf = (
     "scale=1100:618:force_original_aspect_ratio=decrease,"
     "pad=1100:618:(ow-iw)/2:(oh-ih)/2,fps=30,setsar=1,"
@@ -32,8 +34,6 @@ vf = (
 parts_ok = []
 for src, out, start, dur in parts:
     op = tmp / out
-    # -ss after -i is slower but more accurate; before -i is faster for keyframes
-    # use input seek + short output for speed; force keyframe at start of each part
     cmd = [
         ff, "-y",
         "-ss", str(start),
@@ -63,7 +63,6 @@ with lst.open("w", encoding="utf-8") as f:
         f.write(f"file '{p.as_posix()}'\n")
 
 final = vid / "snip-hero.mp4"
-# Re-encode full concat with faststart so first seconds play immediately
 cmd = [
     ff, "-y",
     "-f", "concat", "-safe", "0", "-i", str(lst),
@@ -85,10 +84,32 @@ print("HERO", "OK" if r.returncode == 0 else r.stderr[-500:])
 if final.exists():
     print("size_kb", final.stat().st_size // 1024, "segments", len(parts_ok))
 
-# Verify last 2 seconds aren't sponsor
-check = tmp / "tail_check.jpg"
+# Mobile: first ~20s (logo + first sports), baseline, ~3MB target
+mobile = vid / "snip-hero-mobile.mp4"
+cmd_m = [
+    ff, "-y",
+    "-i", str(final),
+    "-t", "20",
+    "-an",
+    "-vf", "scale=960:-2",
+    "-c:v", "libx264",
+    "-profile:v", "baseline",
+    "-level", "3.1",
+    "-preset", "slow",
+    "-crf", "26",
+    "-pix_fmt", "yuv420p",
+    "-movflags", "+faststart",
+    str(mobile),
+]
+r = subprocess.run(cmd_m, capture_output=True, text=True)
+print("MOBILE", "OK" if r.returncode == 0 else r.stderr[-400:])
+if mobile.exists():
+    print("mobile_kb", mobile.stat().st_size // 1024)
+
+# First-frame check (should be logo / smoke)
+head = tmp / "head_check.jpg"
 subprocess.run(
-    [ff, "-y", "-sseof", "-1.5", "-i", str(final), "-frames:v", "1", str(check)],
+    [ff, "-y", "-ss", "0.5", "-i", str(final), "-frames:v", "1", str(head)],
     capture_output=True,
 )
-print("tail_check", check.exists())
+print("head_check", head.exists())

@@ -29,15 +29,20 @@
     </header>
 
     <main class="page-shell">
-      <div class="container" style="max-width: 1000px">
+      <div class="container" style="max-width: 1100px">
         <p class="eyebrow">Organisers only</p>
-        <h1 style="font-family: var(--font-display); font-size: clamp(1.7rem, 4vw, 2.4rem); font-weight: 800; margin: 0.35rem 0 0.5rem;">
-          Registration desk
-        </h1>
-        <p class="form-note" style="margin-bottom: 1.25rem;">
-          Review payment screenshots. Mark <strong>verified</strong> (sends confirmation email when live) or
-          <strong>rejected</strong>. Demo mode uses browser storage until Supabase is connected.
+        <h1 class="reg-page-title" style="font-size: clamp(1.7rem, 4vw, 2.4rem)">Registration desk</h1>
+        <p class="reg-page-lead" style="margin-bottom: 1.25rem">
+          Review payment screenshots and team details. Mark <strong>verified</strong> (triggers confirmation email when live)
+          or <strong>rejected</strong>. Demo mode uses this browser’s storage until Supabase is connected.
         </p>
+
+        <div class="admin-stats" id="admin-stats" aria-live="polite">
+          <div class="admin-stat"><span class="n" id="stat-pending">0</span><span class="l">Pending</span></div>
+          <div class="admin-stat"><span class="n" id="stat-verified">0</span><span class="l">Verified</span></div>
+          <div class="admin-stat"><span class="n" id="stat-rejected">0</span><span class="l">Rejected</span></div>
+          <div class="admin-stat"><span class="n" id="stat-total">0</span><span class="l">Total</span></div>
+        </div>
 
         <div class="reg-card" style="margin-bottom: 1rem">
           <div class="field-row">
@@ -51,15 +56,26 @@
               </select>
             </div>
             <div class="field">
-              <label for="admin-email">Your email (live mode)</label>
-              <input id="admin-email" type="email" placeholder="organiser@…" />
+              <label for="filter-sport">Filter sport</label>
+              <select id="filter-sport">
+                <option value="all">All sports</option>
+              </select>
             </div>
+          </div>
+          <div class="field">
+            <label for="search-q">Search college / captain / ref</label>
+            <input id="search-q" type="search" placeholder="Type to filter…" autocomplete="off" />
           </div>
           <div class="form-actions">
             <button type="button" class="btn btn-primary" id="refresh-list">Refresh list</button>
             <button type="button" class="btn btn-ghost" id="export-csv">Export CSV</button>
           </div>
           <p class="form-note" id="admin-mode-label">Mode: —</p>
+          <p class="form-note">
+            Live mode: create organiser accounts in Supabase Auth (emails listed in <code>js/config.js</code> →
+            <code>ADMIN_EMAILS</code>). Confirmation emails send from the address you set in the Edge Function
+            (<code>CONFIRMATION_FROM</code> — usually <code>noreply@cbitaura.in</code> once Resend + DNS are ready.
+          </p>
         </div>
 
         <div class="reg-card" style="overflow-x: auto">
@@ -75,7 +91,9 @@
               </tr>
             </thead>
             <tbody id="admin-body">
-              <tr><td colspan="6" style="color: var(--text-3)">No rows yet.</td></tr>
+              <tr>
+                <td colspan="6" style="color: var(--text-3)">No rows yet.</td>
+              </tr>
             </tbody>
           </table>
         </div>

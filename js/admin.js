@@ -1,5 +1,5 @@
 /**
- * AURA 2026 admin — verify payment screenshots
+ * AURA 2026 admin — verify payment screenshots, filter, export CSV
  */
 (function () {
   const CFG = window.AURA_CONFIG || {};
@@ -95,13 +95,64 @@
       .replace(/"/g, "&quot;");
   }
 
+  function updateStats(rows) {
+    const c = { pending: 0, verified: 0, rejected: 0 };
+    rows.forEach((r) => {
+      const st = r.status || "pending";
+      if (c[st] != null) c[st]++;
+    });
+    if ($("stat-pending")) $("stat-pending").textContent = String(c.pending);
+    if ($("stat-verified")) $("stat-verified").textContent = String(c.verified);
+    if ($("stat-rejected")) $("stat-rejected").textContent = String(c.rejected);
+    if ($("stat-total")) $("stat-total").textContent = String(rows.length);
+  }
+
+  function fillSportFilter(rows) {
+    const sel = $("filter-sport");
+    if (!sel || sel.dataset.ready === "1") return;
+    const ids = [...new Set(rows.map((r) => r.sport).filter(Boolean))];
+    ids.sort().forEach((id) => {
+      const opt = document.createElement("option");
+      opt.value = id;
+      opt.textContent = sportName(id);
+      sel.appendChild(opt);
+    });
+    sel.dataset.ready = "1";
+  }
+
   function render(rows) {
-    const filter = $("filter-status").value;
-    const list = filter === "all" ? rows : rows.filter((r) => (r.status || "pending") === filter);
+    updateStats(rows);
+    fillSportFilter(rows);
+
+    const filter = $("filter-status") ? $("filter-status").value : "all";
+    const sportF = $("filter-sport") ? $("filter-sport").value : "all";
+    const q = ($("search-q") ? $("search-q").value : "").trim().toLowerCase();
+
+    let list = rows;
+    if (filter !== "all") list = list.filter((r) => (r.status || "pending") === filter);
+    if (sportF !== "all") list = list.filter((r) => r.sport === sportF);
+    if (q) {
+      list = list.filter((r) => {
+        const blob = [
+          r.ref_code,
+          r.college_name,
+          r.captain_name,
+          r.captain_email,
+          r.captain_phone,
+          r.pd_name,
+          sportName(r.sport),
+        ]
+          .join(" ")
+          .toLowerCase();
+        return blob.includes(q);
+      });
+    }
+
     if (!list.length) {
       body.innerHTML = `<tr><td colspan="6" style="color:var(--text-3)">No registrations in this filter.</td></tr>`;
       return;
     }
+
     body.innerHTML = list
       .map((r) => {
         const proof = r.payment_screenshot_data
@@ -126,7 +177,7 @@
 
     body.querySelectorAll(".act-verify").forEach((btn) => {
       btn.addEventListener("click", async () => {
-        if (!confirm("Mark verified? (Live mode will send confirmation email when wired.)")) return;
+        if (!confirm("Mark verified? (Live mode sends confirmation email when Edge Function is deployed.)")) return;
         await updateStatus(btn.dataset.ref, "verified");
         refresh();
       });
@@ -140,21 +191,26 @@
     });
   }
 
+  let cache = [];
+
   async function refresh() {
     modeLabel.textContent =
       mode() === "live"
-        ? "Mode: LIVE (Supabase)"
+        ? "Mode: LIVE (Supabase) — organiser Auth required for list/update under RLS"
         : "Mode: DEMO (this browser’s localStorage only)";
     try {
-      const rows = mode() === "live" ? await loadLive() : loadDemo();
-      render(rows);
+      cache = mode() === "live" ? await loadLive() : loadDemo();
+      render(cache);
     } catch (e) {
       body.innerHTML = `<tr><td colspan="6" style="color:#ff8a8a">Error: ${escapeHtml(e.message || e)}</td></tr>`;
     }
   }
 
   $("refresh-list") && $("refresh-list").addEventListener("click", refresh);
-  $("filter-status") && $("filter-status").addEventListener("change", refresh);
+  $("filter-status") && $("filter-status").addEventListener("change", () => render(cache));
+  $("filter-sport") && $("filter-sport").addEventListener("change", () => render(cache));
+  $("search-q") && $("search-q").addEventListener("input", () => render(cache));
+
   $("export-csv") &&
     $("export-csv").addEventListener("click", async () => {
       const rows = mode() === "live" ? await loadLive() : loadDemo();

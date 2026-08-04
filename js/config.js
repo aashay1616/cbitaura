@@ -1,17 +1,21 @@
 /**
  * AURA 2026 — registration config
  * ---------------------------------------------------------
- * CLOSED until rules + fees + payment QR are final.
+ * CLOSED until rules PDFs + official payment QR are final.
  *
- * Go live:
- *   1. Set feeRupees (or feeByCategory) per sport
- *   2. Drop official QR → assets/payment-qr.png
- *   3. Fill SUPABASE_URL + SUPABASE_ANON_KEY
- *   4. Set REGISTRATION_OPEN: true
- *   5. Run supabase/schema.sql + replace admin emails
+ * Already wired (demo today · live when keys flipped):
+ *   multi-step form · fee display · QR step · screenshot
+ *   localStorage demo · Supabase insert/upload · admin desk
+ *   verify / reject · CSV · confirmation email hook
  *
- * Form fields: sport, category, name, phone, email,
- * college, PD name, PD phone → fee + QR payment.
+ * You still provide later:
+ *   1. feeRupees / feeByCategory per sport
+ *   2. assets/payment-qr.png (official UPI/bank QR)
+ *   3. SUPABASE_URL + SUPABASE_ANON_KEY
+ *   4. REGISTRATION_OPEN: true
+ *   5. Run supabase/schema.sql · set ADMIN_EMAILS
+ *   6. Deploy edge function send-confirmation (Resend)
+ *   7. Optional: rules PDF links per sport (RULES_PDF_PATH)
  */
 window.AURA_CONFIG = {
   REGISTRATION_OPEN: false,
@@ -19,21 +23,48 @@ window.AURA_CONFIG = {
   SUPABASE_URL: "",
   SUPABASE_ANON_KEY: "",
 
+  /** Official payment QR — drop file when finance finalises UPI/account */
   PAYMENT_QR_PATH: "assets/payment-qr.png",
+
   SITE_URL: "https://cbitaura.in",
 
-  // Used later for live admin auth checks (match schema RLS emails)
+  /**
+   * Organiser logins for live admin (must match Supabase Auth emails
+   * and RLS policies in supabase/schema.sql).
+   * Example: ["aashayrajgrandhi@gmail.com", "kreeda@cbit.ac.in"]
+   */
   ADMIN_EMAILS: [],
+
+  /**
+   * Confirmation emails (Edge Function + Resend / SMTP).
+   * Pick a real mailbox you control, then verify it with Resend.
+   * Recommended once domain DNS is ready:  noreply@cbitaura.in
+   * Until then use a personal/org Gmail you own.
+   */
+  CONFIRMATION_FROM_EMAIL: "",
+  CONFIRMATION_FROM_NAME: "AURA 2026 · Chaitanya Kreeda",
+  CONFIRMATION_REPLY_TO: "",
+
+  /** Optional later: folder or per-sport PDFs e.g. assets/rules/basketball.pdf */
+  RULES_PDF_BASE: "assets/rules/",
 
   /**
    * feeRupees: number | null
    *   null   → payment step shows “Fee TBA”
    *   number → “Pay ₹X” and pre-fill amount
-   * feeByCategory: { men: 2000, women: 1500 }  (optional override)
+   * feeByCategory: { men: 3500, women: 2000 }  (optional override)
+   *
+   * Basketball fees set as decided; others TBA until you confirm.
    */
   SPORTS: [
     { id: "cricket", name: "Cricket", categories: ["men"], feeRupees: null },
-    { id: "basketball", name: "Basketball", categories: ["men", "women"], feeRupees: null },
+    {
+      id: "basketball",
+      name: "Basketball",
+      categories: ["men", "women"],
+      feeRupees: null,
+      feeByCategory: { men: 3500, women: 2000 },
+    },
     { id: "football", name: "Football", categories: ["men"], feeRupees: null },
     { id: "volleyball", name: "Volleyball", categories: ["men", "women"], feeRupees: null },
     { id: "kabaddi", name: "Kabaddi", categories: ["men"], feeRupees: null },
@@ -42,5 +73,13 @@ window.AURA_CONFIG = {
     { id: "table-tennis", name: "Table Tennis", categories: ["men", "women"], feeRupees: null },
     { id: "chess", name: "Chess", categories: ["men", "women"], feeRupees: null },
     { id: "carroms", name: "Carroms", categories: ["men", "women"], feeRupees: null },
+  ],
+
+  /** Student coordinators (from sponsorship deck + fest captains) */
+  COORDINATORS: [
+    { name: "Aashay", phone: "+919390206134", role: "Student coordinator" },
+    { name: "Parin", phone: "+919100100507", role: "Student coordinator" },
+    { name: "Sohan", phone: "+919550527704", role: "Student coordinator" },
+    { name: "Samhitha", phone: "+916304647182", role: "Student coordinator" },
   ],
 };

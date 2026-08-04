@@ -1422,6 +1422,37 @@ body.has-preview-banner .hero-cinematic { padding-top: calc(var(--nav-h) + var(-
   text-transform: uppercase;
   color: var(--text-3);
 }
+.admin-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.65rem;
+  margin: 0 0 1.25rem;
+}
+.admin-stat {
+  padding: 0.9rem 1rem;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: rgba(10, 14, 24, 0.75);
+  text-align: center;
+}
+.admin-stat .n {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.02em;
+}
+.admin-stat .l {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+@media (max-width: 640px) {
+  .admin-stats { grid-template-columns: 1fr 1fr; }
+}
 .hidden-step { display: none !important; }
 
 /* Register page — titles & gate */

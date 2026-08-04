@@ -40,7 +40,8 @@ Sources:
 ## Exports on site
 | File | Source | Start | Len | Placement |
 |------|--------|-------|-----|-----------|
-| `snip-hero.mp4` | aftermovie | 1:10 | 22s | Hero background loop |
+| `snip-hero.mp4` | aftermovie | logo smoke 74s → sports | ~46s | Hero: **starts at AURA logo reveal**, then sports |
+| `snip-hero-mobile.mp4` | snip-hero | 0 | 20s | Mobile hero (lighter) |
 | `snip-feature-sports.mp4` | aftermovie | 1:10 | 40s | Main film player (controls) |
 | `snip-trailer-atmosphere.mp4` | trailer | 0:46 | 28s | Side card → full trailer IG |
 | `snip-closing-aura.mp4` | aftermovie | 3:08 | 12s | Side card + about strip |

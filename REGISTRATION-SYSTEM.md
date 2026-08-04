@@ -1,139 +1,120 @@
-# AURA 2026 — Registration system
+# AURA 2026 — Registration system (full pipeline)
 
-Built now, **opened later** when rules + entry fees + payment QR are final.
+**Status:** Fully built end-to-end. **Not open to public** until fees + payment QR + rules are final.
 
-`REGISTRATION_OPEN` stays `false` until then. Demo mode still works end-to-end.
-
----
-
-## Captain journey
-
-```
-1. register.html
-2. Choose sport + category (men / women)
-3. Details → name, phone, email, college name,
-             Physical Director name + phone
-4. Payment → fee from config (or “Fee TBA”),
-             official QR, UTR, amount, screenshot
-5. Submit → status = PENDING · ref code shown
-6. Organiser verifies in admin.html
-7. VERIFIED → confirmation email (when Edge Function is live)
-   or REJECTED with optional note
-```
+`REGISTRATION_OPEN` remains `false` in `js/config.js`.
 
 ---
 
-## Files
+## What captains do
+
+1. `register.html` → choose sport + category  
+2. Details → name, phone, email, college, Physical Director name + phone  
+3. Payment → fee from config, scan official QR, UTR, amount, screenshot  
+4. Submit → **pending** + reference code  
+5. Organiser verifies in `admin.html`  
+6. **verified** → confirmation email (when Edge Function + Resend live)  
+   or **rejected** with optional note  
+
+---
+
+## Admin portal (how it works)
+
+| Mode | When | Data |
+|------|------|------|
+| **DEMO** | No Supabase keys | Browser `localStorage` (`aura2026_registrations`) |
+| **LIVE** | Keys set + schema run | Supabase table `registrations` |
+
+### Demo today
+1. Open `register.html` → submit a test entry  
+2. Open `admin.html` **in the same browser**  
+3. See stats · filter · search · Verify / Reject · Export CSV  
+
+### Live later
+1. Create free Supabase project  
+2. Run `supabase/schema.sql` (replace `admin@example.com` with real organiser emails)  
+3. Auth → invite organiser logins matching those emails  
+4. Put `SUPABASE_URL` + `SUPABASE_ANON_KEY` in `js/config.js`  
+5. `ADMIN_EMAILS: ["you@…"]`  
+6. `REGISTRATION_OPEN: true`  
+
+**Portal URL:** `https://cbitaura.in/admin.html` (don’t link it publicly; only share with organisers).
+
+---
+
+## Confirmation email — which address?
+
+Emails are **not** sent from Gmail directly in the browser. Flow:
+
+1. Admin clicks **Verify + email**  
+2. Site calls Supabase Edge Function `send-confirmation`  
+3. Function uses **Resend** (or similar) to email the captain  
+
+### Sender address you choose
+
+| Option | Address | Notes |
+|--------|---------|--------|
+| **Recommended** | `noreply@cbitaura.in` | Professional; needs Resend domain DNS on Hostinger |
+| Temporary | Your Gmail via Resend | Works for testing; less “official” |
+
+Set in Edge Function secret:
+
+```
+CONFIRMATION_FROM=AURA 2026 · Chaitanya Kreeda <noreply@cbitaura.in>
+RESEND_API_KEY=re_xxxx
+```
+
+Template lives at: `supabase/functions/send-confirmation/index.ts`
+
+**You still need to:** create a Resend account, verify domain or test domain, deploy the function, set secrets. Until then Verify works but email is skipped.
+
+---
+
+## What’s already done vs still yours
+
+### Built (pipeline complete)
+- Multi-step registration UI  
+- Fees from config (basketball men ₹3500 / women ₹2000 already set)  
+- Payment step + QR path + UTR + screenshot  
+- Demo storage + live Supabase hooks  
+- Admin desk: list, filter, search, stats, verify, reject, CSV  
+- Schema + RLS + payment-proofs bucket  
+- Edge Function template for confirmation email  
+- Student coordinators on contact page  
+
+### You provide later (only blockers for “go live”)
+1. **Official payment QR** → save as `assets/payment-qr.png`  
+2. **Rules PDFs** (optional links) → e.g. `assets/rules/basketball.pdf`  
+3. Remaining sports **fees** in `config.js`  
+4. **Supabase project** + run schema + organiser Auth  
+5. **Resend** + `CONFIRMATION_FROM` email  
+6. Flip `REGISTRATION_OPEN: true`  
+
+### Poster website QR (not on site UI)
+Saved for print/posters (removed from homepage):
+
+- `assets/print/website-qr.png`  
+- `C:\Users\Dell\Downloads\AURA-2026-website-qr.png`  
+
+---
+
+## Files map
 
 | File | Role |
 |------|------|
-| `register.html` | 4-step form (Sport → Details → Payment → Done) |
-| `admin.html` | Verify / reject / export CSV |
-| `js/config.js` | Open switch, Supabase keys, sports + fees |
-| `js/registration.js` | Form logic (demo + live) |
-| `js/admin.js` | Desk + status actions + CSV |
-| `supabase/schema.sql` | Table, RLS, storage bucket |
-| `assets/payment-qr.png` | **You add** when ready |
-
-Home `#register` shows the same 4-step path.
+| `register.html` + `js/registration.js` | Captain form |
+| `admin.html` + `js/admin.js` | Organiser desk |
+| `js/config.js` | Switches, fees, keys, coordinators |
+| `supabase/schema.sql` | DB + storage + RLS |
+| `supabase/functions/send-confirmation/` | Email on verify |
+| `assets/payment-qr.png` | **You add** payment QR |
+| `assets/print/website-qr.png` | Poster QR to cbitaura.in |
 
 ---
 
-## Config: fees (set when decided)
+## Security notes
 
-In `js/config.js` per sport:
-
-```js
-{ id: "cricket", name: "Cricket", categories: ["men"], feeRupees: 2500 }
-// or different by category:
-{ id: "basketball", name: "Basketball", categories: ["men", "women"],
-  feeRupees: null,
-  feeByCategory: { men: 2000, women: 1500 } }
-```
-
-- `null` → UI shows **Fee TBA** (current state)
-- number → payment step shows **Pay ₹X** and pre-fills amount
-
-QR path: `PAYMENT_QR_PATH: "assets/payment-qr.png"`
-
----
-
-## Demo mode (works today)
-
-1. Open `register.html`
-2. Walk through all steps and submit (payment fields optional in demo)
-3. Open `admin.html` in the **same browser**
-4. See **pending** → Verify / Reject / Export CSV
-
-Data lives in `localStorage` key `aura2026_registrations` until Supabase is connected.
-
----
-
-## Go-live checklist
-
-### A. Content
-1. Final rules (link or PDF later)
-2. Entry fees per sport (and category if needed) in `config.js`
-3. Official payment QR → `assets/payment-qr.png`
-
-### B. Supabase
-1. Create project at https://supabase.com  
-2. SQL editor → run `supabase/schema.sql`  
-3. Confirm storage bucket `payment-proofs`  
-4. Auth → organiser login(s)  
-5. Replace `admin@example.com` in policies with real emails  
-6. In `js/config.js`:
-
-```js
-REGISTRATION_OPEN: true,
-SUPABASE_URL: "https://xxxx.supabase.co",
-SUPABASE_ANON_KEY: "eyJ...",
-```
-
-### C. Confirmation email
-Deploy Edge Function `send-confirmation` (Resend / SendGrid / SMTP).  
-`admin.js` already POSTs `/functions/v1/send-confirmation` on verify.
-
-### D. Flip switch
-- `REGISTRATION_OPEN: true`
-- Push to GitHub
-
----
-
-## Database fields (aligned with form)
-
-| Field | Source |
-|-------|--------|
-| `sport`, `category` | Step 1 |
-| `college_name` | Step 2 |
-| `captain_name`, `captain_phone`, `captain_email` | Step 2 |
-| `pd_name`, `pd_phone` | Step 2 (Physical Director) |
-| `fee_expected` | From config at submit time |
-| `payment_txn_id`, `payment_amount`, screenshot path | Step 3 |
-| `status` | `pending` → `verified` / `rejected` |
-| `ref_code` | Auto `AURA-XXXXXXXX` |
-
-Optional `players` jsonb kept for a future roster step.
-
----
-
-## Status model
-
-| Status | Meaning |
-|--------|---------|
-| `pending` | Submitted; payment not checked |
-| `verified` | Payment OK; email when wired |
-| `rejected` | Invalid / incomplete payment |
-
----
-
-## Security
-
-- Public **insert** only (registrations)
-- Authenticated admins **select / update**
-- Payment screenshots in private `payment-proofs` bucket
-- Never commit service-role keys
-
----
-
-No hero changes required for any of this.
+- Public can **insert** registrations only  
+- Admins (Auth email allow-list) **select / update**  
+- Payment screenshots in private storage  
+- Never commit service-role keys or Resend secret to the repo  
