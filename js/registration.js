@@ -109,14 +109,16 @@
     if (!wrap || !a) return;
     const sheets = CFG.RULES_SHEETS || {};
     const id = sportHidden && sportHidden.value;
-    const path = id && sheets[id];
-    if (path) {
-      a.href = path;
+    const entry = id && sheets[id];
+    if (entry) {
+      // Open inside site rules viewer (not raw PNG tab)
+      a.href = "rules.html?sport=" + encodeURIComponent(id);
       a.textContent = "View " + (currentSport()?.name || "tournament") + " rules →";
+      a.removeAttribute("target");
       wrap.hidden = false;
     } else {
       wrap.hidden = true;
-      a.removeAttribute("href");
+      a.href = "rules.html";
     }
   }
 
@@ -438,4 +440,19 @@
     });
 
   renderSportGrid();
+
+  // Deep-link: register.html?sport=basketball
+  const qs = new URLSearchParams(location.search);
+  const pre = qs.get("sport");
+  if (pre && sports.some((s) => s.id === pre) && sportHidden) {
+    sportHidden.value = pre;
+    const btn = grid && grid.querySelector(`.sport-pick[data-id="${pre}"]`);
+    if (btn) {
+      btn.classList.add("is-selected");
+      btn.setAttribute("aria-selected", "true");
+    }
+    syncCategories();
+    updateFeeUI();
+    updateRulesLink();
+  }
 })();

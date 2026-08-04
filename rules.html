@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Rules · AURA 2026</title>
+    <meta name="description" content="Tournament rules for AURA 2026 sports." />
+    <meta name="theme-color" content="#05080f" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Outfit:wght@500;600;700;800&family=Syne:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="icon" href="assets/logo-kreeda.png" type="image/png" />
+  </head>
+  <body>
+    <header class="nav scrolled" id="top">
+      <div class="nav-inner">
+        <a class="brand" href="index.html">
+          <img src="assets/logo-kreeda.png" alt="Chaitanya Kreeda" width="36" height="36" />
+          <span class="brand-text">
+            <strong>AURA</strong>
+            <span>2026 · Rules</span>
+          </span>
+        </a>
+        <nav class="nav-links" aria-label="Primary">
+          <a href="index.html">Home</a>
+          <a href="index.html#sports">Sports</a>
+          <a href="register.html">Register</a>
+          <a href="index.html#contact">Contact</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="page-shell">
+      <div class="container rules-page">
+        <p class="eyebrow">Tournament rules</p>
+        <h1 class="reg-page-title" id="rules-title">Rules</h1>
+        <p class="reg-page-lead" id="rules-lead">Official sheet for this sport at AURA 2026.</p>
+
+        <div class="form-actions" style="margin-bottom: 1.25rem">
+          <a class="btn btn-ghost" href="index.html#sports">← All sports</a>
+          <a class="btn btn-primary" id="rules-register-cta" href="register.html">Register for this sport</a>
+        </div>
+
+        <!-- Loading / empty / sheet -->
+        <div id="rules-empty" class="reg-card rules-empty hidden-step">
+          <p class="form-note" style="margin: 0">
+            Rules for this sport are not published yet. Check back soon, or contact the student coordinators.
+          </p>
+        </div>
+
+        <div id="rules-frame" class="rules-frame reg-card hidden-step">
+          <img id="rules-img" class="rules-img" alt="Tournament rules sheet" />
+          <iframe id="rules-pdf" class="rules-pdf" title="Tournament rules PDF" hidden></iframe>
+        </div>
+
+        <p class="form-note" id="rules-meta" style="margin-top: 1rem"></p>
+      </div>
+    </main>
+
+    <script src="js/config.js"></script>
+    <script src="js/rules.js"></script>
+  </body>
+</html>

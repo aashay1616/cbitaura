@@ -83,10 +83,17 @@ window.AURA_CONFIG = {
   ],
 
   /**
-   * Optional rules sheet per sport (image or PDF path).
-   * Shown on register step when present.
+   * Rules sheets — shown in-site at rules.html?sport=<id>
+   * Pipeline: drop file in assets/rules/ then add key here.
+   * Value: string path OR { file: "…", title: "optional lead line" }
+   * Supports .png / .jpg / .webp / .pdf
    */
   RULES_SHEETS: {
-    basketball: "assets/rules/basketball-rules.png",
+    basketball: {
+      file: "assets/rules/basketball-rules.png",
+      title: "Men & women · Fees, group stage, FIBA, squad size, and captains.",
+    },
+    // cricket: "assets/rules/cricket-rules.png",
+    // football: "assets/rules/football-rules.pdf",
   },
 };
