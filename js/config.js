@@ -1,21 +1,15 @@
 /**
- * AURA 2026 — registration config
+ * AURA 2026 — registration config (full pipeline scaffolded)
  * ---------------------------------------------------------
- * CLOSED until rules PDFs + official payment QR are final.
+ * REGISTRATION_OPEN stays false until:
+ *   • assets/payment-qr.png (real UPI/bank QR)
+ *   • rules for sports you want open (RULES_SHEETS)
+ *   • fees set per sport
+ *   • Supabase keys + Resend Edge Functions (see GO-LIVE.md)
  *
- * Already wired (demo today · live when keys flipped):
- *   multi-step form · fee display · QR step · screenshot
- *   localStorage demo · Supabase insert/upload · admin desk
- *   verify / reject · CSV · confirmation email hook
- *
- * You still provide later:
- *   1. feeRupees / feeByCategory per sport
- *   2. assets/payment-qr.png (official UPI/bank QR)
- *   3. SUPABASE_URL + SUPABASE_ANON_KEY
- *   4. REGISTRATION_OPEN: true
- *   5. Run supabase/schema.sql · set ADMIN_EMAILS
- *   6. Deploy edge function send-confirmation (Resend)
- *   7. Optional: rules PDF links per sport (RULES_PDF_PATH)
+ * Pipeline already wired:
+ *   form → pending → notify organisers → admin verify/reject
+ *   → captain confirmation email · rules viewer · CSV export
  */
 window.AURA_CONFIG = {
   REGISTRATION_OPEN: false,
@@ -99,7 +93,15 @@ window.AURA_CONFIG = {
       file: "assets/rules/basketball-rules.png",
       title: "Men & women · Fees, group stage, FIBA, squad size, and captains.",
     },
-    // cricket: "assets/rules/cricket-rules.png",
-    // football: "assets/rules/football-rules.pdf",
+    // Uncomment + add files under assets/rules/ when ready:
+    // cricket: { file: "assets/rules/cricket-rules.png", title: "Cricket · AURA 2026" },
+    // football: { file: "assets/rules/football-rules.png", title: "Football · AURA 2026" },
+    // volleyball: { file: "assets/rules/volleyball-rules.png", title: "Volleyball · AURA 2026" },
+    // kabaddi: { file: "assets/rules/kabaddi-rules.png", title: "Kabaddi · AURA 2026" },
+    // throwball: { file: "assets/rules/throwball-rules.png", title: "Throwball · AURA 2026" },
+    // badminton: { file: "assets/rules/badminton-rules.png", title: "Badminton · AURA 2026" },
+    // "table-tennis": { file: "assets/rules/table-tennis-rules.png", title: "Table Tennis · AURA 2026" },
+    // chess: { file: "assets/rules/chess-rules.png", title: "Chess · AURA 2026" },
+    // carroms: { file: "assets/rules/carroms-rules.png", title: "Carroms · AURA 2026" },
   },
 };

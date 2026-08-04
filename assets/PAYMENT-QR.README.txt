@@ -1,0 +1,10 @@
+PAYMENT QR — place official file here when ready
+
+File name required by the site:
+  assets/payment-qr.png
+
+Used on: register.html payment step
+  (js/config.js → PAYMENT_QR_PATH)
+
+Until this file exists, the form shows a placeholder box.
+Do not set REGISTRATION_OPEN: true until the real QR is here.

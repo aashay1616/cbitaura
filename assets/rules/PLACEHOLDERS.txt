@@ -1,0 +1,21 @@
+Rules pipeline — one file per sport
+
+Already published:
+  basketball-rules.png  →  rules.html?sport=basketball
+
+Add when ready (png/jpg/pdf), then list in js/config.js RULES_SHEETS:
+  cricket-rules.png
+  football-rules.png
+  volleyball-rules.png
+  kabaddi-rules.png
+  throwball-rules.png
+  badminton-rules.png
+  table-tennis-rules.png
+  chess-rules.png
+  carroms-rules.png
+
+How to publish (or ask the agent):
+  1. Save file in this folder
+  2. Add to RULES_SHEETS in js/config.js
+  3. Change sport card link on index.html to rules.html?sport=<id>
+  4. Commit + push
