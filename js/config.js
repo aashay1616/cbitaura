@@ -87,7 +87,13 @@ window.AURA_CONFIG = {
       feeRupees: null,
       feeByCategory: { men: 2500, women: 2000 },
     },
-    { id: "table-tennis", name: "Table Tennis", categories: ["men", "women"], feeRupees: null },
+    {
+      id: "table-tennis",
+      name: "Table Tennis",
+      categories: ["men", "women"],
+      feeRupees: null,
+      feeByCategory: { men: 1500, women: 1500 },
+    },
     { id: "chess", name: "Chess", categories: ["men", "women"], feeRupees: null },
     {
       id: "carroms",
@@ -140,9 +146,12 @@ window.AURA_CONFIG = {
       file: "assets/rules/carroms-rules.png",
       title: "Men & women · Fees, tie format, OU laws, squad size, and captains.",
     },
+    "table-tennis": {
+      file: "assets/rules/table-tennis-rules.png",
+      title: "Men & women · Fees, formats, scoring, equipment, and captains.",
+    },
     // Still waiting:
     // football: { file: "assets/rules/football-rules.png", title: "Football · AURA 2026" },
-    // "table-tennis": { file: "assets/rules/table-tennis-rules.png", title: "Table Tennis · AURA 2026" },
     // chess: { file: "assets/rules/chess-rules.png", title: "Chess · AURA 2026" },
   },
 };

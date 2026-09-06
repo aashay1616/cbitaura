@@ -43,6 +43,7 @@ football: {
 | Throwball | `throwball-rules.png` | `rules.html?sport=throwball` |
 | Badminton | `badminton-rules.png` | `rules.html?sport=badminton` |
 | Carroms | `carroms-rules.png` | `rules.html?sport=carroms` |
+| Table Tennis | `table-tennis-rules.png` | `rules.html?sport=table-tennis` |
 
 ## Naming tip
 
