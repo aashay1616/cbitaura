@@ -1351,23 +1351,39 @@ body.has-preview-banner .hero-cinematic { padding-top: calc(var(--nav-h) + var(-
 }
 .pay-box {
   display: grid;
-  grid-template-columns: 160px 1fr;
+  grid-template-columns: 200px 1fr;
   gap: 1.25rem;
-  align-items: center;
+  align-items: start;
   padding: 1.15rem;
   border-radius: 16px;
   border: 1px dashed var(--line-strong);
   background: rgba(91, 140, 255, 0.06);
   margin: 1rem 0;
 }
+.pay-qr-col { display: flex; flex-direction: column; gap: 0.65rem; align-items: stretch; }
+.pay-scanner-tabs {
+  display: flex; flex-wrap: wrap; gap: 0.4rem;
+}
+.pay-scanner-tabs button {
+  font: inherit; font-size: 0.72rem; font-weight: 600;
+  padding: 0.35rem 0.65rem; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--line-strong);
+  background: rgba(0,0,0,0.25); color: var(--text-2);
+}
+.pay-scanner-tabs button.is-active {
+  background: rgba(91, 140, 255, 0.2);
+  border-color: var(--blue);
+  color: var(--blue-soft);
+}
 .pay-box img {
-  width: 160px; height: 160px;
+  width: 180px; height: 180px;
   object-fit: contain;
   border-radius: 12px;
-  background: #0a0e16;
+  background: #fff;
+  padding: 6px;
 }
 .pay-box .pay-placeholder {
-  width: 160px; height: 160px;
+  width: 180px; height: 180px;
   border-radius: 12px;
   border: 1px solid var(--line);
   display: flex; align-items: center; justify-content: center;
@@ -1377,8 +1393,20 @@ body.has-preview-banner .hero-cinematic { padding-top: calc(var(--nav-h) + var(-
   padding: 0.75rem;
   background: #0a0e16;
 }
+.pay-scanner-label {
+  font-size: 0.78rem; color: var(--text-2); margin: 0; font-weight: 600;
+}
+.pay-scan-note {
+  font-size: 0.78rem; line-height: 1.45; color: var(--text-2);
+  margin: 0; padding: 0.65rem 0.75rem;
+  border-radius: 12px;
+  background: rgba(255, 193, 77, 0.1);
+  border: 1px solid rgba(255, 193, 77, 0.25);
+}
+.pay-scan-note strong { color: #ffc14d; }
 @media (max-width: 560px) {
   .pay-box { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+  .pay-qr-col { align-items: center; }
 }
 .form-actions {
   display: flex;

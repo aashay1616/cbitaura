@@ -168,11 +168,21 @@
     }
   }
 
-  function setupPaymentQr() {
+  function paymentScanners() {
+    if (Array.isArray(CFG.PAYMENT_QRS) && CFG.PAYMENT_QRS.length) return CFG.PAYMENT_QRS;
+    const legacy = CFG.PAYMENT_QR_PATH || "assets/payment-qr.png";
+    return [{ id: "default", label: "Official scanner", file: legacy }];
+  }
+
+  let activeScannerId = null;
+
+  function showScanner(sc) {
     const img = $("payment-qr");
     const ph = $("payment-qr-ph");
-    if (!img) return;
-    const path = CFG.PAYMENT_QR_PATH || "assets/payment-qr.png";
+    const label = $("payment-scanner-label");
+    const note = $("payment-scan-note");
+    if (!img || !sc) return;
+    activeScannerId = sc.id;
     img.onload = () => {
       img.hidden = false;
       if (ph) ph.hidden = true;
@@ -181,7 +191,57 @@
       img.hidden = true;
       if (ph) ph.hidden = false;
     };
-    img.src = path + (path.includes("?") ? "&" : "?") + "v=1";
+    const path = sc.file || CFG.PAYMENT_QR_PATH || "assets/payment-qr.png";
+    img.src = path + (path.includes("?") ? "&" : "?") + "v=" + Date.now();
+    img.alt = sc.label || "Official payment QR";
+    if (label) {
+      label.hidden = false;
+      label.textContent = sc.upiName ? `${sc.label} · ${sc.upiName}` : sc.label || "";
+    }
+    if (note && CFG.PAYMENT_SCAN_NOTE) {
+      note.innerHTML = CFG.PAYMENT_SCAN_NOTE;
+    }
+    const tabs = $("payment-scanner-tabs");
+    if (tabs) {
+      tabs.querySelectorAll("button").forEach((b) => {
+        b.classList.toggle("is-active", b.dataset.id === sc.id);
+      });
+    }
+    const sel = $("payment_scanner_used");
+    if (sel && sc.id) sel.value = sc.id;
+  }
+
+  function setupPaymentQr() {
+    const scanners = paymentScanners();
+    const tabs = $("payment-scanner-tabs");
+    const sel = $("payment_scanner_used");
+    if (sel) {
+      sel.innerHTML = '<option value="">Select scanner…</option>';
+      scanners.forEach((sc) => {
+        const opt = document.createElement("option");
+        opt.value = sc.id;
+        opt.textContent = sc.label || sc.id;
+        sel.appendChild(opt);
+      });
+    }
+    if (tabs) {
+      if (scanners.length > 1) {
+        tabs.hidden = false;
+        tabs.innerHTML = "";
+        scanners.forEach((sc, i) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.dataset.id = sc.id;
+          btn.textContent = sc.label || `Scanner ${i + 1}`;
+          btn.addEventListener("click", () => showScanner(sc));
+          tabs.appendChild(btn);
+        });
+      } else {
+        tabs.hidden = true;
+        tabs.innerHTML = "";
+      }
+    }
+    showScanner(scanners[0]);
   }
 
   function fillReview() {
@@ -293,6 +353,7 @@
       players: [],
       payment_txn_id: record.payment_txn_id,
       payment_amount: record.payment_amount,
+      payment_scanner_id: record.payment_scanner_id,
       fee_expected: record.fee_expected,
       payment_screenshot_path,
       status: "pending",
@@ -410,6 +471,8 @@
         pd_phone: $("pd_phone").value.trim(),
         payment_txn_id: $("payment_txn").value.trim(),
         payment_amount: $("payment_amount").value.trim(),
+        payment_scanner_id:
+          ($("payment_scanner_used") && $("payment_scanner_used").value) || activeScannerId || null,
         fee_expected: fee,
         payment_screenshot_name: file ? file.name : null,
         payment_screenshot_data: null,

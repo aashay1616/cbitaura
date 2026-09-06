@@ -28,6 +28,7 @@ create table if not exists public.registrations (
   fee_expected numeric,
   payment_txn_id text,
   payment_amount text,
+  payment_scanner_id text,
   payment_screenshot_path text,
   payment_screenshot_url text,
 

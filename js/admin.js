@@ -203,7 +203,8 @@
           <td>${escapeHtml(r.captain_name)}<br><small>${escapeHtml(r.captain_phone)}<br>${escapeHtml(r.captain_email)}</small></td>
           <td>Fee: ${r.fee_expected != null ? "₹" + escapeHtml(r.fee_expected) : "TBA"}<br>
           Paid: ${escapeHtml(r.payment_amount || "—")}<br>
-          UTR: ${escapeHtml(r.payment_txn_id || "—")}<br>${proof}</td>
+          UTR: ${escapeHtml(r.payment_txn_id || "—")}<br>
+          Scanner: ${escapeHtml(r.payment_scanner_id || "—")}<br>${proof}</td>
           <td><span class="status-pill ${r.status || "pending"}">${escapeHtml(r.status || "pending")}</span></td>
           <td>
             <button type="button" class="btn btn-primary act-verify" data-ref="${escapeHtml(r.ref_code)}" style="padding:0.4rem 0.7rem;font-size:0.75rem;margin:0.15rem">Verify + email</button>

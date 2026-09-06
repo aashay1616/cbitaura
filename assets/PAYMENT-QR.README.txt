@@ -1,10 +1,17 @@
-PAYMENT QR — place official file here when ready
+PAYMENT SCANNERS
+================
 
-File name required by the site:
+Primary file (Scanner 1):
   assets/payment-qr.png
 
-Used on: register.html payment step
-  (js/config.js → PAYMENT_QR_PATH)
+Extra scanners folder:
+  assets/payment-qrs/
 
-Until this file exists, the form shows a placeholder box.
-Do not set REGISTRATION_OPEN: true until the real QR is here.
+Configured in js/config.js → PAYMENT_QRS (array).
+Add a new object there when you have Scanner 2 / 3.
+
+Current:
+  Scanner 1 · Aashay (PhonePe) · AASHAY RAJ GRANDHI
+
+Form shows a note: payments over ₹2,000 should be scanned
+from another device (UPI same-phone limit).

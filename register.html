@@ -162,12 +162,20 @@
             </div>
 
             <div class="pay-box">
-              <div>
+              <div class="pay-qr-col">
+                <div class="pay-scanner-tabs" id="payment-scanner-tabs" hidden></div>
                 <img id="payment-qr" src="assets/payment-qr.png" alt="Official payment QR" hidden />
                 <div class="pay-placeholder" id="payment-qr-ph">
                   Official payment QR<br />will appear here<br />
                   <small>Place file at assets/payment-qr.png</small>
                 </div>
+                <p class="pay-scanner-label" id="payment-scanner-label" hidden></p>
+                <p class="pay-scan-note" id="payment-scan-note">
+                  <strong>Paying more than ₹2,000?</strong>
+                  Many UPI apps block scanning a QR from the same phone above ₹2,000.
+                  Use <strong>another phone/device</strong> to scan this QR (or pay via UPI ID),
+                  then upload the payment screenshot here.
+                </p>
               </div>
               <div>
                 <div class="field">
@@ -177,6 +185,12 @@
                 <div class="field">
                   <label for="payment_amount">Amount you paid (₹)</label>
                   <input id="payment_amount" name="payment_amount" inputmode="decimal" placeholder="Same as amount above" />
+                </div>
+                <div class="field">
+                  <label for="payment_scanner_used">Scanner used</label>
+                  <select id="payment_scanner_used" name="payment_scanner_used">
+                    <option value="">Select scanner…</option>
+                  </select>
                 </div>
                 <div class="field">
                   <label for="payment_file">Payment screenshot</label>

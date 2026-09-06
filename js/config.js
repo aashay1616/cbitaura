@@ -17,8 +17,28 @@ window.AURA_CONFIG = {
   SUPABASE_URL: "",
   SUPABASE_ANON_KEY: "",
 
-  /** Official payment QR — drop file when finance finalises UPI/account */
+  /**
+   * Payment scanners (UPI QR). First entry is default.
+   * Add more objects later for alternate accounts / higher limits.
+   * Each: { id, label, file, upiName?, note? }
+   */
+  PAYMENT_QRS: [
+    {
+      id: "aashay-phonepe",
+      label: "Scanner 1 · Aashay (PhonePe)",
+      file: "assets/payment-qr.png",
+      upiName: "AASHAY RAJ GRANDHI",
+    },
+    // Example for later:
+    // { id: "scanner-2", label: "Scanner 2 · …", file: "assets/payment-qrs/qr-2.png", upiName: "…" },
+  ],
+
+  /** @deprecated use PAYMENT_QRS[0].file — kept for older code paths */
   PAYMENT_QR_PATH: "assets/payment-qr.png",
+
+  /** Show this note under every scanner (UPI device limits) */
+  PAYMENT_SCAN_NOTE:
+    "If the fee is more than ₹2,000, PhonePe/GPay on the same phone may block the scan. Use another device to scan this QR, or pay via UPI ID / bank transfer, then upload the screenshot.",
 
   SITE_URL: "https://cbitaura.in",
 
