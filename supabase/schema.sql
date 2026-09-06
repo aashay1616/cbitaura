@@ -86,16 +86,16 @@ create policy "public_insert_registration"
   to anon, authenticated
   with check (true);
 
--- Replace placeholder emails with real organiser Gmail/college logins
--- (must match Supabase Auth users + js/config.js ADMIN_EMAILS)
+-- SINGLE shared CC login (one email + password for the whole core committee).
+-- Must match: Supabase Auth user  +  js/config.js → ADMIN_EMAILS
+-- Change this email if you use a different shared inbox.
 drop policy if exists "admin_select_all" on public.registrations;
 create policy "admin_select_all"
   on public.registrations for select
   to authenticated
   using (
     auth.jwt() ->> 'email' in (
-      'aashayrajgrandhi@gmail.com'
-      -- add more: , 'parin@…', 'sohan@…'
+      'aura.cbit.cc@gmail.com'
     )
   );
 
@@ -105,7 +105,7 @@ create policy "admin_update_all"
   to authenticated
   using (
     auth.jwt() ->> 'email' in (
-      'aashayrajgrandhi@gmail.com'
+      'aura.cbit.cc@gmail.com'
     )
   );
 

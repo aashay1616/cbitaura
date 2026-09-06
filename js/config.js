@@ -43,18 +43,20 @@ window.AURA_CONFIG = {
   SITE_URL: "https://cbitaura.in",
 
   /**
-   * Organiser logins for live admin (must match Supabase Auth emails
-   * and RLS policies in supabase/schema.sql).
-   * Example: ["aashayrajgrandhi@gmail.com"]
+   * Shared Core Committee admin login (ONE account for everyone).
+   * Must match Supabase Auth user + RLS emails in supabase/schema.sql.
    */
-  ADMIN_EMAILS: [],
+  ADMIN_EMAILS: ["aura.cbit.cc@gmail.com"],
 
   /**
-   * Who gets an email the moment a team submits (pending).
-   * Put real Gmail/college addresses — set the same list as Edge secret NOTIFY_EMAILS.
-   * Example: ["aashayrajgrandhi@gmail.com", "parin@…"]
+   * Who gets an email when a team submits (pending).
+   * Can be personal inboxes even if admin login is shared.
+   * Also set the same list as Edge secret NOTIFY_EMAILS when emails go live.
    */
-  NOTIFY_ORGANISER_EMAILS: [],
+  NOTIFY_ORGANISER_EMAILS: [
+    "aashayrajgrandhi@gmail.com",
+    // add Parin / Sohan personal emails for alerts if you want
+  ],
 
   /**
    * Captain confirmation email after you click Verify.
