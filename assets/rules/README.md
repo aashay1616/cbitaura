@@ -44,6 +44,7 @@ football: {
 | Badminton | `badminton-rules.png` | `rules.html?sport=badminton` |
 | Carroms | `carroms-rules.png` | `rules.html?sport=carroms` |
 | Table Tennis | `table-tennis-rules.png` | `rules.html?sport=table-tennis` |
+| Chess | `chess-rules.png` | `rules.html?sport=chess` |
 
 ## Naming tip
 

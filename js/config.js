@@ -94,7 +94,12 @@ window.AURA_CONFIG = {
       feeRupees: null,
       feeByCategory: { men: 1500, women: 1500 },
     },
-    { id: "chess", name: "Chess", categories: ["men", "women"], feeRupees: null },
+    {
+      id: "chess",
+      name: "Chess",
+      categories: ["men", "women"],
+      feeRupees: 500,
+    },
     {
       id: "carroms",
       name: "Carroms",
@@ -150,8 +155,11 @@ window.AURA_CONFIG = {
       file: "assets/rules/table-tennis-rules.png",
       title: "Men & women · Fees, formats, scoring, equipment, and captains.",
     },
+    chess: {
+      file: "assets/rules/chess-rules.png",
+      title: "Open · Fees, Swiss format, FIDE rules, time control, and captains.",
+    },
     // Still waiting:
     // football: { file: "assets/rules/football-rules.png", title: "Football · AURA 2026" },
-    // chess: { file: "assets/rules/chess-rules.png", title: "Chess · AURA 2026" },
   },
 };
