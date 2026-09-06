@@ -37,6 +37,12 @@ football: {
 | Sport | File | Viewer |
 |-------|------|--------|
 | Basketball | `basketball-rules.png` | `rules.html?sport=basketball` |
+| Cricket | `cricket-rules.png` | `rules.html?sport=cricket` |
+| Volleyball | `volleyball-rules.png` | `rules.html?sport=volleyball` |
+| Kabaddi | `kabaddi-rules.png` | `rules.html?sport=kabaddi` |
+| Throwball | `throwball-rules.png` | `rules.html?sport=throwball` |
+| Badminton | `badminton-rules.png` | `rules.html?sport=badminton` |
+| Carroms | `carroms-rules.png` | `rules.html?sport=carroms` |
 
 ## Naming tip
 

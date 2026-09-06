@@ -66,13 +66,36 @@ window.AURA_CONFIG = {
       feeByCategory: { men: 3500, women: 2000 },
     },
     { id: "football", name: "Football", categories: ["men"], feeRupees: null },
-    { id: "volleyball", name: "Volleyball", categories: ["men", "women"], feeRupees: null },
-    { id: "kabaddi", name: "Kabaddi", categories: ["men"], feeRupees: null },
+    {
+      id: "volleyball",
+      name: "Volleyball",
+      categories: ["men", "women"],
+      feeRupees: null,
+      feeByCategory: { men: 3000, women: 2000 },
+    },
+    {
+      id: "kabaddi",
+      name: "Kabaddi",
+      categories: ["men"],
+      feeRupees: 2000,
+    },
     { id: "throwball", name: "Throwball", categories: ["women"], feeRupees: null },
-    { id: "badminton", name: "Badminton", categories: ["men", "women"], feeRupees: null },
+    {
+      id: "badminton",
+      name: "Badminton",
+      categories: ["men", "women"],
+      feeRupees: null,
+      feeByCategory: { men: 2500, women: 2000 },
+    },
     { id: "table-tennis", name: "Table Tennis", categories: ["men", "women"], feeRupees: null },
     { id: "chess", name: "Chess", categories: ["men", "women"], feeRupees: null },
-    { id: "carroms", name: "Carroms", categories: ["men", "women"], feeRupees: null },
+    {
+      id: "carroms",
+      name: "Carroms",
+      categories: ["men", "women"],
+      feeRupees: null,
+      feeByCategory: { men: 1000, women: 1000 },
+    },
   ],
 
   /** Student coordinators (from sponsorship deck + fest captains) */
@@ -93,15 +116,33 @@ window.AURA_CONFIG = {
       file: "assets/rules/basketball-rules.png",
       title: "Men & women · Fees, group stage, FIBA, squad size, and captains.",
     },
-    // Uncomment + add files under assets/rules/ when ready:
-    // cricket: { file: "assets/rules/cricket-rules.png", title: "Cricket · AURA 2026" },
+    cricket: {
+      file: "assets/rules/cricket-rules.png",
+      title: "Men · Eligibility, squad lock, T20 format, powerplay, and contacts.",
+    },
+    volleyball: {
+      file: "assets/rules/volleyball-rules.png",
+      title: "Men & women · Fees, squad, sets, net height, and captains.",
+    },
+    kabaddi: {
+      file: "assets/rules/kabaddi-rules.png",
+      title: "Men · Fees, raid timing, scoring, halves, and captains.",
+    },
+    throwball: {
+      file: "assets/rules/throwball-rules.png",
+      title: "Women · Court specs, catch-throw rules, scoring, and captains.",
+    },
+    badminton: {
+      file: "assets/rules/badminton-rules.png",
+      title: "Men & women · Fees, tie format, shuttle, BWF rules, and captains.",
+    },
+    carroms: {
+      file: "assets/rules/carroms-rules.png",
+      title: "Men & women · Fees, tie format, OU laws, squad size, and captains.",
+    },
+    // Still waiting:
     // football: { file: "assets/rules/football-rules.png", title: "Football · AURA 2026" },
-    // volleyball: { file: "assets/rules/volleyball-rules.png", title: "Volleyball · AURA 2026" },
-    // kabaddi: { file: "assets/rules/kabaddi-rules.png", title: "Kabaddi · AURA 2026" },
-    // throwball: { file: "assets/rules/throwball-rules.png", title: "Throwball · AURA 2026" },
-    // badminton: { file: "assets/rules/badminton-rules.png", title: "Badminton · AURA 2026" },
     // "table-tennis": { file: "assets/rules/table-tennis-rules.png", title: "Table Tennis · AURA 2026" },
     // chess: { file: "assets/rules/chess-rules.png", title: "Chess · AURA 2026" },
-    // carroms: { file: "assets/rules/carroms-rules.png", title: "Carroms · AURA 2026" },
   },
 };
