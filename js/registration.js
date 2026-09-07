@@ -449,25 +449,44 @@
       players: [],
       payment_txn_id: record.payment_txn_id,
       payment_amount: record.payment_amount,
-      payment_scanner_id: record.payment_scanner_id,
       fee_expected: record.fee_expected,
       payment_screenshot_path,
       payment_screenshot_url,
       status: "pending",
       ref_code: record.ref_code,
     };
+    // Only send if present (older DBs may lack this column until FIX-ADD-SCANNER-COLUMN.sql)
+    if (record.payment_scanner_id) {
+      body.payment_scanner_id = record.payment_scanner_id;
+    }
 
-    const res = await fetch(`${url}/rest/v1/registrations`, {
+    const postHeaders = {
+      apikey: key,
+      Authorization: `Bearer ${key}`,
+      "Content-Type": "application/json",
+      Prefer: "return=representation",
+    };
+    let res = await fetch(`${url}/rest/v1/registrations`, {
       method: "POST",
-      headers: {
-        apikey: key,
-        Authorization: `Bearer ${key}`,
-        "Content-Type": "application/json",
-        Prefer: "return=representation",
-      },
+      headers: postHeaders,
       body: JSON.stringify(body),
     });
-    if (!res.ok) throw new Error((await res.text()) || "Submit failed");
+    if (!res.ok) {
+      const errText = (await res.text()) || "Submit failed";
+      // Retry without scanner column if DB schema is behind
+      if (/payment_scanner_id/i.test(errText) && body.payment_scanner_id) {
+        delete body.payment_scanner_id;
+        res = await fetch(`${url}/rest/v1/registrations`, {
+          method: "POST",
+          headers: postHeaders,
+          body: JSON.stringify(body),
+        });
+      }
+      if (!res.ok) {
+        const err2 = res.bodyUsed ? errText : (await res.text()) || errText;
+        throw new Error(err2 || "Submit failed");
+      }
+    }
     const saved = (await res.json())[0] || body;
 
     // Ping organisers (email alert) — non-blocking if function not deployed yet
