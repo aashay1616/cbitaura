@@ -196,10 +196,23 @@
     img.alt = sc.label || "Official payment QR";
     if (label) {
       label.hidden = false;
-      label.textContent = sc.upiName ? `${sc.label} · ${sc.upiName}` : sc.label || "";
+      const parts = [];
+      if (sc.label) parts.push(sc.label);
+      if (sc.upiName) parts.push(sc.upiName);
+      if (sc.upiId) parts.push(`UPI: ${sc.upiId}`);
+      label.textContent = parts.join(" · ");
     }
     if (note && CFG.PAYMENT_SCAN_NOTE) {
       note.innerHTML = CFG.PAYMENT_SCAN_NOTE;
+    }
+    const upiEl = $("payment-upi-id");
+    if (upiEl) {
+      if (sc.upiId) {
+        upiEl.hidden = false;
+        upiEl.innerHTML = `UPI ID: <strong>${sc.upiId}</strong>`;
+      } else {
+        upiEl.hidden = true;
+      }
     }
     const tabs = $("payment-scanner-tabs");
     if (tabs) {

@@ -1403,6 +1403,15 @@ body.has-preview-banner .hero-cinematic { padding-top: calc(var(--nav-h) + var(-
 .pay-scanner-label {
   font-size: 0.78rem; color: var(--text-2); margin: 0; font-weight: 600;
 }
+.pay-upi-id {
+  font-size: 0.85rem; color: var(--text); margin: 0;
+  padding: 0.55rem 0.7rem;
+  border-radius: 10px;
+  background: rgba(91, 140, 255, 0.12);
+  border: 1px solid var(--line-strong);
+  word-break: break-all;
+}
+.pay-upi-id strong { color: var(--blue-soft); font-weight: 700; }
 .pay-scan-note {
   font-size: 0.78rem; line-height: 1.45; color: var(--text-2);
   margin: 0; padding: 0.65rem 0.75rem;

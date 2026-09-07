@@ -29,6 +29,7 @@ window.AURA_CONFIG = {
       label: "Official scanner · Saiteja Pampati (PhonePe)",
       file: "assets/payment-qr.png",
       upiName: "Saiteja Pampati",
+      upiId: "6303916754-2@ybl",
     },
     // Example for later:
     // { id: "scanner-2", label: "Scanner 2 · …", file: "assets/payment-qrs/qr-2.png", upiName: "…" },
