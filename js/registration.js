@@ -398,30 +398,43 @@
     if (!url || !key) throw new Error("Supabase not configured");
 
     let payment_screenshot_path = null;
+    let payment_screenshot_url = null;
     if (file) {
       const normalized = await normalizeProofImage(file);
       const path = `payments/${record.ref_code}/${normalized.filename}`;
-      const up = await fetch(`${url}/storage/v1/object/payment-proofs/${path}`, {
-        method: "POST",
-        headers: {
-          apikey: key,
-          Authorization: `Bearer ${key}`,
-          "Content-Type": "image/jpeg",
-          "x-upsert": "true",
-        },
-        body: normalized.blob,
-      });
+      const up = await fetch(
+        `${url}/storage/v1/object/payment-proofs/${encodeURIComponent(path).replace(/%2F/g, "/")}`,
+        {
+          method: "POST",
+          headers: {
+            apikey: key,
+            Authorization: `Bearer ${key}`,
+            "Content-Type": "image/jpeg",
+            Prefer: "return=minimal",
+          },
+          body: normalized.blob,
+        }
+      );
       if (!up.ok) {
         let detail = "";
         try {
           detail = await up.text();
         } catch (_) {}
         console.error("Storage upload failed", up.status, detail);
-        throw new Error(
-          "Screenshot upload failed. Please try again with a gallery photo (JPG/PNG)."
-        );
+        // Fallback: keep compressed data-URL on the row so registration still works
+        // while storage RLS is being fixed.
+        if (record.payment_screenshot_data && String(record.payment_screenshot_data).length < 900000) {
+          payment_screenshot_url = record.payment_screenshot_data;
+          payment_screenshot_path = `inline:${normalized.filename}`;
+          console.warn("Using inline screenshot fallback");
+        } else {
+          throw new Error(
+            "Screenshot upload blocked by storage permissions. Ask organisers to run FIX-STORAGE-RLS.sql, then retry."
+          );
+        }
+      } else {
+        payment_screenshot_path = path;
       }
-      payment_screenshot_path = path;
     }
 
     const body = {
@@ -439,6 +452,7 @@
       payment_scanner_id: record.payment_scanner_id,
       fee_expected: record.fee_expected,
       payment_screenshot_path,
+      payment_screenshot_url,
       status: "pending",
       ref_code: record.ref_code,
     };

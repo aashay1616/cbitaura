@@ -193,9 +193,18 @@
 
     body.innerHTML = list
       .map((r) => {
-        const proof = r.payment_screenshot_data
-          ? `<a href="${r.payment_screenshot_data}" target="_blank" rel="noopener">View screenshot</a>`
-          : escapeHtml(r.payment_screenshot_path || "—");
+        let proof = "—";
+        if (r.payment_screenshot_data) {
+          proof = `<a href="${r.payment_screenshot_data}" target="_blank" rel="noopener">View screenshot</a>`;
+        } else if (r.payment_screenshot_url && String(r.payment_screenshot_url).startsWith("data:")) {
+          proof = `<a href="${r.payment_screenshot_url}" target="_blank" rel="noopener">View screenshot</a>`;
+        } else if (r.payment_screenshot_path && !String(r.payment_screenshot_path).startsWith("inline:")) {
+          proof = `<button type="button" class="btn btn-ghost act-proof" data-path="${escapeHtml(
+            r.payment_screenshot_path
+          )}" style="padding:0.35rem 0.6rem;font-size:0.75rem">View screenshot</button>`;
+        } else if (r.payment_screenshot_path) {
+          proof = escapeHtml(r.payment_screenshot_path);
+        }
         return `<tr>
           <td><code>${escapeHtml(r.ref_code)}</code><br><small style="color:var(--text-3)">${escapeHtml((r.created_at || "").slice(0, 16))}</small></td>
           <td><strong>${escapeHtml(r.college_name)}</strong><br>${escapeHtml(sportName(r.sport))} · ${escapeHtml(r.category)}
@@ -238,6 +247,24 @@
           refresh();
         } catch (e) {
           alert("Error: " + (e.message || e));
+        }
+      });
+    });
+    body.querySelectorAll(".act-proof").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const path = btn.dataset.path;
+        if (!path || !CFG.SUPABASE_URL) return;
+        try {
+          const res = await fetch(
+            `${CFG.SUPABASE_URL}/storage/v1/object/payment-proofs/${path}`,
+            { headers: authHeaders() }
+          );
+          if (!res.ok) throw new Error(await res.text());
+          const blob = await res.blob();
+          const obj = URL.createObjectURL(blob);
+          window.open(obj, "_blank", "noopener");
+        } catch (e) {
+          alert("Could not open screenshot: " + (e.message || e));
         }
       });
     });
