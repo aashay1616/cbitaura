@@ -1349,20 +1349,45 @@ body.has-preview-banner .hero-cinematic { padding-top: calc(var(--nav-h) + var(-
   border: 1px solid var(--line);
   color: var(--text-2);
 }
-.pay-box {
+.pay-box-stack {
   display: grid;
-  grid-template-columns: 220px 1fr;
-  gap: 1.25rem;
+  grid-template-columns: minmax(260px, 320px) 1fr;
+  gap: 1.5rem;
   align-items: start;
-  padding: 1.15rem;
+  padding: 1.25rem;
   border-radius: 16px;
-  border: 1px dashed var(--line-strong);
+  border: 1px solid var(--line-strong);
   background: rgba(91, 140, 255, 0.06);
   margin: 1rem 0;
 }
-.pay-qr-col { display: flex; flex-direction: column; gap: 0.65rem; align-items: stretch; }
+.pay-qr-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  align-items: center;
+  text-align: center;
+}
+.pay-qr-frame {
+  width: 100%;
+  max-width: 300px;
+  aspect-ratio: 1 / 1;
+  background: #fff;
+  border-radius: 16px;
+  padding: 14px;
+  box-sizing: border-box;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.08);
+}
+.pay-qr-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  background: #fff;
+}
 .pay-scanner-tabs {
-  display: flex; flex-wrap: wrap; gap: 0.4rem;
+  display: flex; flex-wrap: wrap; gap: 0.4rem; justify-content: center;
 }
 .pay-scanner-tabs button {
   font: inherit; font-size: 0.72rem; font-weight: 600;
@@ -1375,39 +1400,18 @@ body.has-preview-banner .hero-cinematic { padding-top: calc(var(--nav-h) + var(-
   border-color: var(--blue);
   color: var(--blue-soft);
 }
-.pay-box img {
-  width: 220px;
-  height: 220px;
-  object-fit: contain;
-  border-radius: 12px;
-  background: #fff;
-  padding: 10px;
-  display: block;
-  box-sizing: border-box;
-}
-.pay-box .pay-placeholder {
-  width: 220px;
-  height: 220px;
-  border-radius: 12px;
-  border: 1px solid var(--line);
-  display: flex; align-items: center; justify-content: center;
-  text-align: center;
-  font-size: 0.75rem;
-  color: var(--text-3);
-  padding: 0.75rem;
-  background: #0a0e16;
-  box-sizing: border-box;
-}
 .pay-scanner-label {
-  font-size: 0.78rem; color: var(--text-2); margin: 0; font-weight: 600;
+  font-size: 0.9rem; color: var(--text); margin: 0; font-weight: 700;
 }
 .pay-upi-id {
-  font-size: 0.85rem; color: var(--text); margin: 0;
-  padding: 0.55rem 0.7rem;
+  font-size: 0.88rem; color: var(--text); margin: 0;
+  padding: 0.6rem 0.75rem;
   border-radius: 10px;
   background: rgba(91, 140, 255, 0.12);
   border: 1px solid var(--line-strong);
   word-break: break-all;
+  width: 100%;
+  box-sizing: border-box;
 }
 .pay-upi-id strong { color: var(--blue-soft); font-weight: 700; }
 .pay-scan-note {
@@ -1416,11 +1420,21 @@ body.has-preview-banner .hero-cinematic { padding-top: calc(var(--nav-h) + var(-
   border-radius: 12px;
   background: rgba(255, 193, 77, 0.1);
   border: 1px solid rgba(255, 193, 77, 0.25);
+  text-align: left;
+  width: 100%;
+  box-sizing: border-box;
 }
 .pay-scan-note strong { color: #ffc14d; }
-@media (max-width: 560px) {
-  .pay-box { grid-template-columns: 1fr; justify-items: center; text-align: center; }
-  .pay-qr-col { align-items: center; }
+.pay-fields { min-width: 0; }
+@media (max-width: 720px) {
+  .pay-box-stack {
+    grid-template-columns: 1fr;
+    justify-items: stretch;
+  }
+  .pay-qr-frame {
+    max-width: 320px;
+    margin: 0 auto;
+  }
 }
 .form-actions {
   display: flex;

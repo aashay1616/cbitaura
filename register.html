@@ -161,26 +161,23 @@
               <span class="fee-sub" id="fee-sub">Costs will be published when registrations open.</span>
             </div>
 
-            <div class="pay-box">
-              <div class="pay-qr-col">
+            <div class="pay-box pay-box-stack">
+              <div class="pay-qr-panel">
                 <div class="pay-scanner-tabs" id="payment-scanner-tabs" hidden></div>
-                <img id="payment-qr" src="assets/payment-qr.png" alt="Official payment QR" hidden />
-                <div class="pay-placeholder" id="payment-qr-ph">
-                  Official payment QR<br />will appear here<br />
-                  <small>Place file at assets/payment-qr.png</small>
+                <div class="pay-qr-frame">
+                  <img id="payment-qr" src="assets/payment-qr.png?v=saiteja3" alt="Scan to pay Saiteja Pampati" width="1000" height="1000" />
                 </div>
-                <p class="pay-scanner-label" id="payment-scanner-label" hidden></p>
+                <p class="pay-scanner-label" id="payment-scanner-label">Saiteja Pampati</p>
                 <p class="pay-upi-id" id="payment-upi-id">
                   UPI ID: <strong>6303916754-2@ybl</strong>
                 </p>
                 <p class="pay-scan-note" id="payment-scan-note">
                   <strong>Paying more than ₹2,000?</strong>
-                  Many UPI apps block scanning a QR from the same phone above ₹2,000.
-                  Use <strong>another phone/device</strong> to scan this QR (or pay via UPI ID),
-                  then upload the payment screenshot here.
+                  Use <strong>another phone</strong> to scan this QR (same-phone UPI scan often fails above ₹2,000),
+                  or pay to the UPI ID above, then upload the screenshot.
                 </p>
               </div>
-              <div>
+              <div class="pay-fields">
                 <div class="field">
                   <label for="payment_txn">UPI / Transaction / UTR ID</label>
                   <input id="payment_txn" name="payment_txn" placeholder="As shown on your payment app" autocomplete="off" />

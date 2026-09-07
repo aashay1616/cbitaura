@@ -178,29 +178,17 @@
 
   function showScanner(sc) {
     const img = $("payment-qr");
-    const ph = $("payment-qr-ph");
     const label = $("payment-scanner-label");
     const note = $("payment-scan-note");
     if (!img || !sc) return;
     activeScannerId = sc.id;
-    img.onload = () => {
-      img.hidden = false;
-      if (ph) ph.hidden = true;
-    };
-    img.onerror = () => {
-      img.hidden = true;
-      if (ph) ph.hidden = false;
-    };
     const path = sc.file || CFG.PAYMENT_QR_PATH || "assets/payment-qr.png";
-    img.src = path + (path.includes("?") ? "&" : "?") + "v=" + Date.now();
-    img.alt = sc.label || "Official payment QR";
+    img.hidden = false;
+    img.src = path + (path.includes("?") ? "&" : "?") + "v=saiteja-upi-v4";
+    img.alt = "Scan to pay " + (sc.upiName || sc.label || "AURA");
     if (label) {
       label.hidden = false;
-      const parts = [];
-      if (sc.label) parts.push(sc.label);
-      if (sc.upiName) parts.push(sc.upiName);
-      if (sc.upiId) parts.push(`UPI: ${sc.upiId}`);
-      label.textContent = parts.join(" · ");
+      label.textContent = sc.upiName || sc.label || "Official scanner";
     }
     if (note && CFG.PAYMENT_SCAN_NOTE) {
       note.innerHTML = CFG.PAYMENT_SCAN_NOTE;
