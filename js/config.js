@@ -25,10 +25,10 @@ window.AURA_CONFIG = {
    */
   PAYMENT_QRS: [
     {
-      id: "aashay-phonepe",
-      label: "Scanner 1 · Aashay (PhonePe)",
+      id: "saiteja-phonepe",
+      label: "Official scanner · Saiteja Pampati (PhonePe)",
       file: "assets/payment-qr.png",
-      upiName: "AASHAY RAJ GRANDHI",
+      upiName: "Saiteja Pampati",
     },
     // Example for later:
     // { id: "scanner-2", label: "Scanner 2 · …", file: "assets/payment-qrs/qr-2.png", upiName: "…" },

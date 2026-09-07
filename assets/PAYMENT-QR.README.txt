@@ -11,7 +11,8 @@ Configured in js/config.js → PAYMENT_QRS (array).
 Add a new object there when you have Scanner 2 / 3.
 
 Current:
-  Scanner 1 · Aashay (PhonePe) · AASHAY RAJ GRANDHI
+  Official scanner · Saiteja Pampati (PhonePe)
+  Full PhonePe receive screenshot at assets/payment-qr.png
 
 Form shows a note: payments over ₹2,000 should be scanned
 from another device (UPI same-phone limit).

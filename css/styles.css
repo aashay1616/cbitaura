@@ -1351,7 +1351,7 @@ body.has-preview-banner .hero-cinematic { padding-top: calc(var(--nav-h) + var(-
 }
 .pay-box {
   display: grid;
-  grid-template-columns: 200px 1fr;
+  grid-template-columns: minmax(220px, 280px) 1fr;
   gap: 1.25rem;
   align-items: start;
   padding: 1.15rem;
@@ -1376,14 +1376,21 @@ body.has-preview-banner .hero-cinematic { padding-top: calc(var(--nav-h) + var(-
   color: var(--blue-soft);
 }
 .pay-box img {
-  width: 180px; height: 180px;
+  width: 100%;
+  max-width: 280px;
+  height: auto;
+  max-height: 420px;
   object-fit: contain;
+  object-position: top center;
   border-radius: 12px;
-  background: #fff;
-  padding: 6px;
+  background: #5f259f;
+  padding: 0;
+  display: block;
 }
 .pay-box .pay-placeholder {
-  width: 180px; height: 180px;
+  width: 100%;
+  max-width: 280px;
+  min-height: 280px;
   border-radius: 12px;
   border: 1px solid var(--line);
   display: flex; align-items: center; justify-content: center;
