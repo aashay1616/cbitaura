@@ -319,6 +319,79 @@
     localStorage.setItem(key, JSON.stringify(arr));
   }
 
+  /**
+   * Mobile galleries send HEIC / huge PNGs / odd MIME types.
+   * Normalize everything to a JPEG blob browsers + Supabase accept.
+   */
+  async function normalizeProofImage(file) {
+    if (!file) return null;
+
+    const loadBitmap = async () => {
+      if (typeof createImageBitmap === "function") {
+        try {
+          return await createImageBitmap(file);
+        } catch (_) {
+          /* fall through */
+        }
+      }
+      return await new Promise((resolve, reject) => {
+        const url = URL.createObjectURL(file);
+        const img = new Image();
+        img.onload = () => {
+          URL.revokeObjectURL(url);
+          resolve(img);
+        };
+        img.onerror = () => {
+          URL.revokeObjectURL(url);
+          reject(new Error("Could not read this image. Try JPG/PNG from gallery."));
+        };
+        img.src = url;
+      });
+    };
+
+    let bitmap;
+    try {
+      bitmap = await loadBitmap();
+    } catch (err) {
+      // Last resort: upload original if it's already a common type
+      const t = (file.type || "").toLowerCase();
+      if (t.includes("jpeg") || t.includes("jpg") || t.includes("png") || t.includes("webp")) {
+        return { blob: file, filename: file.name.replace(/[^\w.\-]+/g, "_") || "payment.jpg" };
+      }
+      throw err;
+    }
+
+    const maxSide = 1920;
+    let w = bitmap.width || bitmap.naturalWidth;
+    let h = bitmap.height || bitmap.naturalHeight;
+    if (!w || !h) {
+      if (bitmap.close) bitmap.close();
+      throw new Error("Invalid image dimensions.");
+    }
+    const scale = Math.min(1, maxSide / Math.max(w, h));
+    w = Math.max(1, Math.round(w * scale));
+    h = Math.max(1, Math.round(h * scale));
+
+    const canvas = document.createElement("canvas");
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext("2d");
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(0, 0, w, h);
+    ctx.drawImage(bitmap, 0, 0, w, h);
+    if (bitmap.close) bitmap.close();
+
+    const toBlob = (q) =>
+      new Promise((resolve) => canvas.toBlob((b) => resolve(b), "image/jpeg", q));
+
+    let blob = await toBlob(0.85);
+    if (blob && blob.size > 2.5 * 1024 * 1024) blob = await toBlob(0.72);
+    if (blob && blob.size > 2.5 * 1024 * 1024) blob = await toBlob(0.58);
+    if (!blob) throw new Error("Could not process screenshot. Try another photo.");
+
+    return { blob, filename: `payment-${Date.now()}.jpg` };
+  }
+
   async function submitLive(record, file) {
     const url = CFG.SUPABASE_URL;
     const key = CFG.SUPABASE_ANON_KEY;
@@ -326,19 +399,28 @@
 
     let payment_screenshot_path = null;
     if (file) {
-      const safeName = file.name.replace(/[^\w.\-]+/g, "_");
-      const path = `payments/${record.ref_code}/${Date.now()}-${safeName}`;
+      const normalized = await normalizeProofImage(file);
+      const path = `payments/${record.ref_code}/${normalized.filename}`;
       const up = await fetch(`${url}/storage/v1/object/payment-proofs/${path}`, {
         method: "POST",
         headers: {
           apikey: key,
           Authorization: `Bearer ${key}`,
-          "Content-Type": file.type || "image/jpeg",
+          "Content-Type": "image/jpeg",
           "x-upsert": "true",
         },
-        body: file,
+        body: normalized.blob,
       });
-      if (!up.ok) throw new Error("Screenshot upload failed — try a smaller image");
+      if (!up.ok) {
+        let detail = "";
+        try {
+          detail = await up.text();
+        } catch (_) {}
+        console.error("Storage upload failed", up.status, detail);
+        throw new Error(
+          "Screenshot upload failed. Please try again with a gallery photo (JPG/PNG)."
+        );
+      }
       payment_screenshot_path = path;
     }
 
@@ -484,17 +566,29 @@
       if (btn) btn.disabled = true;
 
       try {
+        let uploadFile = file;
         if (file) {
+          // Always normalize for demo preview + live upload (mobile-friendly)
+          try {
+            const normalized = await normalizeProofImage(file);
+            uploadFile = new File([normalized.blob], normalized.filename, {
+              type: "image/jpeg",
+            });
+            record.payment_screenshot_name = normalized.filename;
+          } catch (normErr) {
+            console.warn("normalizeProofImage", normErr);
+            uploadFile = file;
+          }
           record.payment_screenshot_data = await new Promise((resolve, reject) => {
             const r = new FileReader();
             r.onload = () => resolve(r.result);
             r.onerror = reject;
-            r.readAsDataURL(file);
+            r.readAsDataURL(uploadFile);
           });
         }
 
         if (CFG.SUPABASE_URL && CFG.SUPABASE_ANON_KEY && open) {
-          await submitLive(record, file);
+          await submitLive(record, uploadFile);
         } else {
           demoStore(record);
         }

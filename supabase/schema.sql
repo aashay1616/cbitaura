@@ -74,9 +74,17 @@ create trigger registrations_ref
   before insert on public.registrations
   for each row execute function public.gen_ref_code();
 
-insert into storage.buckets (id, name, public)
-values ('payment-proofs', 'payment-proofs', false)
-on conflict (id) do nothing;
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values (
+  'payment-proofs',
+  'payment-proofs',
+  false,
+  10485760, -- 10 MB
+  array['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/heic', 'image/heif', 'application/octet-stream']
+)
+on conflict (id) do update set
+  file_size_limit = excluded.file_size_limit,
+  allowed_mime_types = excluded.allowed_mime_types;
 
 alter table public.registrations enable row level security;
 

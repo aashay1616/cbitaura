@@ -1301,6 +1301,13 @@ body.has-preview-banner .hero-cinematic { padding-top: calc(var(--nav-h) + var(-
   border-color: var(--line-strong);
 }
 .field { margin-bottom: 1rem; }
+.field-hint {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.75rem;
+  color: var(--text-3);
+  line-height: 1.4;
+}
 .field label {
   display: block;
   font-size: 0.72rem;

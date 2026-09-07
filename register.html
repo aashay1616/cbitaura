@@ -194,7 +194,14 @@
                 </div>
                 <div class="field">
                   <label for="payment_file">Payment screenshot</label>
-                  <input id="payment_file" name="payment_file" type="file" accept="image/*" />
+                  <input
+                    id="payment_file"
+                    name="payment_file"
+                    type="file"
+                    accept="image/*,image/jpeg,image/png,image/webp,image/heic,image/heif,.jpg,.jpeg,.png,.webp,.heic,.heif"
+                    capture="environment"
+                  />
+                  <small class="field-hint">Any phone gallery photo is fine (JPG, PNG, HEIC). We’ll compress it automatically.</small>
                 </div>
               </div>
             </div>
