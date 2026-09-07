@@ -79,16 +79,17 @@ window.AURA_CONFIG = {
    *
    * Basketball fees set as decided; others TBA until you confirm.
    */
+  // Fees from official AURA 2026 fee sheet (Sep 2026)
   SPORTS: [
-    { id: "cricket", name: "Cricket", categories: ["men"], feeRupees: null },
+    { id: "cricket", name: "Cricket", categories: ["men"], feeRupees: 4000 },
     {
       id: "basketball",
       name: "Basketball",
       categories: ["men", "women"],
       feeRupees: null,
-      feeByCategory: { men: 3500, women: 2000 },
+      feeByCategory: { men: 3500, women: 2500 },
     },
-    { id: "football", name: "Football", categories: ["men"], feeRupees: null },
+    { id: "football", name: "Football", categories: ["men"], feeRupees: 4000 },
     {
       id: "volleyball",
       name: "Volleyball",
@@ -100,15 +101,15 @@ window.AURA_CONFIG = {
       id: "kabaddi",
       name: "Kabaddi",
       categories: ["men"],
-      feeRupees: 2000,
+      feeRupees: 2500,
     },
-    { id: "throwball", name: "Throwball", categories: ["women"], feeRupees: null },
+    { id: "throwball", name: "Throwball", categories: ["women"], feeRupees: 2500 },
     {
       id: "badminton",
       name: "Badminton",
       categories: ["men", "women"],
       feeRupees: null,
-      feeByCategory: { men: 2500, women: 2000 },
+      feeByCategory: { men: 2000, women: 1500 },
     },
     {
       id: "table-tennis",
@@ -182,7 +183,9 @@ window.AURA_CONFIG = {
       file: "assets/rules/chess-rules.png",
       title: "Open · Fees, Swiss format, FIDE rules, time control, and captains.",
     },
-    // Still waiting:
-    // football: { file: "assets/rules/football-rules.png", title: "Football · AURA 2026" },
+    football: {
+      file: "assets/rules/football-rules.png",
+      title: "Men · Eligibility, format, duration, extras, and contacts.",
+    },
   },
 };
