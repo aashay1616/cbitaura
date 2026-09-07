@@ -103,7 +103,7 @@ window.AURA_CONFIG = {
       categories: ["men"],
       feeRupees: 2500,
     },
-    { id: "throwball", name: "Throwball", categories: ["women"], feeRupees: 2700 },
+    { id: "throwball", name: "Throwball", categories: ["women"], feeRupees: 2500 },
     {
       id: "badminton",
       name: "Badminton",
