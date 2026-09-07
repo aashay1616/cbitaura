@@ -79,9 +79,9 @@ window.AURA_CONFIG = {
    *
    * Basketball fees set as decided; others TBA until you confirm.
    */
-  // Fees from official AURA 2026 fee sheet (Sep 2026)
+  // Fees — latest captain / CC list
   SPORTS: [
-    { id: "cricket", name: "Cricket", categories: ["men"], feeRupees: 4000 },
+    { id: "cricket", name: "Cricket", categories: ["men"], feeRupees: 6000 },
     {
       id: "basketball",
       name: "Basketball",
@@ -95,41 +95,42 @@ window.AURA_CONFIG = {
       name: "Volleyball",
       categories: ["men", "women"],
       feeRupees: null,
-      feeByCategory: { men: 3000, women: 2000 },
+      feeByCategory: { men: 2700, women: 2000 },
     },
     {
       id: "kabaddi",
       name: "Kabaddi",
       categories: ["men"],
-      feeRupees: 2500,
+      feeRupees: 2700,
     },
-    { id: "throwball", name: "Throwball", categories: ["women"], feeRupees: 2500 },
+    { id: "throwball", name: "Throwball", categories: ["women"], feeRupees: 2700 },
     {
       id: "badminton",
       name: "Badminton",
       categories: ["men", "women"],
       feeRupees: null,
-      feeByCategory: { men: 2000, women: 1500 },
+      feeByCategory: { men: 2500, women: 2000 },
     },
     {
       id: "table-tennis",
       name: "Table Tennis",
       categories: ["men", "women"],
       feeRupees: null,
-      feeByCategory: { men: 1500, women: 1500 },
+      feeByCategory: { men: 2000, women: 2000 },
     },
     {
       id: "chess",
       name: "Chess",
       categories: ["men", "women"],
-      feeRupees: 500,
+      feeRupees: null,
+      feeByCategory: { men: 1100, women: 1100 },
     },
     {
       id: "carroms",
       name: "Carroms",
       categories: ["men", "women"],
       feeRupees: null,
-      feeByCategory: { men: 1000, women: 1000 },
+      feeByCategory: { men: 1100, women: 1000 },
     },
   ],
 
