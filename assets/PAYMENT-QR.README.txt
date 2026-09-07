@@ -11,8 +11,10 @@ Configured in js/config.js → PAYMENT_QRS (array).
 Add a new object there when you have Scanner 2 / 3.
 
 Current:
-  Official scanner · Saiteja Pampati (PhonePe)
-  Full PhonePe receive screenshot at assets/payment-qr.png
+  Clean QR only (scannable) · Saiteja Pampati
+  File: assets/payment-qr.png
+  UPI: 6303916754-2@ybl
+  Do NOT use full PhonePe app screenshots — only the QR code image.
 
 Form shows a note: payments over ₹2,000 should be scanned
 from another device (UPI same-phone limit).

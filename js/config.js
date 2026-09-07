@@ -26,7 +26,7 @@ window.AURA_CONFIG = {
   PAYMENT_QRS: [
     {
       id: "saiteja-phonepe",
-      label: "Official scanner · Saiteja Pampati (PhonePe)",
+      label: "Saiteja Pampati",
       file: "assets/payment-qr.png",
       upiName: "Saiteja Pampati",
       upiId: "6303916754-2@ybl",

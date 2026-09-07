@@ -1351,7 +1351,7 @@ body.has-preview-banner .hero-cinematic { padding-top: calc(var(--nav-h) + var(-
 }
 .pay-box {
   display: grid;
-  grid-template-columns: minmax(220px, 280px) 1fr;
+  grid-template-columns: 220px 1fr;
   gap: 1.25rem;
   align-items: start;
   padding: 1.15rem;
@@ -1376,21 +1376,18 @@ body.has-preview-banner .hero-cinematic { padding-top: calc(var(--nav-h) + var(-
   color: var(--blue-soft);
 }
 .pay-box img {
-  width: 100%;
-  max-width: 280px;
-  height: auto;
-  max-height: 420px;
+  width: 220px;
+  height: 220px;
   object-fit: contain;
-  object-position: top center;
   border-radius: 12px;
-  background: #5f259f;
-  padding: 0;
+  background: #fff;
+  padding: 10px;
   display: block;
+  box-sizing: border-box;
 }
 .pay-box .pay-placeholder {
-  width: 100%;
-  max-width: 280px;
-  min-height: 280px;
+  width: 220px;
+  height: 220px;
   border-radius: 12px;
   border: 1px solid var(--line);
   display: flex; align-items: center; justify-content: center;
@@ -1399,6 +1396,7 @@ body.has-preview-banner .hero-cinematic { padding-top: calc(var(--nav-h) + var(-
   color: var(--text-3);
   padding: 0.75rem;
   background: #0a0e16;
+  box-sizing: border-box;
 }
 .pay-scanner-label {
   font-size: 0.78rem; color: var(--text-2); margin: 0; font-weight: 600;
