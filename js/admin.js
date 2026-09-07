@@ -216,7 +216,7 @@
           Scanner: ${escapeHtml(r.payment_scanner_id || "—")}<br>${proof}</td>
           <td><span class="status-pill ${r.status || "pending"}">${escapeHtml(r.status || "pending")}</span></td>
           <td>
-            <button type="button" class="btn btn-primary act-verify" data-ref="${escapeHtml(r.ref_code)}" style="padding:0.4rem 0.7rem;font-size:0.75rem;margin:0.15rem">Verify + email</button>
+            <button type="button" class="btn btn-primary act-verify" data-ref="${escapeHtml(r.ref_code)}" style="padding:0.4rem 0.7rem;font-size:0.75rem;margin:0.15rem">Verify</button>
             <button type="button" class="btn btn-ghost act-reject" data-ref="${escapeHtml(r.ref_code)}" style="padding:0.4rem 0.7rem;font-size:0.75rem;margin:0.15rem">Reject</button>
           </td>
         </tr>`;
@@ -227,7 +227,7 @@
       btn.addEventListener("click", async () => {
         if (
           !confirm(
-            "Mark this team VERIFIED?\n\nLive mode: captain receives a confirmation email."
+            "Mark this team VERIFIED?\n\nRemember to message the captain on Instagram / WhatsApp (no auto-email yet)."
           )
         )
           return;

@@ -1308,6 +1308,32 @@ body.has-preview-banner .hero-cinematic { padding-top: calc(var(--nav-h) + var(-
   color: var(--text-3);
   line-height: 1.4;
 }
+.coord-box {
+  margin: 1rem 0 1.25rem;
+  padding: 0.9rem 1rem;
+  border-radius: 14px;
+  border: 1px solid var(--line-strong);
+  background: rgba(91, 140, 255, 0.08);
+}
+.coord-box .coord-title {
+  margin: 0 0 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--blue-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.coord-box ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.coord-box li {
+  margin: 0.35rem 0;
+  font-size: 0.92rem;
+  color: var(--text);
+}
+.coord-box a { color: var(--blue-soft); }
 .field label {
   display: block;
   font-size: 0.72rem;

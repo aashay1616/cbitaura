@@ -627,10 +627,22 @@
         }
 
         $("final-ref").textContent = record.ref_code;
+        const coords = $("final-coords");
+        if (coords) {
+          const list = CFG.COORDINATORS || [];
+          coords.innerHTML = list.length
+            ? `<p class="coord-title">Coordinate with</p><ul>${list
+                .map(
+                  (c) =>
+                    `<li><strong>${c.name}</strong> · <a href="https://wa.me/${String(c.phone || "").replace(/\D/g, "")}" target="_blank" rel="noopener">${c.phone}</a></li>`
+                )
+                .join("")}</ul>`
+            : "";
+        }
         if (status) {
           status.classList.add("is-ok");
           status.textContent = open
-            ? "Submitted. Status: pending verification."
+            ? "Submitted · pending. Please message @aura_cbit / coordinators with your reference code."
             : "Demo saved on this device. Organisers will verify shortly.";
         }
         goStep(4);
