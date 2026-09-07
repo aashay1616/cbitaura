@@ -37,6 +37,23 @@
     };
   }
 
+  function rosterNames(r) {
+    const p = r && r.players;
+    if (!Array.isArray(p) || !p.length) return [];
+    return p
+      .map((x) => (typeof x === "string" ? x : x && x.name))
+      .map((s) => String(s || "").trim())
+      .filter(Boolean);
+  }
+
+  function rosterSummary(r) {
+    const names = rosterNames(r);
+    if (!names.length) return `<small style="color:var(--text-3)">No squad listed</small>`;
+    return `<button type="button" class="btn btn-ghost act-roster" data-ref="${escapeHtml(
+      r.ref_code || ""
+    )}" style="padding:0.3rem 0.55rem;font-size:0.72rem;margin-top:0.25rem">View squad (${names.length})</button>`;
+  }
+
   function loadDemo() {
     try {
       return JSON.parse(localStorage.getItem("aura2026_registrations") || "[]");
@@ -209,7 +226,8 @@
           <td><code>${escapeHtml(r.ref_code)}</code><br><small style="color:var(--text-3)">${escapeHtml((r.created_at || "").slice(0, 16))}</small></td>
           <td><strong>${escapeHtml(r.college_name)}</strong><br>${escapeHtml(sportName(r.sport))} · ${escapeHtml(r.category)}
           <br><small>PD: ${escapeHtml(r.pd_name || "—")} · ${escapeHtml(r.pd_phone || "")}</small></td>
-          <td>${escapeHtml(r.captain_name)}<br><small>${escapeHtml(r.captain_phone)}<br>${escapeHtml(r.captain_email)}</small></td>
+          <td>${escapeHtml(r.captain_name)}<br><small>${escapeHtml(r.captain_phone)}<br>${escapeHtml(r.captain_email)}</small>
+          <br>${rosterSummary(r)}</td>
           <td>Fee: ${r.fee_expected != null ? "₹" + escapeHtml(r.fee_expected) : "TBA"}<br>
           Paid: ${escapeHtml(r.payment_amount || "—")}<br>
           UTR: ${escapeHtml(r.payment_txn_id || "—")}<br>
@@ -266,6 +284,20 @@
         } catch (e) {
           alert("Could not open screenshot: " + (e.message || e));
         }
+      });
+    });
+    body.querySelectorAll(".act-roster").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const ref = btn.dataset.ref;
+        const row = (cache || []).find((x) => x.ref_code === ref);
+        const names = rosterNames(row || {});
+        const title = row
+          ? `${row.college_name || ""} · ${sportName(row.sport)} · ${row.category || ""}`
+          : ref;
+        alert(
+          `Squad (${names.length}) — ${title}\nRef: ${ref}\n\n` +
+            (names.length ? names.map((n, i) => `${i + 1}. ${n}`).join("\n") : "No names saved.")
+        );
       });
     });
   }
@@ -365,6 +397,8 @@
           "captain_email",
           "pd_name",
           "pd_phone",
+          "squad_names",
+          "squad_count",
           "fee_expected",
           "payment_txn_id",
           "payment_amount",
@@ -372,7 +406,9 @@
         ];
         const lines = [headers.join(",")];
         rows.forEach((r) => {
-          lines.push(headers.map((h) => `"${String(r[h] ?? "").replace(/"/g, '""')}"`).join(","));
+          const names = rosterNames(r);
+          const row = { ...r, squad_names: names.join(" | "), squad_count: names.length };
+          lines.push(headers.map((h) => `"${String(row[h] ?? "").replace(/"/g, '""')}"`).join(","));
         });
         const blob = new Blob([lines.join("\n")], { type: "text/csv" });
         const a = document.createElement("a");

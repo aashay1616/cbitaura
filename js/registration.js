@@ -245,15 +245,34 @@
     showScanner(scanners[0]);
   }
 
+  function parseRosterNames(raw) {
+    return String(raw || "")
+      .split(/[\n,;]+/)
+      .map((s) => s.trim())
+      .filter(Boolean);
+  }
+
+  function updateRosterHint() {
+    const hint = $("roster-hint");
+    const s = currentSport();
+    if (!hint) return;
+    const sport = s ? s.name : "this sport";
+    hint.innerHTML =
+      `List every player who will represent your college in <strong>${sport}</strong>. ` +
+      `These must be the same athletes who report for matches. One full name per line.`;
+  }
+
   function fillReview() {
     const s = currentSport();
     const el = $("reg-review-body");
     if (!el || !s) return;
+    const roster = parseRosterNames($("roster_names") && $("roster_names").value);
     el.innerHTML = `
       <strong>${s.name}</strong> · ${categorySel.value}<br>
       ${$("college").value.trim()}<br>
       ${$("captain_name").value.trim()} · ${$("captain_phone").value.trim()} · ${$("captain_email").value.trim()}<br>
-      PD: ${$("pd_name").value.trim()} · ${$("pd_phone").value.trim()}
+      PD: ${$("pd_name").value.trim()} · ${$("pd_phone").value.trim()}<br>
+      Squad: <strong>${roster.length}</strong> player${roster.length === 1 ? "" : "s"} listed
     `;
   }
 
@@ -303,6 +322,16 @@
     const pdPhone = $("pd_phone");
     if (!isValidPhone(pdPhone.value)) {
       return setFieldError(pdPhone, "Enter a valid 10-digit mobile number");
+    }
+
+    const rosterEl = $("roster_names");
+    clearFieldError(rosterEl);
+    const roster = parseRosterNames(rosterEl && rosterEl.value);
+    if (!rosterEl || !roster.length) {
+      return setFieldError(
+        rosterEl,
+        "List your players (one name per line). These should be the athletes representing your college."
+      );
     }
 
     return true;
@@ -446,7 +475,7 @@
       captain_email: record.captain_email,
       pd_name: record.pd_name,
       pd_phone: record.pd_phone,
-      players: [],
+      players: Array.isArray(record.players) ? record.players : [],
       payment_txn_id: record.payment_txn_id,
       payment_amount: record.payment_amount,
       fee_expected: record.fee_expected,
@@ -513,6 +542,7 @@
       if ($("summary-sport")) {
         $("summary-sport").textContent = `${s.name} · ${categorySel.value}`;
       }
+      updateRosterHint();
       goStep(2);
     });
 
@@ -531,7 +561,7 @@
   categorySel && categorySel.addEventListener("change", updateFeeUI);
 
   // Clear errors on input
-  ["college", "captain_name", "captain_phone", "captain_email", "pd_name", "pd_phone"].forEach((id) => {
+  ["college", "captain_name", "captain_phone", "captain_email", "pd_name", "pd_phone", "roster_names"].forEach((id) => {
     const el = $(id);
     if (el) el.addEventListener("input", () => clearFieldError(el));
   });
@@ -585,6 +615,9 @@
         captain_email: $("captain_email").value.trim(),
         pd_name: $("pd_name").value.trim(),
         pd_phone: $("pd_phone").value.trim(),
+        players: parseRosterNames($("roster_names") && $("roster_names").value).map((name) => ({
+          name,
+        })),
         payment_txn_id: $("payment_txn").value.trim(),
         payment_amount: $("payment_amount").value.trim(),
         payment_scanner_id:
