@@ -567,6 +567,12 @@
     const el = $(id);
     if (el) el.addEventListener("input", () => clearFieldError(el));
   });
+  const payFile = $("payment_file");
+  if (payFile) payFile.addEventListener("change", () => clearFieldError(payFile));
+  ["payment_txn", "payment_amount"].forEach((id) => {
+    const el = $(id);
+    if (el) el.addEventListener("input", () => clearFieldError(el));
+  });
 
   $("submit-reg") &&
     $("submit-reg").addEventListener("click", async () => {
@@ -582,28 +588,31 @@
         status.textContent = "";
       }
 
-      if (open) {
-        if (fee != null && !$("payment_amount").value.trim()) {
-          if (status) {
-            status.classList.add("is-error");
-            status.textContent = "Enter the amount you paid.";
-          }
-          return;
+      // Payment proof is always compulsory
+      clearFieldError(fileInput);
+      clearFieldError($("payment_txn"));
+      clearFieldError($("payment_amount"));
+
+      if (!file) {
+        if (status) {
+          status.classList.add("is-error");
+          status.textContent = "Payment screenshot is required.";
         }
-        if (!file) {
-          if (status) {
-            status.classList.add("is-error");
-            status.textContent = "Please upload a payment screenshot.";
-          }
-          return;
+        return setFieldError(fileInput, "Upload your payment screenshot to continue.");
+      }
+      if (!$("payment_txn").value.trim()) {
+        if (status) {
+          status.classList.add("is-error");
+          status.textContent = "Transaction / UTR ID is required.";
         }
-        if (!$("payment_txn").value.trim()) {
-          if (status) {
-            status.classList.add("is-error");
-            status.textContent = "Please enter the transaction / UTR ID.";
-          }
-          return;
+        return setFieldError($("payment_txn"), "Enter the UPI / UTR ID from your payment app.");
+      }
+      if (fee != null && !$("payment_amount").value.trim()) {
+        if (status) {
+          status.classList.add("is-error");
+          status.textContent = "Enter the amount you paid.";
         }
+        return setFieldError($("payment_amount"), "Enter the amount you paid.");
       }
 
       const record = {
