@@ -489,11 +489,13 @@
       body.payment_scanner_id = record.payment_scanner_id;
     }
 
+    // IMPORTANT: use return=minimal so INSERT does not also require a SELECT RLS policy.
+    // (return=representation was causing "violates row-level security" even when insert was allowed.)
     const postHeaders = {
       apikey: key,
       Authorization: `Bearer ${key}`,
       "Content-Type": "application/json",
-      Prefer: "return=representation",
+      Prefer: "return=minimal",
     };
     let res = await fetch(`${url}/rest/v1/registrations`, {
       method: "POST",
@@ -516,7 +518,7 @@
         throw new Error(err2 || "Submit failed");
       }
     }
-    const saved = (await res.json())[0] || body;
+    const saved = body;
 
     // Ping organisers (email alert) — non-blocking if function not deployed yet
     try {
