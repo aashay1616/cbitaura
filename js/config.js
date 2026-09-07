@@ -95,13 +95,13 @@ window.AURA_CONFIG = {
       name: "Volleyball",
       categories: ["men", "women"],
       feeRupees: null,
-      feeByCategory: { men: 2700, women: 2000 },
+      feeByCategory: { men: 2500, women: 2000 },
     },
     {
       id: "kabaddi",
       name: "Kabaddi",
       categories: ["men"],
-      feeRupees: 2700,
+      feeRupees: 2500,
     },
     { id: "throwball", name: "Throwball", categories: ["women"], feeRupees: 2700 },
     {
@@ -123,14 +123,14 @@ window.AURA_CONFIG = {
       name: "Chess",
       categories: ["men", "women"],
       feeRupees: null,
-      feeByCategory: { men: 1100, women: 1100 },
+      feeByCategory: { men: 1000, women: 1000 },
     },
     {
       id: "carroms",
       name: "Carroms",
       categories: ["men", "women"],
       feeRupees: null,
-      feeByCategory: { men: 1100, women: 1000 },
+      feeByCategory: { men: 1000, women: 1000 },
     },
   ],
 

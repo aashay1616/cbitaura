@@ -30,9 +30,9 @@ Static site on GitHub Pages. Registration pipeline fully scaffolded; **public re
 | Supabase + Resend emails | **Waiting** (code ready) |
 | `REGISTRATION_OPEN` | **false** |
 
-**Master checklist:** [GO-LIVE.md](./GO-LIVE.md)  
-**Admin + email explained:** [ADMIN-AND-EMAIL.md](./ADMIN-AND-EMAIL.md)  
-**Registration technical notes:** [REGISTRATION-SYSTEM.md](./REGISTRATION-SYSTEM.md)
+**Master checklist:** [GO-LIVE.md](./_ops/GO-LIVE.md)  
+**Admin + email explained:** [ADMIN-AND-EMAIL.md](./_ops/ADMIN-AND-EMAIL.md)  
+**Registration technical notes:** [REGISTRATION-SYSTEM.md](./_ops/REGISTRATION-SYSTEM.md)
 
 ---
 

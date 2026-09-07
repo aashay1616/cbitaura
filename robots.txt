@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /*.md$
+Disallow: /supabase/
+Disallow: /_ops/
+Disallow: /_local-only/
+
+Sitemap: https://cbitaura.in/index.html

@@ -18,3 +18,9 @@ assets/sports/_snow_backup/
 assets/sports/_cand_*.jpg
 assets/videos/_analysis/
 
+
+_local-only/
+.claude/
+body.json
+*.pyc
+

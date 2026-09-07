@@ -503,7 +503,7 @@
           status.classList.add("is-ok");
           status.textContent = open
             ? "Submitted. Status: pending verification."
-            : "Demo saved on this device. Open admin.html to verify.";
+            : "Demo saved on this device. Organisers will verify shortly.";
         }
         goStep(4);
       } catch (err) {
