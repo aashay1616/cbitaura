@@ -82,15 +82,31 @@ window.AURA_CONFIG = {
    */
   // Fees — latest captain / CC list
   SPORTS: [
-    { id: "cricket", name: "Cricket", categories: ["men"], feeRupees: 6000 },
+    {
+      id: "cricket",
+      name: "Cricket",
+      categories: ["men"],
+      feeRupees: 6000,
+      eventDates: "Starts 26 September 2026",
+      eventDatesNote:
+        "Cricket begins on 26 September 2026 (ahead of the main fest window of 7–9 October).",
+    },
     {
       id: "basketball",
       name: "Basketball",
       categories: ["men", "women"],
       feeRupees: null,
-      feeByCategory: { men: 3500, women: 2500 },
+      feeByCategory: { men: 3500, women: 3000 },
     },
-    { id: "football", name: "Football", categories: ["men"], feeRupees: 4000 },
+    {
+      id: "football",
+      name: "Football",
+      categories: ["men"],
+      feeRupees: 4000,
+      eventDates: "6–8 October 2026",
+      eventDatesNote:
+        "Football is scheduled 6–8 October 2026 (ahead of the main fest window of 7–9 October).",
+    },
     {
       id: "volleyball",
       name: "Volleyball",
@@ -155,7 +171,7 @@ window.AURA_CONFIG = {
     },
     cricket: {
       file: "assets/rules/cricket-rules.png",
-      title: "Men · Eligibility, squad lock, T20 format, powerplay, and contacts.",
+      title: "Men · Starts 26 September 2026 · Fee, format, and contacts.",
     },
     volleyball: {
       file: "assets/rules/volleyball-rules.png",
@@ -187,7 +203,7 @@ window.AURA_CONFIG = {
     },
     football: {
       file: "assets/rules/football-rules.png",
-      title: "Men · Eligibility, format, duration, extras, and contacts.",
+      title: "Men · 6–8 October 2026 · Eligibility, format, and contacts.",
     },
   },
 };

@@ -1,6 +1,6 @@
 /**
  * AURA 2026 registration
- * Flow: Sport → Details (name, phone, email, college, PD) → Pay (fee + QR + proof) → Pending
+ * Flow: Sport → Details → Rules → Pay (fee + QR + proof) → Pending
  * Live mode only when REGISTRATION_OPEN + Supabase keys; otherwise demo via localStorage.
  */
 (function () {
@@ -30,7 +30,7 @@
   }
 
   function goStep(n) {
-    [1, 2, 3, 4].forEach((i) => {
+    [1, 2, 3, 4, 5].forEach((i) => {
       const el = $("step-" + i);
       if (el) el.classList.toggle("hidden-step", i !== n);
     });
@@ -40,6 +40,65 @@
       s.classList.toggle("done", sn < n);
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function syncSportDateBanner() {
+    const s = currentSport();
+    const banner = $("sport-date-banner");
+    if (!banner) return;
+    if (s && s.eventDatesNote) {
+      banner.classList.remove("hidden-step");
+      banner.innerHTML = `<strong>${s.name} dates:</strong> ${s.eventDatesNote}`;
+    } else {
+      banner.classList.add("hidden-step");
+      banner.textContent = "";
+    }
+  }
+
+  function loadRulesStep() {
+    const s = currentSport();
+    const nameEl = $("rules-sport-name");
+    const img = $("rules-embed-img");
+    const fallback = $("rules-embed-fallback");
+    const link = $("rules-embed-link");
+    const dateNote = $("rules-date-note");
+    const ack = $("rules_ack");
+    const st = $("rules-step-status");
+    if (nameEl) nameEl.textContent = s ? `${s.name}${categorySel.value ? " · " + categorySel.value : ""}` : "—";
+    if (ack) ack.checked = false;
+    if (st) {
+      st.textContent = "";
+      st.classList.remove("is-error", "is-ok");
+    }
+    if (dateNote) {
+      if (s && s.eventDatesNote) {
+        dateNote.classList.remove("hidden-step");
+        dateNote.innerHTML = `<strong>${s.name} schedule:</strong> ${s.eventDatesNote}`;
+      } else {
+        dateNote.classList.add("hidden-step");
+        dateNote.textContent = "";
+      }
+    }
+    const sheet = s && CFG.RULES_SHEETS && CFG.RULES_SHEETS[s.id];
+    const file = sheet && (typeof sheet === "string" ? sheet : sheet.file);
+    if (link) link.href = `rules.html?sport=${encodeURIComponent(s ? s.id : "")}`;
+    if (img && file) {
+      img.hidden = false;
+      if (fallback) fallback.hidden = true;
+      img.onload = () => {
+        img.hidden = false;
+        if (fallback) fallback.hidden = true;
+      };
+      img.onerror = () => {
+        img.hidden = true;
+        if (fallback) fallback.hidden = false;
+      };
+      img.src = file + (file.includes("?") ? "&" : "?") + "v=local-rules";
+      img.alt = `${s.name} tournament rules`;
+    } else if (img) {
+      img.hidden = true;
+      if (fallback) fallback.hidden = false;
+    }
   }
 
   function clearFieldError(el) {
@@ -99,6 +158,7 @@
         syncCategories();
         updateFeeUI();
         updateRulesLink();
+        syncSportDateBanner();
       });
     });
   }
@@ -545,6 +605,7 @@
         $("summary-sport").textContent = `${s.name} · ${categorySel.value}`;
       }
       updateRosterHint();
+      syncSportDateBanner();
       goStep(2);
     });
 
@@ -553,14 +614,40 @@
   $("to-step-3") &&
     $("to-step-3").addEventListener("click", () => {
       if (!validateStep2()) return;
-      fillReview();
-      updateFeeUI();
-      setupPaymentQr();
+      loadRulesStep();
+      syncSportDateBanner();
       goStep(3);
     });
 
   $("back-2") && $("back-2").addEventListener("click", () => goStep(2));
-  categorySel && categorySel.addEventListener("change", updateFeeUI);
+
+  $("to-step-4") &&
+    $("to-step-4").addEventListener("click", () => {
+      const ack = $("rules_ack");
+      const st = $("rules-step-status");
+      if (!ack || !ack.checked) {
+        if (st) {
+          st.classList.add("is-error");
+          st.textContent = "Please confirm you have read the rules before continuing.";
+        }
+        return;
+      }
+      if (st) {
+        st.classList.remove("is-error");
+        st.textContent = "";
+      }
+      fillReview();
+      updateFeeUI();
+      setupPaymentQr();
+      syncSportDateBanner();
+      goStep(4);
+    });
+
+  $("back-3") && $("back-3").addEventListener("click", () => goStep(3));
+  categorySel && categorySel.addEventListener("change", () => {
+    updateFeeUI();
+    syncSportDateBanner();
+  });
 
   // Clear errors on input
   ["college", "captain_name", "captain_phone", "captain_email", "pd_name", "pd_phone", "roster_names"].forEach((id) => {
@@ -689,7 +776,7 @@
             ? "Submitted · pending. Please message @aura_cbit / coordinators with your reference code."
             : "Demo saved on this device. Organisers will verify shortly.";
         }
-        goStep(4);
+        goStep(5);
       } catch (err) {
         console.error(err);
         if (status) {

@@ -52,15 +52,17 @@
           <div class="steps-bar" id="steps-bar" aria-label="Registration steps">
             <div class="s active" data-step="1">1 · Sport</div>
             <div class="s" data-step="2">2 · Details</div>
-            <div class="s" data-step="3">3 · Payment</div>
-            <div class="s" data-step="4">4 · Done</div>
+            <div class="s" data-step="3">3 · Rules</div>
+            <div class="s" data-step="4">4 · Payment</div>
+            <div class="s" data-step="5">5 · Done</div>
           </div>
 
-          <div id="gate-closed" class="gate-banner">
+          <div id="gate-closed" class="gate-banner hidden-step">
             <strong>Registration is not open yet</strong>
-            You can preview the full professional flow. When fees, rules, and the payment QR are
-            final, we turn on live submissions — nothing here is public registration yet.
+            Live submissions are paused. Check back soon.
           </div>
+
+          <div id="sport-date-banner" class="sport-date-banner hidden-step" role="status"></div>
 
           <!-- STEP 1: SPORT -->
           <section id="step-1" aria-labelledby="step1-title">
@@ -156,13 +158,40 @@
 
             <div class="form-actions">
               <button type="button" class="btn btn-ghost" id="back-1">← Back</button>
-              <button type="button" class="btn btn-primary" id="to-step-3">Continue to payment →</button>
+              <button type="button" class="btn btn-primary" id="to-step-3">Continue to rules →</button>
             </div>
           </section>
 
-          <!-- STEP 3: PAYMENT -->
+          <!-- STEP 3: RULES -->
           <section id="step-3" class="hidden-step" aria-labelledby="step3-title">
-            <h2 class="step-title" id="step3-title">Pay entry fee</h2>
+            <h2 class="step-title" id="step3-title">Tournament rules</h2>
+            <p class="form-note" style="margin-bottom: 1rem">
+              Read the rules for <strong id="rules-sport-name" style="color: var(--text)">—</strong> before you pay.
+              AURA is a <strong>national level inter engineering college fest</strong> — players must be
+              <strong>BE / B.Tech</strong> students of the registering college.
+            </p>
+            <div id="rules-date-note" class="sport-date-banner hidden-step" style="margin-bottom: 1rem"></div>
+            <div class="rules-embed-card">
+              <img id="rules-embed-img" alt="Sport rules" hidden />
+              <p id="rules-embed-fallback" class="form-note" hidden>
+                Rules sheet unavailable.
+                <a id="rules-embed-link" href="rules.html" style="color: var(--blue-soft)">Open rules page →</a>
+              </p>
+            </div>
+            <label class="rules-ack">
+              <input type="checkbox" id="rules_ack" />
+              <span>I have read these rules. The listed players are BE/B.Tech students who will represent our engineering college.</span>
+            </label>
+            <div class="form-actions">
+              <button type="button" class="btn btn-ghost" id="back-2">← Back</button>
+              <button type="button" class="btn btn-primary" id="to-step-4">Continue to payment →</button>
+            </div>
+            <p class="form-note" id="rules-step-status" role="status"></p>
+          </section>
+
+          <!-- STEP 4: PAYMENT -->
+          <section id="step-4" class="hidden-step" aria-labelledby="step4-title">
+            <h2 class="step-title" id="step4-title">Pay entry fee</h2>
             <p class="form-note">
               Scan the official QR, pay exactly the amount shown, then upload a clear payment screenshot
               and UTR. After you submit, <strong>message the AURA team</strong> with your reference code
@@ -226,16 +255,16 @@
             </div>
 
             <div class="form-actions">
-              <button type="button" class="btn btn-ghost" id="back-2">← Back</button>
+              <button type="button" class="btn btn-ghost" id="back-3">← Back</button>
               <button type="button" class="btn btn-primary" id="submit-reg">Submit registration</button>
             </div>
             <p class="form-note" id="submit-status" role="status" aria-live="polite"></p>
           </section>
 
-          <!-- STEP 4: DONE -->
-          <section id="step-4" class="hidden-step" aria-labelledby="step4-title">
+          <!-- STEP 5: DONE -->
+          <section id="step-5" class="hidden-step" aria-labelledby="step5-title">
             <span class="status-pill pending" id="final-status">Pending verification</span>
-            <h2 class="reg-page-title" id="step4-title" style="margin-top: 0.85rem; font-size: 1.65rem">
+            <h2 class="reg-page-title" id="step5-title" style="margin-top: 0.85rem; font-size: 1.65rem">
               Registration received
             </h2>
             <p class="form-note" id="final-copy">
@@ -244,7 +273,7 @@
               <strong>Please coordinate with us now</strong> — DM
               <a href="https://www.instagram.com/aura_cbit/" target="_blank" rel="noopener" style="color: var(--blue-soft)">@aura_cbit</a>
               or WhatsApp a coordinator with your <strong>reference code</strong>, college, sport, and UTR
-              so we can approve you faster. We are not sending automatic confirmation emails yet.
+              so we can approve you faster.
             </p>
             <div class="coord-box" id="final-coords" aria-label="Coordinator contacts"></div>
             <div class="form-actions">
