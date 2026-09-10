@@ -810,6 +810,7 @@ body.has-preview-banner .hero-cinematic { padding-top: calc(var(--nav-h) + var(-
 .tag-women { background: rgba(180, 80, 160, 0.1); color: #9a3a88; }
 .tag-outdoor { background: rgba(30, 130, 95, 0.1); color: #187a52; }
 .tag-indoor { background: rgba(110, 85, 190, 0.1); color: #5540a8; }
+.tag-limited { background: rgba(255, 143, 61, 0.14); color: #c25a10; }
 .sport-body p { font-size: 0.88rem; color: #5a6785; line-height: 1.5; }
 .sport-foot {
   margin-top: auto; padding-top: 0.7rem;
