@@ -1809,6 +1809,8 @@ body.has-preview-banner .hero-cinematic { padding-top: calc(var(--nav-h) + var(-
 
 #submit-status.is-error { color: #ff8a8a; }
 #submit-status.is-ok { color: #5ee09a; }
+.form-note.is-error { color: #ff8a8a; }
+.form-note.is-ok { color: #5ee09a; }
 
 /* ============================================================
    INSANE POST-HERO v3 — conversion design system

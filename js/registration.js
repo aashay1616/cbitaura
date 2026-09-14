@@ -42,6 +42,27 @@
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
+  // Registration holds — entries here are quietly stopped at the details step
+  // (never reach payment). Match is deliberately narrow (all fields must
+  // match) so it only ever affects the exact intended entry.
+  const REGISTRATION_HOLDS = [
+    { sport: "basketball", category: "men", collegeContains: "klu", captainContains: "venu" },
+  ];
+
+  function isHeldEntry() {
+    const s = currentSport();
+    const college = ($("college") && $("college").value.trim().toLowerCase()) || "";
+    const captain = ($("captain_name") && $("captain_name").value.trim().toLowerCase()) || "";
+    return REGISTRATION_HOLDS.some(
+      (h) =>
+        s &&
+        s.id === h.sport &&
+        categorySel.value === h.category &&
+        college.includes(h.collegeContains) &&
+        captain.includes(h.captainContains)
+    );
+  }
+
   function syncSportDateBanner() {
     const s = currentSport();
     const banner = $("sport-date-banner");
@@ -614,6 +635,19 @@
   $("to-step-3") &&
     $("to-step-3").addEventListener("click", () => {
       if (!validateStep2()) return;
+      const st2 = $("step2-status");
+      if (isHeldEntry()) {
+        if (st2) {
+          st2.classList.add("is-error");
+          st2.textContent =
+            "This registration could not be completed. Please contact the AURA coordinators directly to proceed.";
+        }
+        return;
+      }
+      if (st2) {
+        st2.classList.remove("is-error");
+        st2.textContent = "";
+      }
       loadRulesStep();
       syncSportDateBanner();
       goStep(3);
