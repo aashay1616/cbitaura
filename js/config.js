@@ -105,8 +105,8 @@ window.AURA_CONFIG = {
       feeRupees: 4000,
       eventDates: "6–8 October 2026",
       eventDatesNote:
-        "Football is scheduled 6–8 October 2026 (ahead of the main fest window of 7–9 October). Only the first 12 team registrations will be accepted.",
-      capacityNote: "Limited to the first 12 team registrations.",
+        "Football is scheduled 6–8 October 2026 (ahead of the main fest window of 7–9 October). Only the first 16 team registrations will be accepted.",
+      capacityNote: "Limited to the first 16 team registrations.",
     },
     {
       id: "volleyball",
@@ -154,7 +154,7 @@ window.AURA_CONFIG = {
 
   /** Student coordinators (from sponsorship deck + fest captains) */
   COORDINATORS: [
-    { name: "Aashay", phone: "+919390206134", role: "Student coordinator" },
+    { name: "Pranathi", phone: "+918019242606", role: "Student coordinator" },
     { name: "Parin", phone: "+919100100507", role: "Student coordinator" },
     { name: "Sohan", phone: "+919550527704", role: "Student coordinator" },
   ],
