@@ -31,8 +31,13 @@ window.AURA_CONFIG = {
       upiName: "Saiteja Pampati",
       upiId: "6303916754-2@ybl",
     },
-    // Example for later:
-    // { id: "scanner-2", label: "Scanner 2 · …", file: "assets/payment-qrs/qr-2.png", upiName: "…" },
+    {
+      id: "pranathi-upi",
+      label: "Pranathi Yadav",
+      file: "assets/payment-qr-2.png",
+      upiName: "Pranathi Yadav",
+      upiId: "pranathiyadav869@okicici",
+    },
   ],
 
   /** @deprecated use PAYMENT_QRS[0].file — kept for older code paths */
