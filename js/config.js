@@ -31,13 +31,15 @@ window.AURA_CONFIG = {
       upiName: "Saiteja Pampati",
       upiId: "6303916754-2@ybl",
     },
-    {
-      id: "pranathi-upi",
-      label: "Pranathi Yadav",
-      file: "assets/payment-qr-2.png",
-      upiName: "Pranathi Yadav",
-      upiId: "pranathiyadav869@okicici",
-    },
+    // Parked (not shown on the site). To re-enable, uncomment this entry —
+    // the QR image is already at assets/payment-qr-2.png.
+    // {
+    //   id: "pranathi-upi",
+    //   label: "Pranathi Yadav",
+    //   file: "assets/payment-qr-2.png",
+    //   upiName: "Pranathi Yadav",
+    //   upiId: "pranathiyadav869@okicici",
+    // },
   ],
 
   /** @deprecated use PAYMENT_QRS[0].file — kept for older code paths */
