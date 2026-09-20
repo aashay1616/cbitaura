@@ -207,7 +207,7 @@ window.AURA_CONFIG = {
     },
     chess: {
       file: "assets/rules/chess-rules.png",
-      title: "Open · Fees, Swiss format, FIDE rules, time control, and captains.",
+      title: "Team event · Swiss system, scoring, board order, and contacts.",
     },
     football: {
       file: "assets/rules/football-rules.png",
