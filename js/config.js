@@ -19,17 +19,31 @@ window.AURA_CONFIG = {
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpmcnhscXB1cnJ6bndnbHRka2tqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg3NzE1NzQsImV4cCI6MjEwNDM0NzU3NH0.r3fNyY1IgIvqm0XB0wpnaCj0-vaMt87d8tvfxQpK_VE",
 
   /**
-   * Payment scanners (UPI QR). First entry is default.
-   * Add more objects later for alternate accounts / higher limits.
-   * Each: { id, label, file, upiName?, note? }
+   * Payment scanners (UPI QR). Each sport shows the scanner(s) that apply to it.
+   * Each: { id, label, file, upiName?, upiId?, sports?, excludeSports? }
+   *   sports         → ONLY these sport ids use this scanner
+   *   excludeSports  → every sport EXCEPT these uses this scanner
+   * Scanners with neither field apply to all sports.
    */
   PAYMENT_QRS: [
+    // College account (ICICI Eazypay merchant QR) — every sport except cricket.
+    {
+      id: "cbit-student-activities",
+      label: "CBIT Student Activities",
+      file: "assets/payment-qrs/qr-college-student-activities.png",
+      upiName: "CBITSTUDENTACTIVITIES",
+      scanNote:
+        "If the fee is more than ₹2,000, PhonePe/GPay on the same phone may block the scan. Use another phone to scan this QR, then upload the screenshot and UTR.",
+      excludeSports: ["cricket"],
+    },
+    // Cricket only.
     {
       id: "saiteja-phonepe",
       label: "Saiteja Pampati",
       file: "assets/payment-qr.png",
       upiName: "Saiteja Pampati",
       upiId: "6303916754-2@ybl",
+      sports: ["cricket"],
     },
     // Parked (not shown on the site). To re-enable, uncomment this entry —
     // the QR image is already at assets/payment-qr-2.png.

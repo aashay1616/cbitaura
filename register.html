@@ -214,22 +214,21 @@
               <div class="pay-qr-panel">
                 <div class="pay-scanner-tabs" id="payment-scanner-tabs" hidden></div>
                 <div class="pay-qr-frame">
-                  <img id="payment-qr" src="assets/payment-qr.png?v=saiteja3" alt="Scan to pay Saiteja Pampati" width="1000" height="1000" />
+                  <img id="payment-qr" src="assets/payment-qrs/qr-college-student-activities.png?v=upi-v5" alt="Scan to pay CBITSTUDENTACTIVITIES" width="1000" height="1000" />
                 </div>
-                <p class="pay-scanner-label" id="payment-scanner-label">Saiteja Pampati</p>
-                <p class="pay-upi-id" id="payment-upi-id">
-                  UPI ID: <strong>6303916754-2@ybl</strong>
-                </p>
+                <p class="pay-scanner-label" id="payment-scanner-label">CBITSTUDENTACTIVITIES</p>
+                <p class="pay-upi-id" id="payment-upi-id" hidden></p>
                 <p class="pay-scan-note" id="payment-scan-note">
                   <strong>Paying more than ₹2,000?</strong>
                   Use <strong>another phone</strong> to scan this QR (same-phone UPI scan often fails above ₹2,000),
-                  or pay to the UPI ID above, then upload the screenshot.
+                  then upload the screenshot and UTR.
                 </p>
               </div>
               <div class="pay-fields">
                 <div class="field">
-                  <label for="payment_txn">UPI / Transaction / UTR ID</label>
-                  <input id="payment_txn" name="payment_txn" placeholder="As shown on your payment app" autocomplete="off" />
+                  <label for="payment_txn">UTR / Transaction ID <span style="color:var(--blue-soft)">*</span></label>
+                  <input id="payment_txn" name="payment_txn" placeholder="Paste UTR / transaction ID" autocomplete="off" />
+                  <small class="field-hint">Copy it from your payment app after paying (Google Pay, PhonePe, Paytm etc. show it as UTR, UPI Ref. No. or Transaction ID).</small>
                 </div>
                 <div class="field">
                   <label for="payment_amount">Amount you paid (₹)</label>
@@ -294,7 +293,7 @@
       </div>
     </main>
 
-    <script src="js/config.js?v=3"></script>
-    <script src="js/registration.js?v=3"></script>
+    <script src="js/config.js?v=5"></script>
+    <script src="js/registration.js?v=5"></script>
   </body>
 </html>

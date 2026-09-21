@@ -249,8 +249,19 @@
     }
   }
 
+  function scannerAppliesTo(sc, sportId) {
+    if (Array.isArray(sc.sports) && sc.sports.length) return sc.sports.includes(sportId);
+    if (Array.isArray(sc.excludeSports) && sc.excludeSports.includes(sportId)) return false;
+    return true;
+  }
+
   function paymentScanners() {
-    if (Array.isArray(CFG.PAYMENT_QRS) && CFG.PAYMENT_QRS.length) return CFG.PAYMENT_QRS;
+    if (Array.isArray(CFG.PAYMENT_QRS) && CFG.PAYMENT_QRS.length) {
+      const s = currentSport();
+      const mine = s ? CFG.PAYMENT_QRS.filter((sc) => scannerAppliesTo(sc, s.id)) : [];
+      // Never leave the payment step without a QR: fall back to the full list.
+      return mine.length ? mine : CFG.PAYMENT_QRS;
+    }
     const legacy = CFG.PAYMENT_QR_PATH || "assets/payment-qr.png";
     return [{ id: "default", label: "Official scanner", file: legacy }];
   }
@@ -265,14 +276,15 @@
     activeScannerId = sc.id;
     const path = sc.file || CFG.PAYMENT_QR_PATH || "assets/payment-qr.png";
     img.hidden = false;
-    img.src = path + (path.includes("?") ? "&" : "?") + "v=saiteja-upi-v4";
+    img.src = path + (path.includes("?") ? "&" : "?") + "v=upi-v5";
     img.alt = "Scan to pay " + (sc.upiName || sc.label || "AURA");
     if (label) {
       label.hidden = false;
       label.textContent = sc.upiName || sc.label || "Official scanner";
     }
-    if (note && CFG.PAYMENT_SCAN_NOTE) {
-      note.innerHTML = CFG.PAYMENT_SCAN_NOTE;
+    const scanNote = sc.scanNote || CFG.PAYMENT_SCAN_NOTE;
+    if (note && scanNote) {
+      note.innerHTML = scanNote;
     }
     const upiEl = $("payment-upi-id");
     if (upiEl) {
@@ -323,6 +335,9 @@
         tabs.innerHTML = "";
       }
     }
+    // One QR per sport → the "Scanner used" picker is redundant, so hide it.
+    const selField = sel && sel.closest(".field");
+    if (selField) selField.style.display = scanners.length > 1 ? "" : "none";
     showScanner(scanners[0]);
   }
 
