@@ -110,7 +110,8 @@ window.AURA_CONFIG = {
       feeRupees: 6000,
       eventDates: "Starts 26 September 2026",
       eventDatesNote:
-        "Cricket begins on 26 September 2026 (ahead of the main fest window of 7–9 October).",
+        "Cricket begins on 26 September 2026 (ahead of the main fest window of 7–9 October). Only the first 16 team registrations will be accepted.",
+      capacityNote: "Limited to the first 16 team registrations.",
     },
     {
       id: "basketball",
