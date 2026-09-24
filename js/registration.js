@@ -160,15 +160,17 @@
     grid.innerHTML = sports
       .map(
         (s) => `
-      <button type="button" class="sport-pick" role="option" data-id="${s.id}" aria-selected="false">
+      <button type="button" class="sport-pick${s.closed ? " is-closed" : ""}" role="option" data-id="${s.id}" aria-selected="false"${s.closed ? " aria-disabled=\"true\"" : ""}>
         <span class="sport-pick-name">${s.name}</span>
-        <span class="sport-pick-meta">${s.categories.join(" · ")}</span>
+        <span class="sport-pick-meta">${s.closed ? "Closed" : s.categories.join(" · ")}</span>
       </button>`
       )
       .join("");
 
     grid.querySelectorAll(".sport-pick").forEach((btn) => {
       btn.addEventListener("click", () => {
+        const s = sports.find((sp) => sp.id === btn.dataset.id);
+        if (s && s.closed) return; // closed sports can't be selected
         grid.querySelectorAll(".sport-pick").forEach((b) => {
           b.classList.remove("is-selected");
           b.setAttribute("aria-selected", "false");
@@ -377,11 +379,15 @@
       alert("Please select a sport.");
       return false;
     }
+    const s = currentSport();
+    if (s && s.closed) {
+      alert(s.closedNote || `${s.name} registrations are closed.`);
+      return false;
+    }
     if (!categorySel || !categorySel.value) {
       alert("Please select Men or Women category.");
       return false;
     }
-    const s = currentSport();
     if (s && !s.categories.includes(categorySel.value)) {
       alert("That category is not available for this sport.");
       return false;
@@ -842,7 +848,8 @@
   // Deep-link: register.html?sport=basketball
   const qs = new URLSearchParams(location.search);
   const pre = qs.get("sport");
-  if (pre && sports.some((s) => s.id === pre) && sportHidden) {
+  const preSport = sports.find((s) => s.id === pre);
+  if (pre && preSport && !preSport.closed && sportHidden) {
     sportHidden.value = pre;
     const btn = grid && grid.querySelector(`.sport-pick[data-id="${pre}"]`);
     if (btn) {
