@@ -175,10 +175,9 @@
     sel.dataset.ready = "1";
   }
 
-  function render(rows) {
-    updateStats(rows);
-    fillSportFilter(rows);
-
+  // Applies the status / sport / search filters currently set in the UI.
+  // Shared by render() and the CSV export so "export" always matches what's on screen.
+  function filteredRows(rows) {
     const filter = $("filter-status") ? $("filter-status").value : "all";
     const sportF = $("filter-sport") ? $("filter-sport").value : "all";
     const q = ($("search-q") ? $("search-q").value : "").trim().toLowerCase();
@@ -202,6 +201,14 @@
         return blob.includes(q);
       });
     }
+    return list;
+  }
+
+  function render(rows) {
+    updateStats(rows);
+    fillSportFilter(rows);
+
+    const list = filteredRows(rows);
 
     if (!list.length) {
       body.innerHTML = `<tr><td colspan="6" style="color:var(--text-3)">No registrations in this filter.</td></tr>`;
@@ -385,7 +392,14 @@
   $("export-csv") &&
     $("export-csv").addEventListener("click", async () => {
       try {
-        const rows = mode() === "live" ? await loadLive() : loadDemo();
+        // Export exactly what's filtered/visible on screen right now, not every
+        // registration — re-apply the current status/sport/search filters to the
+        // already-loaded cache instead of re-fetching everything unfiltered.
+        const rows = filteredRows(cache);
+        if (!rows.length) {
+          alert("No registrations match the current filter — nothing to export.");
+          return;
+        }
         const headers = [
           "ref_code",
           "status",
@@ -413,7 +427,13 @@
         const blob = new Blob([lines.join("\n")], { type: "text/csv" });
         const a = document.createElement("a");
         a.href = URL.createObjectURL(blob);
-        a.download = "aura2026-registrations.csv";
+        const sportF = $("filter-sport") ? $("filter-sport").value : "all";
+        const statusF = $("filter-status") ? $("filter-status").value : "all";
+        const slug = (s) => String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-");
+        const tag = [sportF !== "all" ? slug(sportF) : null, statusF !== "all" ? slug(statusF) : null]
+          .filter(Boolean)
+          .join("-");
+        a.download = `aura2026-registrations${tag ? "-" + tag : ""}.csv`;
         a.click();
       } catch (e) {
         alert("Export failed: " + (e.message || e));
