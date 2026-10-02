@@ -2123,3 +2123,107 @@ body.has-preview-banner .hero-cinematic { padding-top: calc(var(--nav-h) + var(-
   .sports-cta { flex-direction: column; align-items: stretch; }
   .sports-cta .btn { width: 100%; }
 }
+
+/* ============================================================
+   Sponsors / partners — logos always shown whole (object-fit: contain)
+   ============================================================ */
+.sec-sponsors {
+  background: linear-gradient(180deg, #0a0f18, #060910);
+}
+.sponsors-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr);
+  gap: clamp(1rem, 2.5vw, 1.5rem);
+  align-items: stretch;
+}
+.sponsor-card {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  border-radius: 22px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(12, 16, 28, 0.85);
+  box-shadow: 0 30px 70px -40px rgba(59, 102, 214, 0.5);
+  transition: transform 0.25s var(--ease), border-color 0.25s;
+}
+.sponsor-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(120, 160, 255, 0.4);
+}
+.sponsor-feature { grid-row: span 2; }
+.sponsor-media {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 250px;
+  padding: clamp(0.9rem, 2vw, 1.4rem);
+  background: #0c101c;
+}
+.sponsor-media img {
+  display: block;
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain; /* never crop a sponsor's logo */
+}
+.sponsor-feature .sponsor-media { min-height: 520px; }
+.sponsor-feature .sponsor-media img { max-height: 620px; border-radius: 10px; }
+.sponsor-media-white { background: #fff; }
+.sponsor-media-yello { background: #ffc20f; }
+.sponsor-media-white img,
+.sponsor-media-yello img { max-height: 230px; }
+.sponsor-card figcaption {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 1rem 1.25rem 1.15rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+.sponsor-role {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--blue-soft);
+}
+.sponsor-card figcaption strong {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+
+/* compact 3-up version used on the registration page */
+.sponsors-block { margin-top: 2.5rem; }
+.sponsors-block-title {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin: 0 0 0.9rem;
+}
+.sponsors-grid-compact { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.sponsors-grid-compact .sponsor-feature { grid-row: auto; }
+.sponsors-grid-compact .sponsor-media,
+.sponsors-grid-compact .sponsor-feature .sponsor-media { min-height: 290px; }
+.sponsors-grid-compact .sponsor-feature .sponsor-media img { max-height: 270px; }
+.sponsors-grid-compact .sponsor-media-white img,
+.sponsors-grid-compact .sponsor-media-yello img { max-height: 200px; }
+.sponsors-grid-compact .sponsor-card figcaption strong { font-size: 0.92rem; }
+
+@media (max-width: 860px) {
+  .sponsors-grid { grid-template-columns: 1fr; }
+  .sponsor-feature { grid-row: auto; }
+  .sponsor-media { min-height: 0; }
+  .sponsor-feature .sponsor-media { min-height: 0; }
+  .sponsor-feature .sponsor-media img { max-height: 460px; }
+}
+@media (max-width: 640px) {
+  .sponsors-grid-compact { grid-template-columns: 1fr; }
+  .sponsors-grid-compact .sponsor-media,
+  .sponsors-grid-compact .sponsor-feature .sponsor-media { min-height: 0; }
+  .sponsors-grid-compact .sponsor-feature .sponsor-media img { max-height: 420px; }
+}
