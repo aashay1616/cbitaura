@@ -178,6 +178,17 @@ window.AURA_CONFIG = {
     },
   ],
 
+  /**
+   * "Standard" teams — host / automatic entries that are listed in the admin team
+   * list but NOT counted in the website's registration numbers (and not payment-checked).
+   *   match  → lower-case phrases looked for in the college name a team types in
+   *   sports → optional: only these sport ids (omit = every sport and category)
+   */
+  STANDARD_TEAMS: [
+    { name: "CBIT", match: ["cbit", "chaitanya bharathi"] },
+    { name: "MGIT", match: ["mgit", "mahatma gandhi institute"] },
+  ],
+
   /** Student coordinators (from sponsorship deck + fest captains) */
   COORDINATORS: [
     { name: "Pranathi", phone: "+918019242606", role: "Student coordinator" },

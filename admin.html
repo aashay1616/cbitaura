@@ -83,6 +83,18 @@
           <div class="admin-stat"><span class="n" id="stat-total">0</span><span class="l">Total</span></div>
         </div>
 
+        <div class="reg-card" id="admin-summary-card" style="margin-bottom: 1rem; overflow-x: auto">
+          <h2 class="step-title" style="font-size: 1.2rem; margin-bottom: 0.35rem">Confirmed teams by sport</h2>
+          <p class="form-note" style="margin-bottom: 0.9rem">
+            Colleges that have registered, paid and been verified — split by sport, then Men / Women.
+          </p>
+          <p class="form-note" id="admin-summary" style="margin-bottom: 0.9rem"></p>
+          <div id="admin-teams"></div>
+          <div class="form-actions" style="margin-top: 1rem">
+            <button type="button" class="btn btn-primary" id="export-teams">Download this list (CSV)</button>
+          </div>
+        </div>
+
         <div class="reg-card" style="margin-bottom: 1rem">
           <div class="field-row">
             <div class="field">
@@ -95,7 +107,7 @@
               </select>
             </div>
             <div class="field">
-              <label for="filter-sport">Filter sport</label>
+              <label for="filter-sport">Filter sport · category</label>
               <select id="filter-sport">
                 <option value="all">All sports</option>
               </select>

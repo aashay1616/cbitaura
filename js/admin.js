@@ -162,20 +162,155 @@
     if ($("stat-total")) $("stat-total").textContent = String(rows.length);
   }
 
-  function fillSportFilter(rows) {
-    const sel = $("filter-sport");
-    if (!sel || sel.dataset.ready === "1") return;
-    const ids = [...new Set(rows.map((r) => r.sport).filter(Boolean))];
-    ids.sort().forEach((id) => {
-      const opt = document.createElement("option");
-      opt.value = id;
-      opt.textContent = sportName(id);
-      sel.appendChild(opt);
+  // ---- sports split by category: every sport is listed as Men and/or Women ----
+  const catLabel = (c) => (c === "women" ? "Women" : c === "men" ? "Men" : String(c || ""));
+
+  function allGroups(rows) {
+    const groups = [];
+    const seen = new Set();
+    (CFG.SPORTS || []).forEach((s) => {
+      (s.categories || []).forEach((c) => {
+        const key = `${s.id}|${c}`;
+        seen.add(key);
+        groups.push({ key, sport: s.id, category: c, label: `${s.name} · ${catLabel(c)}` });
+      });
     });
-    sel.dataset.ready = "1";
+    rows.forEach((r) => {
+      const key = `${r.sport}|${r.category}`;
+      if (r.sport && !seen.has(key)) {
+        seen.add(key);
+        groups.push({ key, sport: r.sport, category: r.category, label: `${sportName(r.sport)} · ${catLabel(r.category)}` });
+      }
+    });
+    return groups;
   }
 
-  // Applies the status / sport / search filters currently set in the UI.
+  // ---- standard teams (CBIT, MGIT): listed, but never counted or payment-checked ----
+  const normName = (s) => " " + String(s || "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim() + " ";
+
+  function standardTeamFor(r) {
+    const n = normName(r.college_name);
+    return (
+      (CFG.STANDARD_TEAMS || []).find(
+        (t) =>
+          (t.match || [t.name]).some((m) => n.includes(" " + String(m).toLowerCase().trim() + " ")) &&
+          (!t.sports || t.sports.includes(r.sport))
+      ) || null
+    );
+  }
+  const isStandard = (r) => !!standardTeamFor(r);
+
+  // ---- payment check ----
+  const utrOf = (r) => String(r.payment_txn_id || "").trim().toLowerCase();
+
+  function buildUtrIndex(rows) {
+    const m = {};
+    rows.forEach((r) => {
+      const u = utrOf(r);
+      if (u) (m[u] = m[u] || []).push(r.ref_code);
+    });
+    return m;
+  }
+
+  function paymentCheck(r, utrIndex) {
+    if (isStandard(r)) return { ok: true, standard: true, text: "Standard — not checked", issues: [] };
+    const issues = [];
+    const fee = r.fee_expected != null && r.fee_expected !== "" ? Number(r.fee_expected) : null;
+    const paid = parseFloat(String(r.payment_amount ?? "").replace(/[^0-9.]/g, ""));
+    if (!utrOf(r)) issues.push("No UTR");
+    if (!(r.payment_screenshot_data || r.payment_screenshot_url || r.payment_screenshot_path)) {
+      issues.push("No screenshot");
+    }
+    if (!Number.isFinite(paid)) issues.push("No amount entered");
+    else if (fee != null && Number.isFinite(fee) && paid !== fee) issues.push(`Paid ₹${paid} but fee is ₹${fee}`);
+    const dups = (utrIndex[utrOf(r)] || []).filter((x) => x !== r.ref_code);
+    if (utrOf(r) && dups.length) issues.push(`Duplicate UTR (also ${dups.join(", ")})`);
+    return { ok: !issues.length, standard: false, text: issues.length ? issues.join(" · ") : "Payment OK", issues };
+  }
+
+  function payBadge(r, utrIndex) {
+    const c = paymentCheck(r, utrIndex);
+    const cls = c.standard ? "pay-std" : c.ok ? "pay-ok" : "pay-warn";
+    const icon = c.standard ? "" : c.ok ? "✓ " : "⚠ ";
+    return `<span class="pay-badge ${cls}">${icon}${escapeHtml(c.text)}</span>`;
+  }
+
+  // ---- grouped teams: per sport + category ----
+  function groupedTeams(rows) {
+    const utrIndex = buildUtrIndex(rows);
+    return allGroups(rows).map((g) => {
+      const mine = rows.filter((r) => r.sport === g.sport && r.category === g.category);
+      const registered = mine
+        .filter((r) => !isStandard(r))
+        .sort((x, y) => String(x.college_name || "").localeCompare(String(y.college_name || "")));
+      const standard = (CFG.STANDARD_TEAMS || [])
+        .filter((t) => !t.sports || t.sports.includes(g.sport))
+        .map((t) => ({ name: t.name }));
+      const counts = { pending: 0, verified: 0, rejected: 0 };
+      registered.forEach((r) => {
+        const st = r.status || "pending";
+        if (counts[st] != null) counts[st]++;
+      });
+      const payIssues = registered.filter((r) => !paymentCheck(r, utrIndex).ok).length;
+      return { ...g, registered, standard, counts, payIssues };
+    });
+  }
+
+  // Simple list: only teams that registered, paid and were VERIFIED, by sport then Men/Women.
+  function verifiedByGroup(rows) {
+    const utrIndex = buildUtrIndex(rows);
+    return groupedTeams(rows)
+      .map((g) => ({ ...g, teams: g.registered.filter((r) => (r.status || "pending") === "verified"), utrIndex }))
+      .filter((g) => g.teams.length);
+  }
+
+  function renderSummary(rows) {
+    const sumEl = $("admin-summary");
+    const teamsEl = $("admin-teams");
+    if (!teamsEl) return;
+    const groups = verifiedByGroup(rows);
+    const total = groups.reduce((n, g) => n + g.teams.length, 0);
+    const std = (CFG.STANDARD_TEAMS || []).map((t) => t.name).join(", ");
+    if (sumEl) {
+      sumEl.innerHTML = total
+        ? `<strong>${total}</strong> verified team${total === 1 ? "" : "s"} across <strong>${groups.length}</strong> sport categor${
+            groups.length === 1 ? "y" : "ies"
+          }${std ? ` <span style="color:var(--text-3)">· ${escapeHtml(std)} are standard teams and not counted</span>` : ""}`
+        : `<span style="color:var(--text-3)">No verified teams yet.</span>`;
+    }
+    teamsEl.innerHTML = groups
+      .map(
+        (g) => `<div class="team-group"><h3 class="team-group-title">${escapeHtml(g.label)} <span>(${g.teams.length})</span></h3>
+        <ol>${g.teams
+          .map((r) => {
+            const pc = paymentCheck(r, g.utrIndex);
+            return `<li>${escapeHtml(r.college_name)}${
+              pc.ok ? "" : ` <span class="pay-badge pay-warn" title="Verified, but check payment">⚠ ${escapeHtml(pc.text)}</span>`
+            }</li>`;
+          })
+          .join("")}</ol></div>`
+      )
+      .join("");
+  }
+
+  function rebuildSportFilter(rows) {
+    const sel = $("filter-sport");
+    if (!sel) return;
+    const prev = sel.value || "all";
+    const counts = {};
+    rows.forEach((r) => {
+      const k = `${r.sport}|${r.category}`;
+      counts[k] = (counts[k] || 0) + (isStandard(r) ? 0 : 1);
+    });
+    sel.innerHTML =
+      '<option value="all">All sports</option>' +
+      allGroups(rows)
+        .map((g) => `<option value="${escapeHtml(g.key)}">${escapeHtml(g.label)} (${counts[g.key] || 0})</option>`)
+        .join("");
+    sel.value = [...sel.options].some((o) => o.value === prev) ? prev : "all";
+  }
+
+  // Applies the status / sport·category / search filters currently set in the UI.
   // Shared by render() and the CSV export so "export" always matches what's on screen.
   function filteredRows(rows) {
     const filter = $("filter-status") ? $("filter-status").value : "all";
@@ -184,7 +319,10 @@
 
     let list = rows;
     if (filter !== "all") list = list.filter((r) => (r.status || "pending") === filter);
-    if (sportF !== "all") list = list.filter((r) => r.sport === sportF);
+    if (sportF !== "all") {
+      const [sp, cat] = sportF.split("|");
+      list = list.filter((r) => r.sport === sp && (!cat || r.category === cat));
+    }
     if (q) {
       list = list.filter((r) => {
         const blob = [
@@ -205,10 +343,12 @@
   }
 
   function render(rows) {
-    updateStats(rows);
-    fillSportFilter(rows);
+    updateStats(rows.filter((r) => !isStandard(r)));
+    rebuildSportFilter(rows);
+    renderSummary(rows);
 
     const list = filteredRows(rows);
+    const utrIndex = buildUtrIndex(rows);
 
     if (!list.length) {
       body.innerHTML = `<tr><td colspan="6" style="color:var(--text-3)">No registrations in this filter.</td></tr>`;
@@ -231,14 +371,14 @@
         }
         return `<tr>
           <td><code>${escapeHtml(r.ref_code)}</code><br><small style="color:var(--text-3)">${escapeHtml((r.created_at || "").slice(0, 16))}</small></td>
-          <td><strong>${escapeHtml(r.college_name)}</strong><br>${escapeHtml(sportName(r.sport))} · ${escapeHtml(r.category)}
+          <td><strong>${escapeHtml(r.college_name)}</strong>${isStandard(r) ? ' <span class="pay-badge pay-std">Standard</span>' : ""}<br>${escapeHtml(sportName(r.sport))} · ${escapeHtml(catLabel(r.category))}
           <br><small>PD: ${escapeHtml(r.pd_name || "—")} · ${escapeHtml(r.pd_phone || "")}</small></td>
           <td>${escapeHtml(r.captain_name)}<br><small>${escapeHtml(r.captain_phone)}<br>${escapeHtml(r.captain_email)}</small>
           <br>${rosterSummary(r)}</td>
           <td>Fee: ${r.fee_expected != null ? "₹" + escapeHtml(r.fee_expected) : "TBA"}<br>
           Paid: ${escapeHtml(r.payment_amount || "—")}<br>
           UTR: ${escapeHtml(r.payment_txn_id || "—")}<br>
-          Scanner: ${escapeHtml(r.payment_scanner_id || "—")}<br>${proof}</td>
+          Scanner: ${escapeHtml(r.payment_scanner_id || "—")}<br>${proof}<br>${payBadge(r, utrIndex)}</td>
           <td><span class="status-pill ${r.status || "pending"}">${escapeHtml(r.status || "pending")}</span></td>
           <td>
             <button type="button" class="btn btn-primary act-verify" data-ref="${escapeHtml(r.ref_code)}" style="padding:0.4rem 0.7rem;font-size:0.75rem;margin:0.15rem">Verify</button>
@@ -417,11 +557,20 @@
           "payment_txn_id",
           "payment_amount",
           "created_at",
+          "team_type",
+          "payment_check",
         ];
+        const utrIndex = buildUtrIndex(cache);
         const lines = [headers.join(",")];
         rows.forEach((r) => {
           const names = rosterNames(r);
-          const row = { ...r, squad_names: names.join(" | "), squad_count: names.length };
+          const row = {
+            ...r,
+            squad_names: names.join(" | "),
+            squad_count: names.length,
+            team_type: isStandard(r) ? "Standard" : "Registered",
+            payment_check: paymentCheck(r, utrIndex).text,
+          };
           lines.push(headers.map((h) => `"${String(row[h] ?? "").replace(/"/g, '""')}"`).join(","));
         });
         const blob = new Blob([lines.join("\n")], { type: "text/csv" });
@@ -434,6 +583,60 @@
           .filter(Boolean)
           .join("-");
         a.download = `aura2026-registrations${tag ? "-" + tag : ""}.csv`;
+        a.click();
+      } catch (e) {
+        alert("Export failed: " + (e.message || e));
+      }
+    });
+
+  // Verified teams only, one row per college, grouped by sport then Men / Women.
+  const csvCell = (v) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+
+  $("export-teams") &&
+    $("export-teams").addEventListener("click", () => {
+      try {
+        const groups = verifiedByGroup(cache || []);
+        if (!groups.length) {
+          alert("No verified teams yet — nothing to download.");
+          return;
+        }
+        const head = [
+          "sport",
+          "category",
+          "college_name",
+          "captain_name",
+          "captain_phone",
+          "captain_email",
+          "fee_expected",
+          "payment_amount",
+          "payment_txn_id",
+          "payment_check",
+        ];
+        const out = [head.map(csvCell).join(",")];
+        groups.forEach((g) =>
+          g.teams.forEach((r) =>
+            out.push(
+              [
+                sportName(g.sport),
+                catLabel(g.category),
+                r.college_name,
+                r.captain_name,
+                r.captain_phone,
+                r.captain_email,
+                r.fee_expected,
+                r.payment_amount,
+                r.payment_txn_id,
+                paymentCheck(r, g.utrIndex).text,
+              ]
+                .map(csvCell)
+                .join(",")
+            )
+          )
+        );
+        const blob = new Blob(["\ufeff" + out.join("\n")], { type: "text/csv" });
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "aura2026-verified-teams-by-sport.csv";
         a.click();
       } catch (e) {
         alert("Export failed: " + (e.message || e));
