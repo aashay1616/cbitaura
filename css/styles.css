@@ -2241,8 +2241,3 @@ body.has-preview-banner .hero-cinematic { padding-top: calc(var(--nav-h) + var(-
 .pay-ok { background: rgba(94, 224, 154, 0.14); color: #5ee09a; }
 .pay-warn { background: rgba(255, 193, 77, 0.16); color: #ffc14d; }
 .pay-std { background: rgba(155, 182, 255, 0.14); color: var(--blue-soft); }
-.team-group { margin-top: 0.75rem; padding: 0.7rem 0.9rem; border: 1px solid var(--line); border-radius: 12px; background: rgba(5, 7, 12, 0.5); }
-.team-group-title { font-family: var(--font-display); font-size: 1rem; margin: 0; }
-.team-group-title span { color: var(--text-3); font-weight: 500; }
-.team-group ol { margin: 0.55rem 0 0; padding-left: 1.3rem; }
-.team-group li { margin: 0.3rem 0; line-height: 1.5; }

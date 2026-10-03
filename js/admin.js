@@ -235,64 +235,6 @@
     return `<span class="pay-badge ${cls}">${icon}${escapeHtml(c.text)}</span>`;
   }
 
-  // ---- grouped teams: per sport + category ----
-  function groupedTeams(rows) {
-    const utrIndex = buildUtrIndex(rows);
-    return allGroups(rows).map((g) => {
-      const mine = rows.filter((r) => r.sport === g.sport && r.category === g.category);
-      const registered = mine
-        .filter((r) => !isStandard(r))
-        .sort((x, y) => String(x.college_name || "").localeCompare(String(y.college_name || "")));
-      const standard = (CFG.STANDARD_TEAMS || [])
-        .filter((t) => !t.sports || t.sports.includes(g.sport))
-        .map((t) => ({ name: t.name }));
-      const counts = { pending: 0, verified: 0, rejected: 0 };
-      registered.forEach((r) => {
-        const st = r.status || "pending";
-        if (counts[st] != null) counts[st]++;
-      });
-      const payIssues = registered.filter((r) => !paymentCheck(r, utrIndex).ok).length;
-      return { ...g, registered, standard, counts, payIssues };
-    });
-  }
-
-  // Simple list: only teams that registered, paid and were VERIFIED, by sport then Men/Women.
-  function verifiedByGroup(rows) {
-    const utrIndex = buildUtrIndex(rows);
-    return groupedTeams(rows)
-      .map((g) => ({ ...g, teams: g.registered.filter((r) => (r.status || "pending") === "verified"), utrIndex }))
-      .filter((g) => g.teams.length);
-  }
-
-  function renderSummary(rows) {
-    const sumEl = $("admin-summary");
-    const teamsEl = $("admin-teams");
-    if (!teamsEl) return;
-    const groups = verifiedByGroup(rows);
-    const total = groups.reduce((n, g) => n + g.teams.length, 0);
-    const std = (CFG.STANDARD_TEAMS || []).map((t) => t.name).join(", ");
-    if (sumEl) {
-      sumEl.innerHTML = total
-        ? `<strong>${total}</strong> verified team${total === 1 ? "" : "s"} across <strong>${groups.length}</strong> sport categor${
-            groups.length === 1 ? "y" : "ies"
-          }${std ? ` <span style="color:var(--text-3)">· ${escapeHtml(std)} are standard teams and not counted</span>` : ""}`
-        : `<span style="color:var(--text-3)">No verified teams yet.</span>`;
-    }
-    teamsEl.innerHTML = groups
-      .map(
-        (g) => `<div class="team-group"><h3 class="team-group-title">${escapeHtml(g.label)} <span>(${g.teams.length})</span></h3>
-        <ol>${g.teams
-          .map((r) => {
-            const pc = paymentCheck(r, g.utrIndex);
-            return `<li>${escapeHtml(r.college_name)}${
-              pc.ok ? "" : ` <span class="pay-badge pay-warn" title="Verified, but check payment">⚠ ${escapeHtml(pc.text)}</span>`
-            }</li>`;
-          })
-          .join("")}</ol></div>`
-      )
-      .join("");
-  }
-
   function rebuildSportFilter(rows) {
     const sel = $("filter-sport");
     if (!sel) return;
@@ -345,7 +287,6 @@
   function render(rows) {
     updateStats(rows.filter((r) => !isStandard(r)));
     rebuildSportFilter(rows);
-    renderSummary(rows);
 
     const list = filteredRows(rows);
     const utrIndex = buildUtrIndex(rows);
@@ -583,60 +524,6 @@
           .filter(Boolean)
           .join("-");
         a.download = `aura2026-registrations${tag ? "-" + tag : ""}.csv`;
-        a.click();
-      } catch (e) {
-        alert("Export failed: " + (e.message || e));
-      }
-    });
-
-  // Verified teams only, one row per college, grouped by sport then Men / Women.
-  const csvCell = (v) => `"${String(v ?? "").replace(/"/g, '""')}"`;
-
-  $("export-teams") &&
-    $("export-teams").addEventListener("click", () => {
-      try {
-        const groups = verifiedByGroup(cache || []);
-        if (!groups.length) {
-          alert("No verified teams yet — nothing to download.");
-          return;
-        }
-        const head = [
-          "sport",
-          "category",
-          "college_name",
-          "captain_name",
-          "captain_phone",
-          "captain_email",
-          "fee_expected",
-          "payment_amount",
-          "payment_txn_id",
-          "payment_check",
-        ];
-        const out = [head.map(csvCell).join(",")];
-        groups.forEach((g) =>
-          g.teams.forEach((r) =>
-            out.push(
-              [
-                sportName(g.sport),
-                catLabel(g.category),
-                r.college_name,
-                r.captain_name,
-                r.captain_phone,
-                r.captain_email,
-                r.fee_expected,
-                r.payment_amount,
-                r.payment_txn_id,
-                paymentCheck(r, g.utrIndex).text,
-              ]
-                .map(csvCell)
-                .join(",")
-            )
-          )
-        );
-        const blob = new Blob(["\ufeff" + out.join("\n")], { type: "text/csv" });
-        const a = document.createElement("a");
-        a.href = URL.createObjectURL(blob);
-        a.download = "aura2026-verified-teams-by-sport.csv";
         a.click();
       } catch (e) {
         alert("Export failed: " + (e.message || e));
