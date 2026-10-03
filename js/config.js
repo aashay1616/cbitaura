@@ -130,8 +130,10 @@ window.AURA_CONFIG = {
       eventDates: "6–8 October 2026",
       eventDatesNote:
         "Football is scheduled 6–8 October 2026 (ahead of the main fest window of 7–9 October). Only the first 15 team registrations will be accepted.",
-      capacityNote: "Limited to the first 15 team registrations.",
-    },
+              capacityNote: "Limited to the first 15 team registrations.",
+         closed: true,
+         closedNote: "Football registrations are now closed. All 15 team slots are filled.",
+       },
     {
       id: "volleyball",
       name: "Volleyball",
