@@ -216,6 +216,21 @@
     });
     if (categorySel.value && !allowed.includes(categorySel.value)) categorySel.value = "";
     if (allowed.length === 1) categorySel.value = allowed[0];
+    // categories closed individually (e.g. basketball men) stay visible but can't be chosen
+    const shut = (s && s.closedCategories) || [];
+    [...categorySel.options].forEach((opt) => {
+      if (!opt.value) return;
+      const label = opt.value.charAt(0).toUpperCase() + opt.value.slice(1);
+      const isShut = shut.includes(opt.value);
+      opt.textContent = isShut ? label + " (closed)" : label;
+      if (isShut) opt.disabled = true;
+    });
+    if (categorySel.value && shut.includes(categorySel.value)) categorySel.value = "";
+    const note = $("category-note");
+    if (note) {
+      note.textContent = shut.length && s ? s.closedCategoryNote || "" : "";
+      note.hidden = !note.textContent;
+    }
   }
 
   function updateFeeUI() {
@@ -390,6 +405,10 @@
     }
     if (s && !s.categories.includes(categorySel.value)) {
       alert("That category is not available for this sport.");
+      return false;
+    }
+    if (s && (s.closedCategories || []).includes(categorySel.value)) {
+      alert(s.closedCategoryNote || `${s.name} ${categorySel.value} registrations are closed.`);
       return false;
     }
     return true;

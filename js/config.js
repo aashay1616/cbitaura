@@ -121,6 +121,8 @@ window.AURA_CONFIG = {
       categories: ["men", "women"],
       feeRupees: null,
       feeByCategory: { men: 3500, women: 3000 },
+      closed: true,
+      closedNote: "Basketball registrations are now closed (men and women). For any queries, please contact Aashay: 9390206134.",
     },
     {
       id: "football",
