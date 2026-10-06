@@ -141,13 +141,17 @@ window.AURA_CONFIG = {
       name: "Volleyball",
       categories: ["men", "women"],
       feeRupees: null,
-      feeByCategory: { men: 2500, women: 2000 },
+      feeByCategory: { men: 2500, women: 2500 },
+      closedCategories: ["men"],
+      closedCategoryNote: "Volleyball men registrations are now closed. Women's registrations are still open.",
     },
     {
       id: "kabaddi",
       name: "Kabaddi",
       categories: ["men"],
       feeRupees: 2500,
+      closed: true,
+      closedNote: "Kabaddi registrations are now closed.",
     },
     { id: "throwball", name: "Throwball", categories: ["women"], feeRupees: 2500 },
     {
