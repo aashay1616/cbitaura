@@ -142,8 +142,8 @@ window.AURA_CONFIG = {
       categories: ["men", "women"],
       feeRupees: null,
       feeByCategory: { men: 2500, women: 2500 },
-      closedCategories: ["men"],
-      closedCategoryNote: "Volleyball men registrations are now closed. Women's registrations are still open.",
+      closed: true,
+      closedNote: "Volleyball registrations are now closed.",
     },
     {
       id: "kabaddi",
@@ -153,13 +153,22 @@ window.AURA_CONFIG = {
       closed: true,
       closedNote: "Kabaddi registrations are now closed.",
     },
-    { id: "throwball", name: "Throwball", categories: ["women"], feeRupees: 2500 },
+    {
+      id: "throwball",
+      name: "Throwball",
+      categories: ["women"],
+      feeRupees: 2500,
+      closed: true,
+      closedNote: "Throwball registrations are now closed.",
+    },
     {
       id: "badminton",
       name: "Badminton",
       categories: ["men", "women"],
       feeRupees: null,
       feeByCategory: { men: 2500, women: 2000 },
+      closed: true,
+      closedNote: "Badminton registrations are now closed.",
     },
     {
       id: "table-tennis",
@@ -167,6 +176,8 @@ window.AURA_CONFIG = {
       categories: ["men", "women"],
       feeRupees: null,
       feeByCategory: { men: 2000, women: 2000 },
+      closed: true,
+      closedNote: "Table Tennis registrations are now closed.",
     },
     {
       id: "chess",
@@ -174,6 +185,8 @@ window.AURA_CONFIG = {
       categories: ["men", "women"],
       feeRupees: null,
       feeByCategory: { men: 1000, women: 1000 },
+      closed: true,
+      closedNote: "Chess registrations are now closed.",
     },
     {
       id: "carroms",
@@ -181,6 +194,8 @@ window.AURA_CONFIG = {
       categories: ["men", "women"],
       feeRupees: null,
       feeByCategory: { men: 1000, women: 1000 },
+      closed: true,
+      closedNote: "Carroms registrations are now closed.",
     },
   ],
 
