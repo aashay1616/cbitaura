@@ -2253,3 +2253,25 @@ body.has-preview-banner .hero-cinematic { padding-top: calc(var(--nav-h) + var(-
 .college-item-fee { font-size: 0.8rem; margin-bottom: 0.5rem; }
 .college-receipt img { width: 100%; max-height: 220px; object-fit: cover; object-position: top; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.14); display: block; }
 a.act-college { color: inherit; text-decoration: underline dotted; text-underline-offset: 3px; }
+
+/* admin: confirmed teams & money */
+.confirmed-card summary { cursor: pointer; list-style: none; display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; align-items: baseline; }
+.confirmed-card summary::-webkit-details-marker { display: none; }
+.confirmed-card summary::before { content: "▸"; color: var(--blue-soft); }
+.confirmed-card[open] summary::before { content: "▾"; }
+#confirmed-headline { color: var(--blue-soft); font-size: 0.85rem; font-weight: 700; }
+.confirmed-sport { margin: 1.1rem 0 0.35rem; font-size: 1rem; }
+.confirmed-cats { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 0.6rem; }
+.confirmed-cat { border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 12px; padding: 0.7rem 0.85rem; background: rgba(255, 255, 255, 0.03); }
+.confirmed-cat h4 { margin: 0 0 0.35rem; font-size: 0.85rem; display: flex; justify-content: space-between; gap: 0.5rem; }
+.confirmed-cat ol { margin: 0; padding-left: 1.25rem; font-size: 0.82rem; }
+.confirmed-cat li { padding: 0.1rem 0; }
+.confirmed-warn { color: #ffc14d; font-size: 0.72rem; }
+.money-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 0.5rem; }
+.money-table th, .money-table td { padding: 0.45rem 0.6rem; text-align: left; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+.money-table th { font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-3); }
+.money-table td:nth-child(n + 2), .money-table th:nth-child(n + 2) { text-align: right; }
+.money-table tfoot td { font-weight: 800; border-bottom: 0; }
+.confirmed-meta { color: var(--text-3); font-size: 0.72rem; }
+.college-detail td, .college-detail th { text-align: left !important; vertical-align: top; }
+.college-detail .college-row td { background: rgba(91, 140, 255, 0.1); padding-top: 0.6rem; }

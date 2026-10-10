@@ -475,6 +475,124 @@
     w.document.close();
   }
 
+  // ---- confirmed teams & money collected (verified teams only; CBIT / MGIT standard teams not counted) ----
+  function renderConfirmed(rows) {
+    const card = $("confirmed-card");
+    const bodyEl = $("confirmed-body");
+    if (!card || !bodyEl) return;
+    const verified = rows.filter((r) => r.status === "verified" && !isStandard(r));
+    if (!verified.length) {
+      card.hidden = true;
+      return;
+    }
+    card.hidden = false;
+    const utrIndex = buildUtrIndex(rows);
+    const adj = CFG.REVENUE_ADJUST || {};
+    const totals = adj.sportTotals || {};
+
+    const groups = allGroups(verified).filter((g) => verified.some((r) => `${r.sport}|${r.category}` === g.key));
+    const sportsOrder = [...new Set(groups.map((g) => g.sport))];
+    const moneyRows = [];
+    let totalMoney = 0;
+    let html = "";
+
+    sportsOrder.forEach((sp) => {
+      const cats = groups.filter((g) => g.sport === sp);
+      const sportTeams = verified.filter((r) => r.sport === sp);
+      html += `<h3 class="confirmed-sport">${escapeHtml(sportName(sp))} <small style="color:var(--text-3)">· ${sportTeams.length} confirmed</small></h3><div class="confirmed-cats">`;
+      cats.forEach((g) => {
+        const teams = verified
+          .filter((r) => `${r.sport}|${r.category}` === g.key)
+          .sort((a, b) => collegeOf(a).label.localeCompare(collegeOf(b).label));
+        const fee = teams.reduce((t, r) => t + feeOf(r), 0);
+        const agreed = totals[sp] != null;
+        if (!agreed || cats[0] === g) {
+          // agreed sport totals are shown once, on the sport's first row
+        }
+        moneyRows.push({ sport: sp, label: g.label, n: teams.length, fee, teams });
+        html += `<div class="confirmed-cat"><h4><span>${escapeHtml(catLabel(g.category))}</span><span style="color:var(--blue-soft)">${teams.length} team${teams.length === 1 ? "" : "s"}</span></h4><ol>${teams
+          .map((r) => {
+            const c = paymentCheck(r, utrIndex);
+            const warn = c.ok ? "" : ` <span class="confirmed-warn" title="${escapeHtml(c.text)}">⚠ ${escapeHtml(c.text)}</span>`;
+            return `<li>${escapeHtml(collegeOf(r).label)}${warn}<br><small class="confirmed-meta">UTR ${escapeHtml(r.payment_txn_id || "—")} · Paid ${money(paidOf(r))} of ${money(feeOf(r))} · ${escapeHtml(r.captain_name || "")} ${escapeHtml(r.captain_phone || "")} · <code>${escapeHtml(r.ref_code)}</code></small></li>`;
+          })
+          .join("")}</ol></div>`;
+      });
+      html += "</div>";
+    });
+
+    // money table: per sport/category, with an agreed total replacing a sport's sum when configured
+    const doneAgreed = new Set();
+    let tableRows = "";
+    moneyRows.forEach((m) => {
+      let amount = m.fee;
+      let feeCell = money(feeOfFirst(m.teams));
+      if (totals[m.sport] != null) {
+        const sportSum = moneyRows.filter((x) => x.sport === m.sport).reduce((t, x) => t + x.n, 0);
+        feeCell = "agreed total";
+        if (!doneAgreed.has(m.sport)) {
+          amount = totals[m.sport];
+          doneAgreed.add(m.sport);
+        } else amount = 0;
+        void sportSum;
+      }
+      totalMoney += amount;
+      tableRows += `<tr><td>${escapeHtml(m.label)}</td><td>${m.n}</td><td>${feeCell}</td><td>${amount ? money(amount) : "included above"}</td></tr>`;
+    });
+    (adj.extras || []).forEach((x) => {
+      totalMoney += Number(x.amount) || 0;
+      tableRows += `<tr><td>${escapeHtml(x.label)}</td><td></td><td></td><td>${money(x.amount)}</td></tr>`;
+    });
+
+    $("confirmed-headline").textContent = `${verified.length} teams · ${money(totalMoney)} collected`;
+    const stats = `
+      <div class="admin-stats" style="margin:0.9rem 0 0.4rem">
+        <div class="admin-stat"><span class="n">${verified.length}</span><span class="l">Confirmed teams</span></div>
+        <div class="admin-stat"><span class="n">${sportsOrder.length}</span><span class="l">Sports</span></div>
+        <div class="admin-stat"><span class="n">${groups.length}</span><span class="l">Categories</span></div>
+        <div class="admin-stat"><span class="n">${money(totalMoney)}</span><span class="l">Money collected</span></div>
+      </div>
+      <p class="form-note" style="margin:0 0 0.4rem">Every verified team counted at the fee it was charged, as if paid in full. CBIT &amp; MGIT (standard teams) are not counted. ⚠ marks a verified team whose payment check needs a look.</p>`;
+    const table = `<h3 class="confirmed-sport">Money collected</h3>
+      <table class="money-table"><thead><tr><th>Sport · category</th><th>Teams</th><th>Fee</th><th>Amount</th></tr></thead><tbody>${tableRows}</tbody>
+      <tfoot><tr><td>Total</td><td>${verified.length}</td><td></td><td>${money(totalMoney)}</td></tr></tfoot></table>`;
+    // college-wise: every sport a college is confirmed in, with UTR, amounts and contacts
+    const byCollege = new Map();
+    verified.forEach((r) => {
+      const c = collegeOf(r);
+      const e = byCollege.get(c.key) || { label: c.label, list: [] };
+      e.list.push(r);
+      byCollege.set(c.key, e);
+    });
+    const collegeRowsHtml = [...byCollege.values()]
+      .sort((a, b) => a.label.localeCompare(b.label))
+      .map((e) => {
+        const tt = collegeTotals(e.list);
+        const head = `<tr class="college-row"><td colspan="7"><strong>${escapeHtml(e.label)}</strong> · ${e.list.length} team${
+          e.list.length === 1 ? "" : "s"
+        } · Fee ${money(tt.fee)} · Paid ${money(tt.paid)}${
+          tt.balance > 0 ? ` · <span class="confirmed-warn">${money(tt.balance)} pending</span>` : tt.balance < 0 ? ` · ${money(-tt.balance)} extra` : ""
+        }</td></tr>`;
+        const lines = e.list
+          .sort((a, b) => `${a.sport}${a.category}`.localeCompare(`${b.sport}${b.category}`))
+          .map(
+            (r) => `<tr><td>${escapeHtml(sportName(r.sport))} · ${escapeHtml(catLabel(r.category))}</td><td><code>${escapeHtml(r.ref_code)}</code></td><td>${escapeHtml(
+              r.payment_txn_id || "—"
+            )}</td><td>${money(feeOf(r))}</td><td>${money(paidOf(r))}</td><td>${escapeHtml(r.captain_name || "")}<br><small>${escapeHtml(
+              r.captain_phone || ""
+            )}<br>${escapeHtml(r.captain_email || "")}</small></td><td>${escapeHtml(r.pd_name || "—")}<br><small>${escapeHtml(r.pd_phone || "")}</small></td></tr>`
+          )
+          .join("");
+        return head + lines;
+      })
+      .join("");
+    const collegeTable = `<h3 class="confirmed-sport">College-wise details</h3>
+      <div style="overflow-x:auto"><table class="money-table college-detail"><thead><tr><th>Sport · category</th><th>Ref</th><th>UTR</th><th>Fee</th><th>Paid</th><th>Captain</th><th>PD / contact</th></tr></thead><tbody>${collegeRowsHtml}</tbody></table></div>`;
+    bodyEl.innerHTML = stats + html + table + collegeTable;
+  }
+
+  const feeOfFirst = (teams) => (teams.length ? feeOf(teams[0]) : 0);
+
   // Applies the status / sport·category / search filters currently set in the UI.
   // Shared by render() and the CSV export so "export" always matches what's on screen.
   function filteredRows(rows) {
@@ -514,6 +632,7 @@
     rebuildSportFilter(rows);
     rebuildCollegeFilter(rows);
     renderCollegeSummary(rows);
+    renderConfirmed(rows);
 
     const list = filteredRows(rows);
     const utrIndex = buildUtrIndex(rows);

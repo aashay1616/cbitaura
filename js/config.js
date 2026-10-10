@@ -200,6 +200,16 @@ window.AURA_CONFIG = {
   ],
 
   /**
+   * Admin "Confirmed teams & money": every verified team counts at the fee it was charged
+   * (fee_expected), as if paid in full. `sportTotals` replaces a sport's sum with an agreed
+   * total; `extras` are one-off additions.
+   */
+  REVENUE_ADJUST: {
+    sportTotals: { cricket: 81000 },
+    extras: [{ label: "Extra received (CMRIT)", amount: 500 }],
+  },
+
+  /**
    * College grouping for the admin desk: one college can be typed many ways
    * ("Cmrit", "CMR institute of technology", ...). Any `match` phrase found in the
    * typed name (whole words, case-insensitive) puts the entry under `name`.
