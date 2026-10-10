@@ -222,7 +222,11 @@
       issues.push("No screenshot");
     }
     if (!Number.isFinite(paid)) issues.push("No amount entered");
-    else if (fee != null && Number.isFinite(fee) && paid !== fee) issues.push(`Paid ₹${paid} but fee is ₹${fee}`);
+    else if (fee != null && Number.isFinite(fee) && paid !== fee) {
+      const due = fee - paid;
+      if (due > 0) issues.push(`Paid ₹${paid} · fee ₹${fee} · ₹${due} pending`);
+      else issues.push(`Paid ₹${paid} but fee is ₹${fee}`);
+    }
     const dups = (utrIndex[utrOf(r)] || []).filter((x) => x !== r.ref_code);
     if (utrOf(r) && dups.length) issues.push(`Duplicate UTR (also ${dups.join(", ")})`);
     return { ok: !issues.length, standard: false, text: issues.length ? issues.join(" · ") : "Payment OK", issues };
@@ -252,14 +256,235 @@
     sel.value = [...sel.options].some((o) => o.value === prev) ? prev : "all";
   }
 
+  // ---- colleges: group every spelling of a college so all its sports show together ----
+  const tidyName = (t) => {
+    const x = String(t || "").trim().replace(/\s+/g, " ");
+    return x && (x === x.toLowerCase() || x === x.toUpperCase()) && x.length > 5
+      ? x.toLowerCase().replace(/(^|[\s(-])([a-z])/g, (m, a, b) => a + b.toUpperCase())
+      : x;
+  };
+
+  function collegeOf(r) {
+    const n = normName(r.college_name);
+    const hit = (CFG.COLLEGE_ALIASES || []).find((a) =>
+      (a.match || [a.name]).some((m) => n.includes(" " + String(m).toLowerCase().trim() + " "))
+    );
+    if (hit) return { key: hit.name, label: hit.name };
+    return { key: n.trim() || "unknown", label: tidyName(r.college_name) || "Unknown college" };
+  }
+
+  function rebuildCollegeFilter(rows) {
+    const sel = $("filter-college");
+    if (!sel) return;
+    const prev = sel.value || "all";
+    const m = new Map();
+    rows.forEach((r) => {
+      const c = collegeOf(r);
+      const e = m.get(c.key) || { label: c.label, n: 0 };
+      e.n++;
+      m.set(c.key, e);
+    });
+    const opts = [...m.entries()].sort((a, b) => a[1].label.localeCompare(b[1].label));
+    sel.innerHTML =
+      `<option value="all">All colleges (${opts.length})</option>` +
+      opts.map(([k, e]) => `<option value="${escapeHtml(k)}">${escapeHtml(e.label)} (${e.n})</option>`).join("");
+    sel.value = [...sel.options].some((o) => o.value === prev) ? prev : "all";
+  }
+
+  // ---- fee receipts ----
+  const money = (n) => "₹" + Number(n || 0).toLocaleString("en-IN");
+  const paidOf = (r) => {
+    const v = parseFloat(String(r.payment_amount ?? "").replace(/[^0-9.]/g, ""));
+    return Number.isFinite(v) ? v : 0;
+  };
+  const feeOf = (r) => (r.fee_expected != null && r.fee_expected !== "" ? Number(r.fee_expected) || 0 : 0);
+
+  // Direct image source when the proof is stored inline; otherwise "" (needs a storage fetch).
+  function inlineProof(r) {
+    if (r.payment_screenshot_data) return r.payment_screenshot_data;
+    if (r.payment_screenshot_url) return r.payment_screenshot_url;
+    return "";
+  }
+
+  const proofCache = new Map();
+  async function proofSrc(r) {
+    const direct = inlineProof(r);
+    if (direct) return direct;
+    const path = r.payment_screenshot_path;
+    if (!path || String(path).startsWith("inline:") || !CFG.SUPABASE_URL) return "";
+    if (proofCache.has(r.ref_code)) return proofCache.get(r.ref_code);
+    const res = await fetch(`${CFG.SUPABASE_URL}/storage/v1/object/payment-proofs/${path}`, { headers: authHeaders() });
+    if (!res.ok) throw new Error(await res.text());
+    const url = URL.createObjectURL(await res.blob());
+    proofCache.set(r.ref_code, url);
+    return url;
+  }
+
+  function collegeRows(rows, key) {
+    return rows
+      .filter((r) => collegeOf(r).key === key)
+      .sort((a, b) => `${a.sport}${a.category}`.localeCompare(`${b.sport}${b.category}`));
+  }
+
+  function collegeTotals(list) {
+    const reg = list.filter((r) => !isStandard(r));
+    const fee = reg.reduce((t, r) => t + feeOf(r), 0);
+    const paid = reg.reduce((t, r) => t + paidOf(r), 0);
+    return { teams: list.length, fee, paid, balance: fee - paid };
+  }
+
+  function renderCollegeSummary(rows) {
+    const box = $("college-summary");
+    if (!box) return;
+    const key = $("filter-college") ? $("filter-college").value : "all";
+    if (key === "all") {
+      box.hidden = true;
+      box.innerHTML = "";
+      return;
+    }
+    const list = collegeRows(rows, key);
+    if (!list.length) {
+      box.hidden = true;
+      return;
+    }
+    const utrIndex = buildUtrIndex(rows);
+    const t = collegeTotals(list);
+    const label = collegeOf(list[0]).label;
+    const sportsPlayed = list.map((r) => `${sportName(r.sport)} · ${catLabel(r.category)}`);
+    box.hidden = false;
+    box.innerHTML = `
+      <div class="college-head">
+        <div>
+          <p class="eyebrow" style="margin:0 0 0.2rem">College view</p>
+          <h2 class="step-title" style="margin:0">${escapeHtml(label)}</h2>
+          <p class="form-note" style="margin:0.25rem 0 0">${list.length} registration${list.length === 1 ? "" : "s"}: ${escapeHtml(
+            sportsPlayed.join(" · ")
+          )}</p>
+        </div>
+        <div class="form-actions" style="margin:0">
+          <button type="button" class="btn btn-primary" id="college-receipt">Fee receipt (print / PDF)</button>
+        </div>
+      </div>
+      <div class="admin-stats college-stats">
+        <div class="admin-stat"><span class="n">${list.length}</span><span class="l">Teams</span></div>
+        <div class="admin-stat"><span class="n">${money(t.fee)}</span><span class="l">Fee due</span></div>
+        <div class="admin-stat"><span class="n">${money(t.paid)}</span><span class="l">Paid</span></div>
+        <div class="admin-stat"><span class="n">${t.balance > 0 ? money(t.balance) : t.balance < 0 ? "+" + money(-t.balance) : "—"}</span><span class="l">${
+          t.balance > 0 ? "Pending" : t.balance < 0 ? "Extra paid" : "Settled"
+        }</span></div>
+      </div>
+      <div class="college-grid">
+        ${list
+          .map(
+            (r) => `
+          <div class="college-item">
+            <div class="college-item-top">
+              <strong>${escapeHtml(sportName(r.sport))} · ${escapeHtml(catLabel(r.category))}</strong>
+              <span class="status-pill ${r.status || "pending"}">${escapeHtml(r.status || "pending")}</span>
+            </div>
+            <div class="college-item-meta"><code>${escapeHtml(r.ref_code)}</code> · ${escapeHtml(r.captain_name || "")} ${escapeHtml(r.captain_phone || "")}</div>
+            <div class="college-item-fee">${
+              isStandard(r)
+                ? '<span class="pay-badge pay-std">Standard — no payment</span>'
+                : `Fee ${money(feeOf(r))} · Paid ${money(paidOf(r))} · UTR ${escapeHtml(r.payment_txn_id || "—")}<br>${payBadge(r, utrIndex)}`
+            }</div>
+            ${
+              isStandard(r)
+                ? ""
+                : `<div class="college-receipt" data-ref="${escapeHtml(r.ref_code)}"><span class="form-note">Loading receipt…</span></div>`
+            }
+          </div>`
+          )
+          .join("")}
+      </div>`;
+
+    // load each receipt image (inline proofs show instantly; storage proofs are fetched with the admin login)
+    box.querySelectorAll(".college-receipt").forEach(async (holder) => {
+      const r = list.find((x) => x.ref_code === holder.dataset.ref);
+      try {
+        const src = await proofSrc(r);
+        holder.innerHTML = src
+          ? `<a href="${escapeHtml(src)}" target="_blank" rel="noopener"><img src="${escapeHtml(src)}" alt="Payment receipt ${escapeHtml(r.ref_code)}" /></a>`
+          : '<span class="pay-badge pay-warn">⚠ No receipt uploaded</span>';
+      } catch (e) {
+        holder.innerHTML = '<span class="pay-badge pay-warn">⚠ Could not load receipt</span>';
+      }
+    });
+    const btn = $("college-receipt");
+    if (btn) btn.addEventListener("click", () => openReceipt(label, list));
+  }
+
+  // Printable fee receipt for a college: every sport, amounts, UTRs and the uploaded payment screenshots.
+  async function openReceipt(label, list) {
+    const w = window.open("", "_blank");
+    if (!w) {
+      alert("Allow pop-ups for this page to open the receipt.");
+      return;
+    }
+    w.document.write("<p style='font-family:sans-serif'>Preparing receipt…</p>");
+    const t = collegeTotals(list);
+    const shots = [];
+    for (const r of list) {
+      if (isStandard(r)) continue;
+      let src = "";
+      try {
+        src = await proofSrc(r);
+      } catch (_) {}
+      shots.push({ r, src });
+    }
+    const rowsHtml = list
+      .map(
+        (r) =>
+          `<tr><td>${escapeHtml(sportName(r.sport))} · ${escapeHtml(catLabel(r.category))}</td><td>${escapeHtml(r.ref_code)}</td><td>${escapeHtml(
+            r.payment_txn_id || "—"
+          )}</td><td class="n">${isStandard(r) ? "—" : money(feeOf(r))}</td><td class="n">${isStandard(r) ? "—" : money(paidOf(r))}</td><td>${escapeHtml(
+            isStandard(r) ? "Standard" : r.status || "pending"
+          )}</td></tr>`
+      )
+      .join("");
+    const shotsHtml = shots
+      .map(
+        ({ r, src }) =>
+          `<figure><figcaption>${escapeHtml(sportName(r.sport))} · ${escapeHtml(catLabel(r.category))} · ${escapeHtml(r.ref_code)} · UTR ${escapeHtml(
+            r.payment_txn_id || "—"
+          )}</figcaption>${src ? `<img src="${escapeHtml(src)}" />` : "<em>No receipt uploaded</em>"}</figure>`
+      )
+      .join("");
+    const balanceTxt = t.balance > 0 ? money(t.balance) + " pending" : t.balance < 0 ? money(-t.balance) + " extra" : "Settled";
+    w.document.open();
+    w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>AURA 2026 fee receipt · ${escapeHtml(label)}</title>
+<style>
+ body{font-family:Arial,Helvetica,sans-serif;color:#111;margin:32px;max-width:900px}
+ h1{margin:0;font-size:22px} .sub{color:#555;margin:2px 0 18px;font-size:13px}
+ .brand{border-bottom:3px solid #2f5bff;padding-bottom:10px;margin-bottom:16px}
+ table{width:100%;border-collapse:collapse;font-size:13px;margin:10px 0}
+ th,td{border:1px solid #ccd3e3;padding:7px 9px;text-align:left} th{background:#0b1220;color:#fff;font-size:11px;letter-spacing:.05em;text-transform:uppercase}
+ td.n,th.n{text-align:right} tfoot td{font-weight:700;background:#eef2ff}
+ figure{margin:14px 0;page-break-inside:avoid} figcaption{font-size:12px;color:#444;margin-bottom:4px} figure img{max-width:340px;border:1px solid #ccd3e3}
+ .note{font-size:11px;color:#777;margin-top:18px} button{padding:8px 14px;margin-bottom:14px}
+ @media print{button{display:none} body{margin:14px}}
+</style></head><body>
+<button onclick="window.print()">Print / Save as PDF</button>
+<div class="brand"><h1>AURA 2026 · Fee receipt</h1><div class="sub">Chaitanya Kreeda · CBIT · 7–9 October 2026</div></div>
+<p><strong>College:</strong> ${escapeHtml(label)}<br><strong>Generated:</strong> ${new Date().toLocaleString("en-IN")}</p>
+<table><thead><tr><th>Sport · category</th><th>Ref</th><th>UTR</th><th class="n">Fee</th><th class="n">Paid</th><th>Status</th></tr></thead><tbody>${rowsHtml}</tbody>
+<tfoot><tr><td colspan="3">Total</td><td class="n">${money(t.fee)}</td><td class="n">${money(t.paid)}</td><td>${balanceTxt}</td></tr></tfoot></table>
+<h3 style="font-size:14px;margin-top:22px">Payment screenshots</h3>${shotsHtml || "<em>None</em>"}
+<p class="note">Generated from the AURA 2026 admin desk. Amounts are as entered by the team and checked against the sport fee.</p>
+</body></html>`);
+    w.document.close();
+  }
+
   // Applies the status / sport·category / search filters currently set in the UI.
   // Shared by render() and the CSV export so "export" always matches what's on screen.
   function filteredRows(rows) {
     const filter = $("filter-status") ? $("filter-status").value : "all";
     const sportF = $("filter-sport") ? $("filter-sport").value : "all";
     const q = ($("search-q") ? $("search-q").value : "").trim().toLowerCase();
+    const collegeF = $("filter-college") ? $("filter-college").value : "all";
 
     let list = rows;
+    if (collegeF !== "all") list = list.filter((r) => collegeOf(r).key === collegeF);
     if (filter !== "all") list = list.filter((r) => (r.status || "pending") === filter);
     if (sportF !== "all") {
       const [sp, cat] = sportF.split("|");
@@ -287,6 +512,8 @@
   function render(rows) {
     updateStats(rows.filter((r) => !isStandard(r)));
     rebuildSportFilter(rows);
+    rebuildCollegeFilter(rows);
+    renderCollegeSummary(rows);
 
     const list = filteredRows(rows);
     const utrIndex = buildUtrIndex(rows);
@@ -312,7 +539,7 @@
         }
         return `<tr>
           <td><code>${escapeHtml(r.ref_code)}</code><br><small style="color:var(--text-3)">${escapeHtml((r.created_at || "").slice(0, 16))}</small></td>
-          <td><strong>${escapeHtml(r.college_name)}</strong>${isStandard(r) ? ' <span class="pay-badge pay-std">Standard</span>' : ""}<br>${escapeHtml(sportName(r.sport))} · ${escapeHtml(catLabel(r.category))}
+          <td><a href="#" class="act-college" data-key="${escapeHtml(collegeOf(r).key)}" title="Show every sport and the fee receipt for this college"><strong>${escapeHtml(r.college_name)}</strong></a>${isStandard(r) ? ' <span class="pay-badge pay-std">Standard</span>' : ""}<br>${escapeHtml(sportName(r.sport))} · ${escapeHtml(catLabel(r.category))}
           <br><small>PD: ${escapeHtml(r.pd_name || "—")} · ${escapeHtml(r.pd_phone || "")}</small></td>
           <td>${escapeHtml(r.captain_name)}<br><small>${escapeHtml(r.captain_phone)}<br>${escapeHtml(r.captain_email)}</small>
           <br>${rosterSummary(r)}</td>
@@ -329,6 +556,12 @@
       })
       .join("");
 
+    body.querySelectorAll(".act-college").forEach((a) => {
+      a.addEventListener("click", (ev) => {
+        ev.preventDefault();
+        selectCollege(a.dataset.key);
+      });
+    });
     body.querySelectorAll(".act-verify").forEach((btn) => {
       btn.addEventListener("click", async () => {
         if (
@@ -436,6 +669,29 @@
   $("refresh-list") && $("refresh-list").addEventListener("click", refresh);
   $("filter-status") && $("filter-status").addEventListener("change", () => render(cache));
   $("filter-sport") && $("filter-sport").addEventListener("change", () => render(cache));
+
+  // Picking a college shows ALL its sports, so the status filter steps aside (and comes back on clear).
+  let statusBeforeCollege = null;
+  function selectCollege(key) {
+    const sel = $("filter-college"), st = $("filter-status");
+    if (!sel) return;
+    if (key !== "all" && sel.value === "all" && st) {
+      statusBeforeCollege = st.value;
+      st.value = "all";
+      if ($("filter-sport")) $("filter-sport").value = "all";
+    }
+    if (key === "all" && st && statusBeforeCollege != null) {
+      st.value = statusBeforeCollege;
+      statusBeforeCollege = null;
+    }
+    sel.value = key;
+    render(cache);
+    if (key !== "all") {
+      const box = $("college-summary");
+      if (box && box.scrollIntoView) box.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }
+  $("filter-college") && $("filter-college").addEventListener("change", () => selectCollege($("filter-college").value));
   $("search-q") && $("search-q").addEventListener("input", () => render(cache));
 
   $("admin-login-btn") &&
@@ -520,7 +776,8 @@
         const sportF = $("filter-sport") ? $("filter-sport").value : "all";
         const statusF = $("filter-status") ? $("filter-status").value : "all";
         const slug = (s) => String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-");
-        const tag = [sportF !== "all" ? slug(sportF) : null, statusF !== "all" ? slug(statusF) : null]
+        const collegeF = $("filter-college") ? $("filter-college").value : "all";
+        const tag = [collegeF !== "all" ? slug(collegeF) : null, sportF !== "all" ? slug(sportF) : null, statusF !== "all" ? slug(statusF) : null]
           .filter(Boolean)
           .join("-");
         a.download = `aura2026-registrations${tag ? "-" + tag : ""}.csv`;

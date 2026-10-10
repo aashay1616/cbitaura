@@ -200,6 +200,43 @@ window.AURA_CONFIG = {
   ],
 
   /**
+   * College grouping for the admin desk: one college can be typed many ways
+   * ("Cmrit", "CMR institute of technology", ...). Any `match` phrase found in the
+   * typed name (whole words, case-insensitive) puts the entry under `name`.
+   * Colleges not listed here are grouped by their exact spelling.
+   */
+  COLLEGE_ALIASES: [
+    { name: "CBIT", match: ["cbit", "chaitanya bharathi"] },
+    { name: "MGIT", match: ["mgit", "mahatma gandhi institute"] },
+    { name: "CMR Institute of Technology", match: ["cmrit", "cmr institute of technology"] },
+    { name: "CMR College of Engineering & Technology", match: ["cmrcet", "cmr college of engineering"] },
+    { name: "CVR College of Engineering", match: ["cvr"] },
+    { name: "VNR VJIET", match: ["vnr", "vallurupalli nageswara rao"] },
+    { name: "Vidya Jyothi Institute of Technology (VJIT)", match: ["vjit", "vidya jyothi"] },
+    { name: "GRIET", match: ["griet", "gokaraju rangaraju"] },
+    { name: "G. Narayanamma Institute of Technology & Science", match: ["g narayanamma", "gnits", "narayanamma"] },
+    { name: "Gurunanak Institute of Technology (GNIT)", match: ["gnit", "gurunanak", "guru nanak"] },
+    { name: "JBIET", match: ["jbiet", "jb institution", "jb institute"] },
+    { name: "IIIT Hyderabad", match: ["iiit", "international institute of information technology"] },
+    { name: "HITAM", match: ["hitam", "hyderabad institute of technology"] },
+    { name: "ICFAI", match: ["icfai"] },
+    { name: "Anurag University", match: ["anurag"] },
+    { name: "Mahindra University", match: ["mahindra"] },
+    { name: "NIAT", match: ["niat"] },
+    { name: "KL University", match: ["klhu", "kl university", "klu"] },
+    { name: "Vasavi College of Engineering", match: ["vasavi"] },
+    { name: "MLRIT", match: ["mlrit", "marri laxman"] },
+    { name: "Sreenidhi (SNIST)", match: ["sreenidhi", "snist"] },
+    { name: "ISL Engineering College", match: ["isl"] },
+    { name: "Osmania University College of Engineering", match: ["osmania"] },
+    { name: "Mallareddy University", match: ["mallareddy", "malla reddy university"] },
+    { name: "Muffakham Jah College of Engineering", match: ["muffakhan", "muffakham", "mjcet"] },
+    { name: "Vardhaman College of Engineering", match: ["vardhaman"] },
+    { name: "Keshav Memorial Engineering College", match: ["keshav memorial engineering"] },
+    { name: "Keshav Memorial Institute of Technology", match: ["keshav memorial institute", "kmit"] },
+  ],
+
+  /**
    * "Standard" teams — host / automatic entries that are listed in the admin team
    * list but NOT counted in the website's registration numbers (and not payment-checked).
    *   match  → lower-case phrases looked for in the college name a team types in

@@ -102,6 +102,12 @@
             </div>
           </div>
           <div class="field">
+            <label for="filter-college">Filter college (shows all its sports + fee receipt)</label>
+            <select id="filter-college">
+              <option value="all">All colleges</option>
+            </select>
+          </div>
+          <div class="field">
             <label for="search-q">Search college / captain / ref</label>
             <input id="search-q" type="search" placeholder="Type to filter…" autocomplete="off" />
           </div>
@@ -111,6 +117,8 @@
           </div>
           <p class="form-note" id="admin-mode-label">Mode: —</p>
         </div>
+
+        <div class="reg-card college-card" id="college-summary" hidden></div>
 
         <div class="reg-card" style="overflow-x: auto">
           <table class="admin-table" id="admin-table">
@@ -134,7 +142,7 @@
       </div>
     </main>
 
-    <script src="js/config.js"></script>
-    <script src="js/admin.js"></script>
+    <script src="js/config.js?v=9"></script>
+    <script src="js/admin.js?v=9"></script>
   </body>
 </html>
